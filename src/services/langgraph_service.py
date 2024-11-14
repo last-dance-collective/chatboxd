@@ -32,7 +32,7 @@ class ChatboxdAgent:
         ## Create graph
         self.create_graph()
         logger.info(
-            f"✅ Agent initialized"
+            "✅ Agent initialized"
         )
 
         
@@ -72,7 +72,7 @@ class ChatboxdAgent:
         thread_id="1",
     ):
         config = {"configurable": {"thread_id": thread_id}}
-        logger.info(f"▶️ Running")
+        logger.info("▶️ Running")
         return self.graph.astream_events(
             {"messages": HumanMessage(content=user_msg)},
             config,
