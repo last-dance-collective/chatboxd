@@ -8,6 +8,7 @@ def initialize_session():
             st.session_state[key] = default_value
 
     initialize_key("session_id", uuid.uuid4())
+    initialize_key("messages", [])
 
 
 def reset_session():
@@ -20,3 +21,7 @@ def set_session_val(key: str, value=None, cache_obj=st.session_state):
 
 def get_session_val(key: str, default=None, cache_obj=st.session_state):
     return cache_obj.get(key, default)
+
+
+def save_session_message(author, content):
+    st.session_state.messages.append({"role": author, "content": content})
