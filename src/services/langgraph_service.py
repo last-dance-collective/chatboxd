@@ -10,7 +10,7 @@ from utils.logger_utils import logger
 from utils.langgraph_utils import State
 
 
-class MovementsAgent:
+class ChatboxdAgent:
     def __init__(
         self,
         llm=None,
