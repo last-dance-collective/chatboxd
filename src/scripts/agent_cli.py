@@ -3,7 +3,7 @@ import sys
 from langchain_ollama import ChatOllama
 from langchain_core.messages import AIMessage
 
-from services.langgraph_service import MovementsAgent
+from services.langgraph_service import ChatboxdAgent
 
 
 def main():
@@ -13,7 +13,7 @@ def main():
         temperature=0,
     )
 
-    agent = MovementsAgent(llm=llm)
+    agent = ChatboxdAgent(llm=llm)
 
     while True:
         query = input("> ")
