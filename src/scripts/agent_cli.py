@@ -1,16 +1,13 @@
-import sys
 
-from langchain_ollama import ChatOllama
 from langchain_core.messages import AIMessage
 
+from services.llm_service import ollama_model
 from services.langgraph_service import ChatboxdAgent
-
 
 def main():
 
-    llm = ChatOllama(
-        model="llama3.2:3b",
-        temperature=0,
+    llm = ollama_model(
+        model="llama3.2:3b"
     )
 
     agent = ChatboxdAgent(llm=llm)
