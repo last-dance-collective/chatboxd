@@ -31,7 +31,7 @@ class Database:
         Helper method to create the WHERE clause and values list from filter conditions.
 
         Args:
-            filters (list): A list of dictionaries where each dictionary has "key", "operator", and "value".
+            filters (list): A list of dictionaries where each dictionary has "column", "operator", and "value".
 
         Returns:
             tuple: A WHERE clause string and a list of values for SQL query execution.
@@ -40,22 +40,22 @@ class Database:
         values = []
         
         for filter_item in filters:
-            key = filter_item["key"]
+            column = filter_item["column"]
             operator = filter_item["operator"]
             value = filter_item["value"]
 
-            where_clause_part, value_list = self._build_where_clause_part(key, operator, value)
+            where_clause_part, value_list = self._build_where_clause_part(column, operator, value)
             where_clause.append(where_clause_part)
             values.extend(value_list)
 
         return " AND ".join(where_clause), values
 
-    def _build_where_clause_part(self, key: str, operator: str, value: Any) -> Tuple[str, List[Any]]:
+    def _build_where_clause_part(self, column: str, operator: str, value: Any) -> Tuple[str, List[Any]]:
         """
         Helper method to build a part of the WHERE clause and corresponding values.
 
         Args:
-            key (str): The column name.
+            column (str): The column name.
             operator (str): The operator to use for filtering.
             value (Any): The value to filter by.
 
@@ -68,9 +68,9 @@ class Database:
         if operator == Operator.BETWEEN.value:
             if not isinstance(value, list) or len(value) != 2:
                 raise ValueError("BETWEEN operator requires a list of two values.")
-            return f"{key} {operator} ? AND ?", value
+            return f"{column} {operator} ? AND ?", value
         else:
-            return f"{key} {operator.value} ?", [value]
+            return f"{column} {operator.value} ?", [value]
         
     # -------- Methods for the Diary Table --------
     
@@ -79,7 +79,7 @@ class Database:
         Filter diary entries by any combination of fields with specified operators.
         
         Args:
-            filters (list): A list of dictionaries, each containing "key", "operator", and "value".
+            filters (list): A list of dictionaries, each containing "column", "operator", and "value".
 
         Returns:
             list: A list of dictionaries representing matching diary entries.
@@ -99,7 +99,7 @@ class Database:
         Filter reviews by any combination of fields with specified operators.
         
         Args:
-            filters (list): A list of dictionaries, each containing "key", "operator", and "value".
+            filters (list): A list of dictionaries, each containing "column", "operator", and "value".
 
         Returns:
             list: A list of dictionaries representing matching reviews.

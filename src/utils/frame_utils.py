@@ -37,6 +37,6 @@ def display_header():
 
 def display_table():
     db = Database("letterboxd.db")
-    last_month_entries = db.filter_diary_entries([{"key": "watched_date", "operator": Operator.EQUAL, "value": "2019-03-15"}])
+    last_month_entries = db.filter_diary_entries([{"column": "watched_date", "operator": Operator.EQUAL, "value": "2019-03-15"}])
     df = pd.DataFrame(last_month_entries)
     st.dataframe(df, use_container_width=True)
