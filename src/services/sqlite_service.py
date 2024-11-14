@@ -15,42 +15,71 @@ class Database:
         """Close the database connection when the instance is destroyed."""
         self.connection.close()
 
-    # -------- Methods for the Diary Table --------
+    # -------- Helper Method --------
 
-    def filter_diary_entries(self, filters: Dict[str, Any]) -> List[Dict[str, Any]]:
+    def _parse_filters(self, filters: List[Dict[str, Any]]) -> (str, List[Any]):
         """
-        Filter diary entries by any combination of fields.
+        Helper method to create the WHERE clause and values list from filter conditions.
 
         Args:
-            filters (dict): A dictionary of field-value pairs to filter by.
+            filters (list): A list of dictionaries where each dictionary has "key", "operator", and "value".
+
+        Returns:
+            tuple: A WHERE clause string and a list of values for SQL query execution.
+        """
+        where_clause = []
+        values = []
+        
+        for filter_item in filters:
+            key = filter_item["key"]
+            operator = filter_item["operator"]
+            value = filter_item["value"]
+
+            # Validate operator
+            if operator not in ["=", "<=", ">="]:
+                raise ValueError(f"Unsupported operator: {operator}")
+
+            where_clause.append(f"{key} {operator} ?")
+            values.append(value)
+        
+        return " AND ".join(where_clause), values
+
+    # -------- Methods for the Diary Table --------
+    
+    def filter_diary_entries(self, filters: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """
+        Filter diary entries by any combination of fields with specified operators.
+        
+        Args:
+            filters (list): A list of dictionaries, each containing "key", "operator", and "value".
 
         Returns:
             list: A list of dictionaries representing matching diary entries.
         """
-        where_clause = " AND ".join([f"{key} = ?" for key in filters.keys()])
+        where_clause, values = self._parse_filters(filters)
         query = f"SELECT * FROM diary WHERE {where_clause}"
 
         cursor = self.connection.cursor()
-        cursor.execute(query, tuple(filters.values()))
-
+        cursor.execute(query, values)
+        
         return [dict(row) for row in cursor.fetchall()]
 
     # -------- Methods for the Reviews Table --------
 
-    def filter_reviews(self, filters: Dict[str, Any]) -> List[Dict[str, Any]]:
+    def filter_reviews(self, filters: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """
-        Filter reviews by any combination of fields.
-
+        Filter reviews by any combination of fields with specified operators.
+        
         Args:
-            filters (dict): A dictionary of field-value pairs to filter by.
+            filters (list): A list of dictionaries, each containing "key", "operator", and "value".
 
         Returns:
             list: A list of dictionaries representing matching reviews.
         """
-        where_clause = " AND ".join([f"{key} = ?" for key in filters.keys()])
+        where_clause, values = self._parse_filters(filters)
         query = f"SELECT * FROM reviews WHERE {where_clause}"
 
         cursor = self.connection.cursor()
-        cursor.execute(query, tuple(filters.values()))
-
+        cursor.execute(query, values)
+        
         return [dict(row) for row in cursor.fetchall()]
