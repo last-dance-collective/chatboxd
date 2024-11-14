@@ -1,6 +1,8 @@
 import streamlit as st
+import pandas as pd
 
 from utils.session_utils import reset_session
+from services.sqlite_service import Database
 
 
 def display_interface():
@@ -8,6 +10,7 @@ def display_interface():
     display_header()
     reset_conversation()
     display_chat_input()
+    display_table()
 
 
 def reset_conversation():
@@ -30,3 +33,10 @@ def display_chat_input():
 def display_header():
     st.header("Chatboxd")
     st.caption("Chatboxd allows you to chat with your LetterBoxd stats!")
+
+
+def display_table():
+    db = Database("letterboxd.db")
+    last_month_entries = db.filter_diary_entries({"watched_date": "2019-03-15"})
+    df = pd.DataFrame(last_month_entries)
+    st.table(df)
