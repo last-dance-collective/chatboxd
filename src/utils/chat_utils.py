@@ -37,3 +37,4 @@ async def display_agent_response(agent_call):
                         stream += content
                         message_placeholder.write(stream + "| ")
             message_placeholder.write(stream)
+            save_session_message("assistant", stream)
