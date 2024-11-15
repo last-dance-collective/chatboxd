@@ -1,13 +1,15 @@
-
 from datetime import datetime
 
 from langchain_core.messages import SystemMessage, HumanMessage
 from langgraph.graph import StateGraph, START
 from langgraph.checkpoint.memory import MemorySaver
+from langgraph.prebuilt import ToolNode, tools_condition
 
 from catalog.prompts import AGENT_SYSTEM_PROMPT
 from utils.logger_utils import logger
 from utils.langgraph_utils import State
+
+from utils.agent_tools import saludar
 
 
 class ChatboxdAgent:
@@ -17,31 +19,21 @@ class ChatboxdAgent:
         database=None,
         username=None,
     ):
-        
         self.sys_msg = SystemMessage(
             content=AGENT_SYSTEM_PROMPT.format(
                 current_date=datetime.today().strftime("%Y-%m-%d"),
                 username=username,
             )
         )
-
-        self.llm = llm.with_config(
-            {"run_name": "chatboxd_llm"}
-        )
-
+        self.tools = [saludar]
+        self.llm = llm.bind_tools(self.tools).with_config({"run_name": "chatboxd_llm"})
         ## Create graph
         self.create_graph()
-        logger.info(
-            "✅ Agent initialized"
-        )
+        logger.info("✅ Agent initialized")
 
-        
     def chatbot(self, state: State):
         """Main node that passes the message history into the chain."""
-        return {
-            "messages": [self.llm.invoke([self.sys_msg] + state["messages"])]
-        }
-
+        return {"messages": [self.llm.invoke([self.sys_msg] + state["messages"])]}
 
     def create_graph(self):
         # Create graph
@@ -49,13 +41,15 @@ class ChatboxdAgent:
 
         ## Add Nodes
         graph_builder.add_node("chatbot", self.chatbot)
+        graph_builder.add_node("tools", ToolNode(self.tools))
 
         ## Add Edges
         graph_builder.add_edge(START, "chatbot")
+        graph_builder.add_conditional_edges("chatbot", tools_condition)
+        graph_builder.add_edge("tools", "chatbot")
 
         checkpointer = MemorySaver()
         self.graph = graph_builder.compile(checkpointer=checkpointer)
-
 
     def run(self, user_msg, thread_id="1"):
         config = {"configurable": {"thread_id": thread_id}}
