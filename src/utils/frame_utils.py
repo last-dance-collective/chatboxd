@@ -31,7 +31,10 @@ def display_chat_input():
 
 
 def display_header():
-    st.header("Chatboxd")
+    n_cols = 7
+    cols = st.columns(n_cols)
+    with cols[n_cols // 2]:
+        st.image("public/logo.jpg", width=128)
     st.caption("Chatboxd allows you to chat with your LetterBoxd stats!")
 
 
