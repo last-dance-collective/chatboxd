@@ -9,14 +9,13 @@ from catalog.prompts import AGENT_SYSTEM_PROMPT
 from utils.logger_utils import logger
 from utils.langgraph_utils import State
 
-from utils.agent_tools import saludar
+from utils.agent_tools import saludar, get_films
 
 
 class ChatboxdAgent:
     def __init__(
         self,
         llm=None,
-        database=None,
         username=None,
     ):
         self.sys_msg = SystemMessage(
@@ -25,7 +24,7 @@ class ChatboxdAgent:
                 username=username,
             )
         )
-        self.tools = [saludar]
+        self.tools = [saludar, get_films]
         self.llm = llm.bind_tools(self.tools).with_config({"run_name": "chatboxd_llm"})
         ## Create graph
         self.create_graph()
