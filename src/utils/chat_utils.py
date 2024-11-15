@@ -1,6 +1,5 @@
 from typing import Literal
 import streamlit as st
-from streamlit.delta_generator import DeltaGenerator
 
 from utils.session_utils import get_session_val, save_session_message
 
