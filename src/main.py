@@ -1,11 +1,15 @@
 import asyncio
 from utils.init_utils import initialize_app
-from utils.chat_utils import process_user_input, display_chat_msg
+from utils.chat_utils import (
+    process_user_input,
+    display_agent_response,
+)
+from utils.session_utils import get_session_val
 
 
 async def handle_user_input(prompt):
     if prompt:
-        display_chat_msg("Hola, soy Chatboxd, un bot de ChatGPT para LetterBoxd!", "ai")
+        await display_agent_response(get_session_val("agent").run_async(prompt))
 
 
 async def main():
