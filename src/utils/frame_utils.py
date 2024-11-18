@@ -10,7 +10,7 @@ def display_interface():
     display_header()
     reset_conversation()
     display_chat_input()
-    display_table()
+    #display_table()
 
 
 def reset_conversation():
