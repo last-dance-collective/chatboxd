@@ -1,13 +1,16 @@
 from datetime import datetime
 
+from langchain.globals import set_debug
 from langchain_core.messages import SystemMessage, HumanMessage
 from langgraph.graph import StateGraph, START
 from langgraph.checkpoint.memory import MemorySaver
+from langgraph.prebuilt import ToolNode, tools_condition
 from langgraph.prebuilt import ToolNode, tools_condition
 
 from catalog.prompts import AGENT_SYSTEM_PROMPT
 from utils.logger_utils import logger
 from utils.langgraph_utils import State
+from services.agent_tools import get_movies
 
 from utils.agent_tools import saludar
 
@@ -25,8 +28,13 @@ class ChatboxdAgent:
                 username=username,
             )
         )
-        self.tools = [saludar]
-        self.llm = llm.bind_tools(self.tools).with_config({"run_name": "chatboxd_llm"})
+        set_debug(True)
+        self.tools = [get_movies]
+
+        self.llm = llm.bind_tools(self.tools).with_config(
+            {"run_name": "chatboxd_llm"}
+        )
+        
         ## Create graph
         self.create_graph()
         logger.info("✅ Agent initialized")
@@ -47,7 +55,7 @@ class ChatboxdAgent:
         graph_builder.add_edge(START, "chatbot")
         graph_builder.add_conditional_edges("chatbot", tools_condition)
         graph_builder.add_edge("tools", "chatbot")
-
+        
         checkpointer = MemorySaver()
         self.graph = graph_builder.compile(checkpointer=checkpointer)
 
