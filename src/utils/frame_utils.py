@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-from utils.session_utils import reset_session
+from utils.session_utils import reset_session, get_session_val, set_session_val
 from services.sqlite_service import Database, Operator
 
 
@@ -36,15 +36,18 @@ def display_header():
 
 
 def display_table():
-    db = Database("letterboxd.db")
-    last_month_entries = db.filter_diary_entries(
-        [
-            {
-                "column": "watched_date",
-                "operator": Operator.EQUAL,
-                "value": "2021-07-04",
-            }
-        ]
-    )
-    df = pd.DataFrame(last_month_entries)
-    st.dataframe(df, use_container_width=True)
+    if len(get_session_val("table", default=[])) == 0:
+        db = Database("letterboxd.db")
+        last_month_entries = db.filter_diary_entries(
+            [
+                {
+                    "column": "watched_date",
+                    "operator": Operator.EQUAL,
+                    "value": "2021-07-04",
+                }
+            ]
+        )
+        df = pd.DataFrame(last_month_entries)
+        set_session_val("table", df)
+
+    st.dataframe(get_session_val("table"), use_container_width=True)

@@ -9,7 +9,7 @@ from catalog.prompts import AGENT_SYSTEM_PROMPT
 from utils.logger_utils import logger
 from utils.langgraph_utils import State
 
-from utils.agent_tools import saludar, get_films
+from utils.agent_tools import get_films_by_name, get_films_by_watched_date
 
 
 class ChatboxdAgent:
@@ -24,7 +24,7 @@ class ChatboxdAgent:
                 username=username,
             )
         )
-        self.tools = [saludar, get_films]
+        self.tools = [get_films_by_watched_date, get_films_by_name]
         self.llm = llm.bind_tools(self.tools).with_config({"run_name": "chatboxd_llm"})
         ## Create graph
         self.create_graph()

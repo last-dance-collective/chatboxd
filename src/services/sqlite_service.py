@@ -2,11 +2,14 @@ import sqlite3
 from typing import List, Dict, Any, Tuple
 from enum import Enum
 
+
 class Operator(Enum):
     EQUAL = "="
     LESS_THAN_EQUAL = "<="
     GREATER_THAN_EQUAL = ">="
     BETWEEN = "BETWEEN"
+    LIKE = "LIKE"
+
 
 OPERATOR_VALUES = [op.value for op in Operator]
 
@@ -38,19 +41,23 @@ class Database:
         """
         where_clause = []
         values = []
-        
+
         for filter_item in filters:
             column = filter_item["column"]
             operator = filter_item["operator"]
             value = filter_item["value"]
 
-            where_clause_part, value_list = self._build_where_clause_part(column, operator, value)
+            where_clause_part, value_list = self._build_where_clause_part(
+                column, operator, value
+            )
             where_clause.append(where_clause_part)
             values.extend(value_list)
 
         return " AND ".join(where_clause), values
 
-    def _build_where_clause_part(self, column: str, operator: str, value: Any) -> Tuple[str, List[Any]]:
+    def _build_where_clause_part(
+        self, column: str, operator: str, value: Any
+    ) -> Tuple[str, List[Any]]:
         """
         Helper method to build a part of the WHERE clause and corresponding values.
 
@@ -65,19 +72,23 @@ class Database:
         if operator.value not in OPERATOR_VALUES:
             raise ValueError(f"Unsupported operator: {operator}")
 
-        if operator == Operator.BETWEEN.value:
+        if operator == Operator.BETWEEN:
             if not isinstance(value, list) or len(value) != 2:
                 raise ValueError("BETWEEN operator requires a list of two values.")
-            return f"{column} {operator} ? AND ?", value
+            return f"{column} {operator.value} ? AND ?", value
+        elif operator == Operator.LIKE:
+            return f"{column} {operator.value} ?", [f"%{value}%"]
         else:
             return f"{column} {operator.value} ?", [value]
-        
+
     # -------- Methods for the Diary Table --------
-    
-    def filter_diary_entries(self, filters: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+
+    def filter_diary_entries(
+        self, filters: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
         """
         Filter diary entries by any combination of fields with specified operators.
-        
+
         Args:
             filters (list): A list of dictionaries, each containing "column", "operator", and "value".
 
@@ -89,7 +100,7 @@ class Database:
 
         cursor = self.connection.cursor()
         cursor.execute(query, values)
-        
+
         return [dict(row) for row in cursor.fetchall()]
 
     # -------- Methods for the Reviews Table --------
@@ -97,7 +108,7 @@ class Database:
     def filter_reviews(self, filters: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """
         Filter reviews by any combination of fields with specified operators.
-        
+
         Args:
             filters (list): A list of dictionaries, each containing "column", "operator", and "value".
 
