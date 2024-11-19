@@ -65,10 +65,10 @@ class Database:
         if operator.value not in OPERATOR_VALUES:
             raise ValueError(f"Unsupported operator: {operator}")
 
-        if operator == Operator.BETWEEN.value:
+        if operator == Operator.BETWEEN:
             if not isinstance(value, list) or len(value) != 2:
                 raise ValueError("BETWEEN operator requires a list of two values.")
-            return f"{column} {operator} ? AND ?", value
+            return f"{column} {operator.value} ? AND ?", value
         else:
             return f"{column} {operator.value} ?", [value]
         
