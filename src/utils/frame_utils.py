@@ -6,7 +6,7 @@ from services.sqlite_service import Database, Operator
 
 
 def display_interface():
-    st.logo("public/logo.jpg", size="large")
+    st.logo("public/logo.png", size="large")
     display_header()
     reset_conversation()
     display_chat_input()
@@ -34,7 +34,7 @@ def display_header():
     n_cols = 7
     cols = st.columns(n_cols)
     with cols[n_cols // 2]:
-        st.image("public/logo.jpg", width=128)
+        st.image("public/logo.png", width=128)
     st.caption("Chatboxd allows you to chat with your LetterBoxd stats!")
 
 
