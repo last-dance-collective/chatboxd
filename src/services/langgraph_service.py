@@ -28,13 +28,10 @@ class ChatboxdAgent:
                 username=username,
             )
         )
-        set_debug(True)
         self.tools = [get_movies]
 
-        self.llm = llm.bind_tools(self.tools).with_config(
-            {"run_name": "chatboxd_llm"}
-        )
-        
+        self.llm = llm.bind_tools(self.tools).with_config({"run_name": "chatboxd_llm"})
+
         ## Create graph
         self.create_graph()
         logger.info("✅ Agent initialized")
@@ -55,7 +52,7 @@ class ChatboxdAgent:
         graph_builder.add_edge(START, "chatbot")
         graph_builder.add_conditional_edges("chatbot", tools_condition)
         graph_builder.add_edge("tools", "chatbot")
-        
+
         checkpointer = MemorySaver()
         self.graph = graph_builder.compile(checkpointer=checkpointer)
 
