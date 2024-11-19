@@ -1,7 +1,8 @@
+import pandas as pd
 from typing import Optional, Dict, Any
 
 from services.sqlite_service import Database, Operator
-
+from utils.session_utils import set_session_val, get_session_val
 
 def get_movies(
     name: str = None,
@@ -51,21 +52,18 @@ def get_movies(
     }
     
 def create_watched_date_filter(from_watched_date: Optional[str], to_watched_date: Optional[str]) -> Dict[str, Any]:
-    if from_watched_date and to_watched_date:
-        return {"column": "watched_date", "operator": Operator.BETWEEN, "value": [from_watched_date, to_watched_date]}
-    elif from_watched_date:
-        return {"column": "watched_date", "operator": Operator.GREATER_THAN_EQUAL, "value": from_watched_date}
-    elif to_watched_date:
-        return {"column": "watched_date", "operator": Operator.LESS_THAN_EQUAL, "value": to_watched_date}
-    else:
-        return {"column": "watched_date", "operator": Operator.LESS_THAN_EQUAL, "value": None}
+    return create_two_params_filter("watched_date", from_watched_date, to_watched_date)
 
 def create_rating_filter(from_rating: Optional[float], to_rating: Optional[float]) -> Dict[str, Any]:
-    if from_rating and to_rating:
-        return {"column": "rating", "operator": Operator.BETWEEN, "value": [from_rating, to_rating]}
-    elif from_rating:
-        return {"column": "rating", "operator": Operator.GREATER_THAN_EQUAL, "value": from_rating}
-    elif to_rating:
-        return {"column": "rating", "operator": Operator.LESS_THAN_EQUAL, "value": to_rating}
+    return create_two_params_filter("rating", from_rating, to_rating)
+    
+def create_two_params_filter(param_name: str, from_param: Optional[float], to_param: Optional[float]) -> Dict[str, Any]:
+    if from_param and to_param:
+        return {"column": param_name, "operator": Operator.BETWEEN, "value": [from_param, to_param]}
+    elif from_param:
+        return {"column": param_name, "operator": Operator.GREATER_THAN_EQUAL, "value": from_param}
+    elif to_param:
+        return {"column": param_name, "operator": Operator.LESS_THAN_EQUAL, "value": to_param}
     else:
-        return {"column": "rating", "operator": Operator.LESS_THAN_EQUAL, "value": None}
+        return {"column": param_name, "operator": Operator.LESS_THAN_EQUAL, "value": None}
+
