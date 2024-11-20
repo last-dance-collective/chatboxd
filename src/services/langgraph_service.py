@@ -10,9 +10,7 @@ from langgraph.prebuilt import ToolNode, tools_condition
 from catalog.prompts import AGENT_SYSTEM_PROMPT
 from utils.logger_utils import logger
 from utils.langgraph_utils import State
-from services.agent_tools import get_movies
-
-from utils.agent_tools import saludar
+from services.agent_tools import get_movies, get_letterboxd_film_details
 
 
 class ChatboxdAgent:
@@ -28,10 +26,10 @@ class ChatboxdAgent:
                 username=username,
             )
         )
-        self.tools = [get_movies]
+        self.tools = [get_movies, get_letterboxd_film_details]
 
         self.llm = llm.bind_tools(self.tools).with_config({"run_name": "chatboxd_llm"})
-
+        set_debug(True)
         ## Create graph
         self.create_graph()
         logger.info("✅ Agent initialized")
