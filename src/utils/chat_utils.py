@@ -1,7 +1,11 @@
 from typing import Literal
 import streamlit as st
 
-from utils.session_utils import get_session_val, save_session_message
+from utils.session_utils import get_session_val, set_session_val, save_session_message
+from utils.agent_utils import extract_image_data, get_df
+from utils.frame_utils import return_img_preview
+
+set_session_val("print_response", True)
 
 
 def process_user_input():
@@ -26,31 +30,46 @@ def display_chat_msg(msg: str, author: Literal["user", "assistant", "ai", "human
 async def display_agent_response(agent_call):
     with st.chat_message("assistant"):
         with st.spinner("Generando respuesta..."):
+            stream_card = ""
+            stream = ""
+            card_placeholder = st.empty()
+            text_placeholder = st.empty()
             async for event in agent_call:
                 kind = event["event"]
-                
+
                 if kind == "on_tool_start":
                     display_tool_call_info(event)
-
-                if kind == "on_chat_model_start":
-                    stream = ""
-                    message_placeholder = st.empty()
 
                 if kind == "on_chat_model_stream":
                     content = event["data"]["chunk"].content
                     if content:
                         stream += content
-                        message_placeholder.write(stream + "| ")
-                
+                        text_placeholder.write(stream + "| ")
+
                 if kind == "on_chat_model_end":
                     if stream:
-                        message_placeholder.write(stream)
+                        text_placeholder.write(stream)
                         save_session_message("assistant", stream)
-                        
+
+                if (
+                    kind == "on_tool_end"
+                    and event["name"] == "get_letterboxd_film_details"
+                ):
+                    movie_detail = extract_image_data(event)
+                    stream_card += return_img_preview(
+                        movie_detail.get("image_url", ""),
+                        movie_detail.get("title", ""),
+                        movie_detail.get("url", ""),
+                    )
+
+            card_placeholder.markdown(stream_card, unsafe_allow_html=True)
+            text_placeholder.markdown(stream)
+            save_session_message("assistant", stream)
+
 
 def display_tool_call_info(event):
-    tool_name = event['name']
-    tool_args = event['data']['input']
+    tool_name = event["name"]
+    tool_args = event["data"]["input"]
 
     if tool_name == "get_movies":
         name = tool_args.get("name")
@@ -60,21 +79,21 @@ def display_tool_call_info(event):
         to_rating = tool_args.get("to_rating", 5)
         rewatch = tool_args.get("rewatch")
         year = tool_args.get("year")
-        
+
         description_str = "Buscando películas con los siguientes filtros:\n"
         if name:
             description_str += f"* Título: {name.title()}\n"
         if from_watched_date or to_watched_date:
-            description_str += f"* Vistas desde {from_watched_date} hasta {to_watched_date}\n"
+            description_str += (
+                f"* Vistas desde {from_watched_date} hasta {to_watched_date}\n"
+            )
         if from_rating or to_rating:
-            description_str += f"* Rango de puntuaciones: De {from_rating} a {to_rating} estrellas\n"
+            description_str += (
+                f"* Rango de puntuaciones: De {from_rating} a {to_rating} estrellas\n"
+            )
         if year:
             description_str += f"* Año de lanzamiento: {year}\n"
         if rewatch:
             description_str += f"* Rewatch: {rewatch}\n"
-            
+
         st.info(description_str, icon="🔎")
-        
-
-        
-

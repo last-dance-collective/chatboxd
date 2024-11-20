@@ -1,7 +1,8 @@
 from typing import Dict, Any, Literal
+import requests
+from bs4 import BeautifulSoup
 
 from services.sqlite_service import Database, Operator
-
 from utils.logger_utils import logger
 
 
@@ -43,7 +44,7 @@ def get_movies(
     movies = db.filter_diary_entries(filters=filters)
 
     return {
-        "messages": movies,
+        "messages": {"obj_type": "dict", "movies": movies},
     }
 
 
@@ -74,3 +75,28 @@ def create_two_params_filter(
             "operator": Operator.LESS_THAN_EQUAL,
             "value": None,
         }
+
+def get_letterboxd_film_details(url: str):
+    """
+    Obtiene los detalles de una película desde Letterboxd.
+
+    Params:
+        url (str): La url de la película en Letterboxd.
+
+    Returns:
+        str: Un elemento html con una tarjeta para ser mostrada en el frontal
+    """
+    response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
+    soup = BeautifulSoup(response.text, 'html.parser')
+    
+    og_title = soup.find("meta", property="og:title")["content"]
+    og_image = soup.find("meta", property="og:image")["content"]
+    
+    data = {
+        "title": og_title,
+        "url": url,
+        "image_url": og_image
+    }
+    return {
+        "messages": {"obj_type": "movie_detail", "movies": data, "indicaciones": "no se tiene que mostrar la imagen, solo los detalles de la pelicula"},
+    }
