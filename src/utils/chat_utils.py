@@ -26,14 +26,55 @@ def display_chat_msg(msg: str, author: Literal["user", "assistant", "ai", "human
 async def display_agent_response(agent_call):
     with st.chat_message("assistant"):
         with st.spinner("Generando respuesta..."):
-            stream = ""
-            message_placeholder = st.empty()
             async for event in agent_call:
                 kind = event["event"]
+                
+                if kind == "on_tool_start":
+                    display_tool_call_info(event)
+
+                if kind == "on_chat_model_start":
+                    stream = ""
+                    message_placeholder = st.empty()
+
                 if kind == "on_chat_model_stream":
                     content = event["data"]["chunk"].content
                     if content:
                         stream += content
                         message_placeholder.write(stream + "| ")
-            message_placeholder.write(stream)
-            save_session_message("assistant", stream)
+                
+                if kind == "on_chat_model_end":
+                    if stream:
+                        message_placeholder.write(stream)
+                        save_session_message("assistant", stream)
+                        
+
+def display_tool_call_info(event):
+    tool_name = event['name']
+    tool_args = event['data']['input']
+
+    if tool_name == "get_movies":
+        name = tool_args.get("name")
+        from_watched_date = tool_args.get("from_watched_date")
+        to_watched_date = tool_args.get("to_watched_date", "hoy")
+        from_rating = tool_args.get("from_rating", 0)
+        to_rating = tool_args.get("to_rating", 5)
+        rewatch = tool_args.get("rewatch")
+        year = tool_args.get("year")
+        
+        description_str = "Buscando películas con los siguientes filtros:\n"
+        if name:
+            description_str += f"* Título: {name.title()}\n"
+        if from_watched_date or to_watched_date:
+            description_str += f"* Vistas desde {from_watched_date} hasta {to_watched_date}\n"
+        if from_rating or to_rating:
+            description_str += f"* Rango de puntuaciones: De {from_rating} a {to_rating} estrellas\n"
+        if year:
+            description_str += f"* Año de lanzamiento: {year}\n"
+        if rewatch:
+            description_str += f"* Rewatch: {rewatch}\n"
+            
+        st.info(description_str, icon="🔎")
+        
+
+        
+
