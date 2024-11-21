@@ -32,17 +32,19 @@ async def display_agent_response(agent_call):
         with st.spinner("Generando respuesta..."):
             stream = ""
             is_card = False
-            col1, col2 = st.columns(2)
+            info_container = st.empty()
             text_placeholder = st.empty()
+            col1, col2 = st.columns(2)
             with col1:
                 text_placeholder_col1 = st.empty()
             with col2:
                 card_placeholder = st.empty()
+
             async for event in agent_call:
                 kind = event["event"]
 
                 if kind == "on_tool_start":
-                    display_tool_call_info(event)
+                    display_tool_call_info(event, info_container)
 
                 if kind == "on_tool_end" and event["name"] == "get_movie_details":
                     is_card = True
@@ -65,14 +67,15 @@ async def display_agent_response(agent_call):
                             text_placeholder.write(stream + "| ")
 
                 if kind == "on_chat_model_end":
-                    if is_card:
-                        text_placeholder_col1.markdown(stream)
-                    else:
-                        text_placeholder.markdown(stream)
-                    save_session_message("assistant", stream)
+                    if stream:
+                        if is_card:
+                            text_placeholder_col1.markdown(stream)
+                        else:
+                            text_placeholder.markdown(stream)
+                        save_session_message("assistant", stream)
 
 
-def display_tool_call_info(event):
+def display_tool_call_info(event, info_container):
     tool_name = event["name"]
     tool_args = event["data"]["input"]
 
@@ -101,4 +104,4 @@ def display_tool_call_info(event):
         if rewatch:
             description_str += f"* Rewatch: {rewatch}\n"
 
-        st.info(description_str, icon="🔎")
+        info_container.info(description_str, icon="🔎")
