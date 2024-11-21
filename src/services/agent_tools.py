@@ -1,9 +1,7 @@
 from typing import Dict, Any, Literal
-import requests
-from bs4 import BeautifulSoup
-import os
 
 from services.sqlite_service import Database, Operator
+from services.movies_data_service import get_omdb_data, get_letterboxd_data
 from utils.logger_utils import logger
 from utils.agent_utils import clean_omdb_response
 
@@ -50,7 +48,6 @@ def get_movies(
         + str(movies)
     )
 
-
 def get_movie_details(title: str, letterboxd_url: str):
     """Obtiene los detalles de una película mediante el titulo en inglés y el uso de una API externa
 
@@ -61,31 +58,47 @@ def get_movie_details(title: str, letterboxd_url: str):
     Returns:
         str: Descripción de la película.
     """
-    BASE_URL = "http://www.omdbapi.com/?apikey={api_key}&t={title}"
-    url = BASE_URL.format(api_key=os.environ["OMDB_API_KEY"], title=title)
-    response = requests.get(url)
-    clean_response = clean_omdb_response(response.json())
+    omdb_data = get_omdb_data(title)
+    letterboxd_data = get_letterboxd_data(letterboxd_url)
 
-    response_lb = requests.get(letterboxd_url, headers={"User-Agent": "Mozilla/5.0"})
-    soup = BeautifulSoup(response_lb.text, "html.parser")
-
-    og_title = soup.find("meta", property="og:title")["content"]
-    og_image = soup.find("meta", property="og:image")["content"]
-
+    if (clean_omdb_response == {} or letterboxd_data == {}):
+        return "No se encontraron detalles de la película"
+    
     data = {
-        "title": og_title,
-        "url": url,
-        "image_url": og_image,
-        "plot": response.json()["Plot"],
-        "ratings": response.json()["Ratings"],
+        "title": letterboxd_data["title"],
+        "url": letterboxd_url,
+        "image_url": letterboxd_data["image_url"],
+        "plot": omdb_data["Plot"],
+        "ratings": omdb_data["Ratings"],
     }
+    
+    del omdb_data["Plot"]
+    del omdb_data["Ratings"]
 
     return (
         "🎬 Los detalles de la película son (Añade emojis para que visualmente se vea mejor):\n"
-        + clean_response
+        + str(omdb_data)
         + "\n\n  En ningún caso debes mostrar una imagen ni la sinopsis. El diccionario que viene a continuación es irrelevante para ti, no lo hagas caso. "
     ), {"movies": data}
 
+def get_letterboxd_film_details(url: str):
+    """
+    Obtiene los detalles de una película desde Letterboxd.
+
+    Params:
+        url (str): La url de la película en Letterboxd.
+
+    Returns:
+        str: Un elemento html con una tarjeta para ser mostrada en el frontal
+    """
+    data = get_letterboxd_data(url)
+    return {
+        "obj_type": "movie_detail",
+        "movies": data,
+        "indicaciones": "no se tiene que mostrar la imagen, solo los detalles de la pelicula",
+    }
+
+# Aux mehtods
 
 def create_two_params_filter(
     param_name: str, from_param: Any, to_param: Any
@@ -114,27 +127,3 @@ def create_two_params_filter(
             "operator": Operator.LESS_THAN_EQUAL,
             "value": None,
         }
-
-
-def get_letterboxd_film_details(url: str):
-    """
-    Obtiene los detalles de una película desde Letterboxd.
-
-    Params:
-        url (str): La url de la película en Letterboxd.
-
-    Returns:
-        str: Un elemento html con una tarjeta para ser mostrada en el frontal
-    """
-    response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
-    soup = BeautifulSoup(response.text, "html.parser")
-
-    og_title = soup.find("meta", property="og:title")["content"]
-    og_image = soup.find("meta", property="og:image")["content"]
-
-    data = {"title": og_title, "url": url, "image_url": og_image}
-    return {
-        "obj_type": "movie_detail",
-        "movies": data,
-        "indicaciones": "no se tiene que mostrar la imagen, solo los detalles de la pelicula",
-    }
