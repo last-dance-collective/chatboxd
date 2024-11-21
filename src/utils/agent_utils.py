@@ -26,23 +26,3 @@ def extract_image_data(event):
         return message[1].get("movies", {})
     else:
         return {}
-
-
-def clean_omdb_response(response: dict):
-    del response["Rated"]
-    del response["Year"]
-    del response["Language"]
-    del response["Poster"]
-    del response["Type"]
-    del response["Website"]
-    del response["Response"]
-    del response["DVD"]
-    del response["imdbVotes"]
-    del response["Metascore"]
-    del response["imdbID"]
-    del response["Plot"]
-    del response["imdbRating"]
-    del response["Production"]
-    del response["Ratings"]
-
-    return str(response)
