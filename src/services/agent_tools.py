@@ -3,7 +3,6 @@ from typing import Dict, Any, Literal
 from services.sqlite_service import Database, Operator
 from services.movies_data_service import get_omdb_data, get_letterboxd_data
 from utils.logger_utils import logger
-from utils.agent_utils import clean_omdb_response
 
 
 def get_movies(
@@ -48,6 +47,7 @@ def get_movies(
         + str(movies)
     )
 
+
 def get_movie_details(title: str, letterboxd_url: str):
     """Obtiene los detalles de una película mediante el titulo en inglés y el uso de una API externa
 
@@ -61,9 +61,9 @@ def get_movie_details(title: str, letterboxd_url: str):
     omdb_data = get_omdb_data(title)
     letterboxd_data = get_letterboxd_data(letterboxd_url)
 
-    if (clean_omdb_response == {} or letterboxd_data == {}):
+    if omdb_data == {} or letterboxd_data == {}:
         return "No se encontraron detalles de la película"
-    
+
     data = {
         "title": letterboxd_data["title"],
         "url": letterboxd_url,
@@ -71,15 +71,16 @@ def get_movie_details(title: str, letterboxd_url: str):
         "plot": omdb_data["Plot"],
         "ratings": omdb_data["Ratings"],
     }
-    
+
     del omdb_data["Plot"]
     del omdb_data["Ratings"]
 
     return (
         "🎬 Los detalles de la película son (Añade emojis para que visualmente se vea mejor):\n"
         + str(omdb_data)
-        + "\n\n  En ningún caso debes mostrar una imagen ni la sinopsis. El diccionario que viene a continuación es irrelevante para ti, no lo hagas caso. "
+        + "\n\n  En ningún caso debes mostrar una imagen ni la sinopsis, ni los Ratings. El diccionario que viene a continuación es irrelevante para ti, no lo hagas caso. "
     ), {"movies": data}
+
 
 def get_letterboxd_film_details(url: str):
     """
@@ -98,7 +99,9 @@ def get_letterboxd_film_details(url: str):
         "indicaciones": "no se tiene que mostrar la imagen, solo los detalles de la pelicula",
     }
 
+
 # Aux mehtods
+
 
 def create_two_params_filter(
     param_name: str, from_param: Any, to_param: Any
