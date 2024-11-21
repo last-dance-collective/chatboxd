@@ -63,7 +63,6 @@ def return_img_preview(
                     height: 200px;
                     object-fit: cover;
                     border-radius: 0.5rem;
-                    cursor: ;
                 }
                 .card-body {
                     padding: 10px;
@@ -81,9 +80,9 @@ def return_img_preview(
                     font-weight: bold;
                     line-height: 1.1;
                 }
-                a {
+                .card a {
                     text-decoration: none;
-                    color: inherit;
+                    color: #fff;
                 }
                 .card-body p {
                     color: #ccdbe9;
@@ -134,8 +133,8 @@ def return_img_preview(
     tarjeta_html = f"""
         <div class="card">
                 <a
-                href="{og_url}"
-                target="_blank"
+                    href="{og_url}"
+                    target="_blank"
                 >
                     <img
                         class="card-img"
