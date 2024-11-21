@@ -38,12 +38,15 @@ def display_header():
     st.caption("Chatboxd allows you to chat with your LetterBoxd stats!")
 
 
-def return_img_preview(og_image: str, og_title: str, og_url: str, plot: str):
+def return_img_preview(
+    og_image: str, og_title: str, og_url: str, plot: str, ratings: list
+):
+    badges_html = get_ratings_badges(ratings)
     styles_css = """
         <head>
             <style>
                 .card {
-                    max-width: 700px;
+                    max-width: 80%;
                     margin-left: auto;
                     border: 1px solid #ccdbe9;
                     border-radius: 1rem;
@@ -57,8 +60,10 @@ def return_img_preview(og_image: str, og_title: str, og_url: str, plot: str):
                 }
                 .card-img {
                     width: 100%;
-                    height: auto;
+                    height: 200px;
+                    object-fit: cover;
                     border-radius: 0.5rem;
+                    cursor: ;
                 }
                 .card-body {
                     padding: 10px;
@@ -70,13 +75,57 @@ def return_img_preview(og_image: str, og_title: str, og_url: str, plot: str):
                 }
                 .card-body h3 {
                     margin: 0;
-                    font-size: 1.1em;
-                    color: #ccdbe9;
-                    line-height: 1.4;
+                    font-size: 1.7em;
+                    color: #ffffff;
+                    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+                    font-weight: bold;
+                    line-height: 1.1;
                 }
                 .card-body a {
                     text-decoration: none;
                     color: inherit;
+                }
+                .card-body p {
+                    color: #ccdbe9;
+                    font-style: italic;
+                }
+                .ratings {
+                    width: 50%;
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 1rem;
+                }
+                .badge {
+                    display: inline-block;
+                    padding: 0.5em;
+                    font-size: 90%;
+                    font-weight: bold;
+                    line-height: 1;
+                    text-align: center;
+                    white-space: nowrap;
+                    vertical-align: baseline;
+                    border-radius: 0.25rem;
+                }
+                .badge-primary {
+                    color: #fff;
+                    background-color: #d69e02;
+                }
+                .badge-secondary {
+                    color: #fff;
+                    background-color: #a31702;
+                }
+                .badge-terciary {
+                    color: #fff;
+                    background-color: #212121;
+                }
+                @media (min-width: 1440px) {
+                    .card {
+                        max-width: 800px;
+                        margin: 20px auto;
+                    }
+                    .card-img {
+                        height: 325px;
+                    }
                 }
             </style>
         </head>
@@ -107,6 +156,9 @@ def return_img_preview(og_image: str, og_title: str, og_url: str, plot: str):
                 <p>
                 {plot}
                 </p>
+                <div class="ratings">
+                    {badges_html}
+                </div>
             </div>
         </div>
     """
@@ -126,3 +178,14 @@ def display_table():
     )
     df = pd.DataFrame(last_month_entries)
     st.dataframe(df, use_container_width=True)
+
+
+def get_ratings_badges(ratings: list):
+    if len(ratings) == 0:
+        return ""
+    elif len(ratings) == 1:
+        return f"<span class='badge badge-primary'>IMDB: {ratings[0]["Value"]}</span>"
+    elif len(ratings) == 2:
+        return f"<span class='badge badge-primary'>IMDB: {ratings[0]["Value"]}</span><span class='badge badge-secondary'>RT: {ratings[1]["Value"]}</span>"
+    else:
+        return f"<span class='badge badge-primary'>IMDB: {ratings[0]["Value"]}</span><span class='badge badge-secondary'>RT: {ratings[1]["Value"]}</span><span class='badge badge-terciary'>MC: {ratings[2]["Value"]}</span>"

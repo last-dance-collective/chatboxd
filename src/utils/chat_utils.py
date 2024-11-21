@@ -2,7 +2,7 @@ from typing import Literal
 import streamlit as st
 
 from utils.session_utils import get_session_val, set_session_val, save_session_message
-from utils.agent_utils import extract_image_data, get_df
+from utils.agent_utils import extract_image_data
 from utils.frame_utils import return_img_preview
 
 set_session_val("print_response", True)
@@ -44,6 +44,17 @@ async def display_agent_response(agent_call):
                 if kind == "on_tool_start":
                     display_tool_call_info(event)
 
+                if kind == "on_tool_end" and event["name"] == "get_movie_details":
+                    is_card = True
+                    movie_detail = extract_image_data(event)
+                    card = return_img_preview(
+                        movie_detail.get("image_url", ""),
+                        movie_detail.get("title", ""),
+                        movie_detail.get("url", ""),
+                        movie_detail.get("plot", ""),
+                        movie_detail.get("ratings", []),
+                    )
+                    card_placeholder.markdown(card, unsafe_allow_html=True)
                 elif kind == "on_chat_model_stream":
                     content = event["data"]["chunk"].content
                     if content:
@@ -54,25 +65,11 @@ async def display_agent_response(agent_call):
                             text_placeholder.write(stream + "| ")
 
                 if kind == "on_chat_model_end":
-                    if stream:
-                        text_placeholder.write(stream)
-                        save_session_message("assistant", stream)
-
-                if (
-                    kind == "on_tool_end"
-                    and event["name"] == "get_letterboxd_film_details"
-                ):
-                    movie_detail = extract_image_data(event)
-                    card = return_img_preview(
-                        movie_detail.get("image_url", ""),
-                        movie_detail.get("title", ""),
-                        movie_detail.get("url", ""),
-                        movie_detail.get("plot", ""),
-                    )
-                    card_placeholder.markdown(card, unsafe_allow_html=True)
-
-            # text_placeholder.markdown(stream)
-            save_session_message("assistant", stream)
+                    if is_card:
+                        text_placeholder_col1.markdown(stream)
+                    else:
+                        text_placeholder.markdown(stream)
+                    save_session_message("assistant", stream)
 
 
 def display_tool_call_info(event):
