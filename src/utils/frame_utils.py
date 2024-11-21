@@ -81,7 +81,7 @@ def return_img_preview(
                     font-weight: bold;
                     line-height: 1.1;
                 }
-                .card-body a {
+                a {
                     text-decoration: none;
                     color: inherit;
                 }
@@ -133,17 +133,16 @@ def return_img_preview(
     """
     tarjeta_html = f"""
         <div class="card">
-            <a
-            href="http://www.omdbapi.com/?apikey=afacdf8e&t=Avatar: The Way of Water"
-            target="_blank"
-        >
-            <div style="flex-shrink: 0">
-                <img
-                    class="card-img"
-                    src="{og_image}"
-                    alt="{og_title}"
-                />
-            </div>
+                <a
+                href="{og_url}"
+                target="_blank"
+                >
+                    <img
+                        class="card-img"
+                        src="{og_image}"
+                        alt="{og_title}"
+                    />
+                </a>
             <div class="card-body">
                 <h3>
                     <a
