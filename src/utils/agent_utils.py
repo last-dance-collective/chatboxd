@@ -41,5 +41,8 @@ def clean_omdb_response(response: dict):
     del response["Metascore"]
     del response["imdbID"]
     del response["Plot"]
+    del response["imdbRating"]
+    del response["Production"]
+    del response["Ratings"]
 
     return str(response)

@@ -77,6 +77,7 @@ def get_movie_details(title: str, letterboxd_url: str):
         "url": url,
         "image_url": og_image,
         "plot": response.json()["Plot"],
+        "ratings": response.json()["Ratings"],
     }
 
     return (
