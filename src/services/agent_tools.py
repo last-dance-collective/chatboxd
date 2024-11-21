@@ -1,7 +1,7 @@
 from typing import Dict, Any, Literal
 
 from services.sqlite_service import Database, Operator
-
+from services.movies_data_service import get_omdb_data, get_letterboxd_data
 from utils.logger_utils import logger
 
 
@@ -42,9 +42,65 @@ def get_movies(
     db = Database("letterboxd.db")
     movies = db.filter_diary_entries(filters=filters)
 
-    return {
-        "messages": movies,
+    return (
+        "De acuerdo a los filtros que me has dado, el usuario ha visto las siguiente películas:\n"
+        + str(movies)
+    )
+
+
+def get_movie_details(title: str, letterboxd_url: str):
+    """Obtiene los detalles de una película mediante el titulo en inglés y el uso de una API externa
+
+    Params:
+        title (str): nombre de la película en inglés.
+        letterboxd_url (str): url de la película en letterboxd.
+
+    Returns:
+        str: Descripción de la película.
+    """
+    omdb_data = get_omdb_data(title)
+    letterboxd_data = get_letterboxd_data(letterboxd_url)
+
+    if omdb_data == {} or letterboxd_data == {}:
+        return "No se encontraron detalles de la película"
+
+    data = {
+        "title": letterboxd_data["title"],
+        "url": letterboxd_url,
+        "image_url": letterboxd_data["image_url"],
+        "plot": omdb_data["Plot"],
+        "ratings": omdb_data["Ratings"],
     }
+
+    del omdb_data["Plot"]
+    del omdb_data["Ratings"]
+
+    return (
+        "🎬 Los detalles de la película son (Añade emojis para que visualmente se vea mejor):\n"
+        + str(omdb_data)
+        + "\n\n  En ningún caso debes mostrar una imagen ni la sinopsis, ni los Ratings. El diccionario que viene a continuación es irrelevante para ti, no lo hagas caso. "
+    ), {"movies": data}
+
+
+def get_letterboxd_film_details(url: str):
+    """
+    Obtiene los detalles de una película desde Letterboxd.
+
+    Params:
+        url (str): La url de la película en Letterboxd.
+
+    Returns:
+        str: Un elemento html con una tarjeta para ser mostrada en el frontal
+    """
+    data = get_letterboxd_data(url)
+    return {
+        "obj_type": "movie_detail",
+        "movies": data,
+        "indicaciones": "no se tiene que mostrar la imagen, solo los detalles de la pelicula",
+    }
+
+
+# Aux mehtods
 
 
 def create_two_params_filter(
