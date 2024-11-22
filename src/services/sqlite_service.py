@@ -1,4 +1,4 @@
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any
 from sqlalchemy import create_engine, Column, Integer, Text, Float, ForeignKey, and_
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -8,6 +8,7 @@ from enum import Enum
 from utils.logger_utils import logger
 
 Base = declarative_base()
+
 
 class Operator(Enum):
     EQUAL = operators.eq
@@ -51,7 +52,9 @@ class Database:
 
     # -------- Helper Method --------
 
-    def _parse_filters(self, table: Diary|Review, filters: List[Dict[str, Any]]) -> List[Any]:
+    def _parse_filters(
+        self, table: Diary | Review, filters: List[Dict[str, Any]]
+    ) -> List[Any]:
         """
         Convert filter definitions into SQLAlchemy expressions.
 
@@ -77,7 +80,11 @@ class Database:
                 conditions.append(column.between(value[0], value[1]))
             elif operator == Operator.LIKE:
                 conditions.append(column.like(f"%{value}%"))
-            elif operator in [Operator.EQUAL, Operator.LESS_THAN_EQUAL, Operator.GREATER_THAN_EQUAL]:
+            elif operator in [
+                Operator.EQUAL,
+                Operator.LESS_THAN_EQUAL,
+                Operator.GREATER_THAN_EQUAL,
+            ]:
                 conditions.append(operator.value(column, value))
             else:
                 raise ValueError(f"Unsupported operator: {operator}")
@@ -86,7 +93,9 @@ class Database:
 
     # -------- Methods for the Diary Table --------
 
-    def filter_diary_entries(self, filters: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def filter_diary_entries(
+        self, filters: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
         """
         Filter diary entries by any combination of fields with specified operators.
 
@@ -100,7 +109,7 @@ class Database:
         try:
             conditions = self._parse_filters(Diary, filters)
             query = session.query(Diary).filter(and_(*conditions))
-            return [entry.__dict__ for entry in query.all()]
+            return [self.get_model_dict(entry) for entry in query.all()]
         except Exception as e:
             logger.error("Error retrieving results from Diary: ", e)
             return []
@@ -129,3 +138,9 @@ class Database:
             return []
         finally:
             session.close()
+
+    def get_model_dict(self, model) -> dict:
+        return dict(
+            (column.name, getattr(model, column.name))
+            for column in model.__table__.columns
+        )
