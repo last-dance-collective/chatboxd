@@ -42,20 +42,6 @@ class Diary(Base):
     username = Column(Text, nullable=False)
     review_id = Column(Integer, ForeignKey("reviews.id"))
 
-    # def __dict__(self):
-    #     return {
-    #         "date": self.date,
-    #         "name": self.name,
-    #         "year": self.year,
-    #         "letterboxd_uri": self.letterboxd_uri,
-    #         "rating": self.rating,
-    #         "rewatch": self.rewatch,
-    #         "tags": self.tags,
-    #         "watched_date": self.watched_date,
-    #         "username": self.username,
-    #         "review_id": self.review_id,
-    #     }
-
 
 class Database:
     def __init__(self, db_path: str):
@@ -153,7 +139,7 @@ class Database:
         finally:
             session.close()
 
-    def get_model_dict(self, model):
+    def get_model_dict(self, model) -> dict:
         return dict(
             (column.name, getattr(model, column.name))
             for column in model.__table__.columns
