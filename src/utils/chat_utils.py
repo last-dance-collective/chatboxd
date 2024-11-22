@@ -43,8 +43,7 @@ async def display_agent_response(agent_call):
             async for event in agent_call:
                 kind = event["event"]
 
-                if kind == "on_tool_start":
-                    display_tool_call_info(event, info_container)
+                display_tool_call_info(event, info_container)
 
                 if kind == "on_tool_end" and event["name"] == "get_movie_details":
                     is_card = True
@@ -77,44 +76,74 @@ async def display_agent_response(agent_call):
 
 
 def display_tool_call_info(event, info_container):
+    kind = event["event"]
     tool_name = event["name"]
-    tool_args = event["data"]["input"]
+    tool_args = event["data"].get("input", {})
 
-    if tool_name == "get_movies":
-        name = tool_args.get("name")
-        from_watched_date = tool_args.get("from_watched_date")
-        to_watched_date = tool_args.get("to_watched_date")
-        from_rating = tool_args.get("from_rating")
-        to_rating = tool_args.get("to_rating")
-        rewatch = tool_args.get("rewatch")
-        year = tool_args.get("year")
+    if tool_name == "get_movies" and kind == "on_tool_start":
+        get_movies_tool_info(tool_args, info_container)
 
-        description_str = "Buscando películas con los siguientes filtros:\n"
-        if name:
-            description_str += f"* Título: {name.title()}\n"
-        if from_watched_date or to_watched_date:
-            if from_watched_date:
-                to_watched_date = tool_args.get("to_watched_date", "hoy")
-                description_str += (
-                    f"* Vistas desde **{from_watched_date}** hasta **{to_watched_date}**\n"
-                )
-            else:
-                description_str += (
-                    f"* Vistas antes de **{to_watched_date}**\n"
-                )   
-        if from_rating or to_rating:
-            from_rating = tool_args.get("from_rating", 0)
-            to_rating = tool_args.get("to_rating", 5)
-            if from_rating != to_rating:
-                description_str += (
-                    f"* Puntuadas entre **{from_rating}** y **{to_rating} estrellas**\n"
-                )
-            else:
-                description_str += f"* Puntuadas con **{from_rating} estrellas**\n"
-        if year:
-            description_str += f"* Lanzadas en el año **{year}**\n"
-            
-        if rewatch:
-            description_str += f"* Rewatch: {rewatch}\n"
 
-        info_container.info(description_str, icon="🔎")
+def get_movies_tool_info(tool_args, info_container):
+    filter_str = title_info(tool_args)
+    filter_str += watched_date_info(tool_args)
+    filter_str += rating_info(tool_args)
+    filter_str += release_year_info(tool_args)
+    filter_str += rewatch_info(tool_args)
+
+    initial_str = ("Buscando películas con los siguientes filtros:\n" 
+                    if filter_str else "Buscando películas...\n")
+    
+    info_container.info(initial_str + filter_str, icon="🔎")
+
+
+def title_info(tool_args):
+    name = tool_args.get("name")
+    info_str = f"* Título: {name.title()}\n" if name else ""
+    return info_str
+
+
+def watched_date_info(tool_args):
+    from_date = tool_args.get("from_watched_date")
+    to_date = tool_args.get("to_watched_date")
+    info_str = ""
+
+    if from_date or to_date: 
+        to_date = to_date or "hoy"
+        info_str += (
+            f"* Vistas desde **{from_date}** hasta **{to_date}**\n"
+            if from_date else 
+            f"* Vistas antes de **{to_date}**\n"
+        )
+
+    return info_str
+
+
+def rating_info(tool_args):
+    from_rating = tool_args.get("from_rating")
+    to_rating = tool_args.get("to_rating")
+    info_str = ""
+
+    if from_rating or to_rating:
+        from_rating = from_rating or 0
+        to_rating = to_rating or 5
+        info_str = (
+            f"* Puntuadas entre **{from_rating}** y **{to_rating} estrellas**\n"
+            if from_rating != to_rating else 
+            f"* Puntuadas con **{from_rating} estrellas**\n"
+        )
+     
+    return info_str
+
+
+def release_year_info(tool_args):
+    year = tool_args.get("year")
+    info_str = f"* Lanzadas en el año **{year}**\n" if year else ""
+    return info_str
+
+
+def rewatch_info(tool_args):
+    rewatch = tool_args.get("rewatch")
+    info_str = "* 🔁 Rewatch\n" if rewatch else ""
+    return info_str
+
