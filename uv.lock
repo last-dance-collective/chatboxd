@@ -222,6 +222,7 @@ dependencies = [
     { name = "langchain-openai" },
     { name = "langgraph" },
     { name = "pandas" },
+    { name = "sqlalchemy" },
     { name = "streamlit" },
 ]
 
@@ -233,6 +234,7 @@ requires-dist = [
     { name = "langchain-openai", specifier = ">=0.2.8" },
     { name = "langgraph", specifier = ">=0.2.48" },
     { name = "pandas", specifier = ">=2.2.3" },
+    { name = "sqlalchemy", specifier = ">=2.0.36" },
     { name = "streamlit", specifier = ">=1.40.1" },
 ]
 
