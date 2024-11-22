@@ -1,91 +1,92 @@
-import sqlite3
 from typing import List, Dict, Any, Tuple
+from sqlalchemy import create_engine, Column, Integer, Text, Float, ForeignKey, and_
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.sql import operators
 from enum import Enum
 
+from utils.logger_utils import logger
+
+Base = declarative_base()
 
 class Operator(Enum):
-    EQUAL = "="
-    LESS_THAN_EQUAL = "<="
-    GREATER_THAN_EQUAL = ">="
-    BETWEEN = "BETWEEN"
-    LIKE = "LIKE"
+    EQUAL = operators.eq
+    LESS_THAN_EQUAL = operators.le
+    GREATER_THAN_EQUAL = operators.ge
+    BETWEEN = "between"
+    LIKE = "like"
 
 
-OPERATOR_VALUES = [op.value for op in Operator]
+class Review(Base):
+    __tablename__ = "reviews"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    date = Column(Text, nullable=False)
+    name = Column(Text, nullable=False)
+    review = Column(Text, nullable=False)
+
+
+class Diary(Base):
+    __tablename__ = "diary"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    date = Column(Text, nullable=False)
+    name = Column(Text, nullable=False)
+    year = Column(Integer, nullable=False)
+    letterboxd_uri = Column(Text, nullable=False)
+    rating = Column(Float)
+    rewatch = Column(Text)
+    tags = Column(Text)
+    watched_date = Column(Text, nullable=False)
+    username = Column(Text, nullable=False)
+    review_id = Column(Integer, ForeignKey("reviews.id"))
 
 
 class Database:
     def __init__(self, db_path: str):
-        """Initialize a connection to the SQLite database and set up a reusable connection."""
-        self.db_path = db_path
-        self.connection = sqlite3.connect(self.db_path)
-        self.connection.row_factory = (
-            sqlite3.Row
-        )  # Enables dict-like row access by column name
-
-    def __del__(self):
-        """Close the database connection when the instance is destroyed."""
-        self.connection.close()
+        """Initialize a connection to the SQLite database using SQLAlchemy."""
+        self.engine = create_engine(f"sqlite:///{db_path}")
+        Base.metadata.create_all(self.engine)
+        self.Session = sessionmaker(bind=self.engine)
 
     # -------- Helper Method --------
 
-    def _parse_filters(self, filters: List[Dict[str, Any]]) -> Tuple[str, List[Any]]:
+    def _parse_filters(self, table: Diary|Review, filters: List[Dict[str, Any]]) -> List[Any]:
         """
-        Helper method to create the WHERE clause and values list from filter conditions.
+        Convert filter definitions into SQLAlchemy expressions.
 
         Args:
             filters (list): A list of dictionaries where each dictionary has "column", "operator", and "value".
 
         Returns:
-            tuple: A WHERE clause string and a list of values for SQL query execution.
+            list: A list of SQLAlchemy filter conditions.
         """
-        where_clause = []
-        values = []
+        conditions = []
 
         for filter_item in filters:
-            column = filter_item["column"]
+            column = getattr(table, filter_item["column"], None)
+            if not column:
+                raise ValueError(f"Column {filter_item['column']} does not exist.")
+
             operator = filter_item["operator"]
             value = filter_item["value"]
 
-            where_clause_part, value_list = self._build_where_clause_part(
-                column, operator, value
-            )
-            where_clause.append(where_clause_part)
-            values.extend(value_list)
+            if operator == Operator.BETWEEN:
+                if not isinstance(value, list) or len(value) != 2:
+                    raise ValueError("BETWEEN operator requires a list of two values.")
+                conditions.append(column.between(value[0], value[1]))
+            elif operator == Operator.LIKE:
+                conditions.append(column.like(f"%{value}%"))
+            elif operator in [Operator.EQUAL, Operator.LESS_THAN_EQUAL, Operator.GREATER_THAN_EQUAL]:
+                conditions.append(operator.value(column, value))
+            else:
+                raise ValueError(f"Unsupported operator: {operator}")
 
-        return " AND ".join(where_clause), values
-
-    def _build_where_clause_part(
-        self, column: str, operator: str, value: Any
-    ) -> Tuple[str, List[Any]]:
-        """
-        Helper method to build a part of the WHERE clause and corresponding values.
-
-        Args:
-            column (str): The column name.
-            operator (str): The operator to use for filtering.
-            value (Any): The value to filter by.
-
-        Returns:
-            tuple: A part of the WHERE clause and a list of values.
-        """
-        if operator.value not in OPERATOR_VALUES:
-            raise ValueError(f"Unsupported operator: {operator}")
-
-        if operator == Operator.BETWEEN:
-            if not isinstance(value, list) or len(value) != 2:
-                raise ValueError("BETWEEN operator requires a list of two values.")
-            return f"{column} {operator.value} ? AND ?", value
-        elif operator == Operator.LIKE:
-            return f"{column} {operator.value} ?", [f"%{value}%"]
-        else:
-            return f"{column} {operator.value} ?", [value]
+        return conditions
 
     # -------- Methods for the Diary Table --------
 
-    def filter_diary_entries(
-        self, filters: List[Dict[str, Any]]
-    ) -> List[Dict[str, Any]]:
+    def filter_diary_entries(self, filters: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """
         Filter diary entries by any combination of fields with specified operators.
 
@@ -95,13 +96,16 @@ class Database:
         Returns:
             list: A list of dictionaries representing matching diary entries.
         """
-        where_clause, values = self._parse_filters(filters)
-        query = f"SELECT * FROM diary WHERE {where_clause}"
-
-        cursor = self.connection.cursor()
-        cursor.execute(query, values)
-
-        return [dict(row) for row in cursor.fetchall()]
+        session = self.Session()
+        try:
+            conditions = self._parse_filters(Diary, filters)
+            query = session.query(Diary).filter(and_(*conditions))
+            return [entry.__dict__ for entry in query.all()]
+        except Exception as e:
+            logger.error("Error retrieving results from Diary: ", e)
+            return []
+        finally:
+            session.close()
 
     # -------- Methods for the Reviews Table --------
 
@@ -115,10 +119,13 @@ class Database:
         Returns:
             list: A list of dictionaries representing matching reviews.
         """
-        where_clause, values = self._parse_filters(filters)
-        query = f"SELECT * FROM reviews WHERE {where_clause}"
-
-        cursor = self.connection.cursor()
-        cursor.execute(query, tuple(values))
-
-        return [dict(row) for row in cursor.fetchall()]
+        session = self.Session()
+        try:
+            conditions = self._parse_filters(Review, filters)
+            query = session.query(Review).filter(and_(*conditions))
+            return [review.__dict__ for review in query.all()]
+        except Exception as e:
+            logger.error("Error retrieving results from Review: ", e)
+            return []
+        finally:
+            session.close()

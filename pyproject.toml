@@ -12,4 +12,5 @@ dependencies = [
     "langchain-openai>=0.2.8",
     "langchain>=0.3.7",
     "bs4>=0.0.2",
+    "sqlalchemy>=2.0.36",
 ]
