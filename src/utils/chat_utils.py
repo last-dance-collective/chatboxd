@@ -57,6 +57,7 @@ async def display_agent_response(agent_call):
                         movie_detail.get("ratings", []),
                     )
                     card_placeholder.markdown(card, unsafe_allow_html=True)
+                    
                 elif kind == "on_chat_model_stream":
                     content = event["data"]["chunk"].content
                     if content:
@@ -82,9 +83,9 @@ def display_tool_call_info(event, info_container):
     if tool_name == "get_movies":
         name = tool_args.get("name")
         from_watched_date = tool_args.get("from_watched_date")
-        to_watched_date = tool_args.get("to_watched_date", "hoy")
-        from_rating = tool_args.get("from_rating", 0)
-        to_rating = tool_args.get("to_rating", 5)
+        to_watched_date = tool_args.get("to_watched_date")
+        from_rating = tool_args.get("from_rating")
+        to_rating = tool_args.get("to_rating")
         rewatch = tool_args.get("rewatch")
         year = tool_args.get("year")
 
@@ -92,15 +93,27 @@ def display_tool_call_info(event, info_container):
         if name:
             description_str += f"* Título: {name.title()}\n"
         if from_watched_date or to_watched_date:
-            description_str += (
-                f"* Vistas desde {from_watched_date} hasta {to_watched_date}\n"
-            )
+            if from_watched_date:
+                to_watched_date = tool_args.get("to_watched_date", "hoy")
+                description_str += (
+                    f"* Vistas desde **{from_watched_date}** hasta **{to_watched_date}**\n"
+                )
+            else:
+                description_str += (
+                    f"* Vistas antes de **{to_watched_date}**\n"
+                )   
         if from_rating or to_rating:
-            description_str += (
-                f"* Rango de puntuaciones: De {from_rating} a {to_rating} estrellas\n"
-            )
+            from_rating = tool_args.get("from_rating", 0)
+            to_rating = tool_args.get("to_rating", 5)
+            if from_rating != to_rating:
+                description_str += (
+                    f"* Puntuadas entre **{from_rating}** y **{to_rating} estrellas**\n"
+                )
+            else:
+                description_str += f"* Puntuadas con **{from_rating} estrellas**\n"
         if year:
-            description_str += f"* Año de lanzamiento: {year}\n"
+            description_str += f"* Lanzadas en el año **{year}**\n"
+            
         if rewatch:
             description_str += f"* Rewatch: {rewatch}\n"
 
