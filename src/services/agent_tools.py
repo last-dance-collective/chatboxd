@@ -1,8 +1,12 @@
 from typing import Dict, Any, Literal
 
 from services.sqlite_service import Database, Operator
-from services.movies_data_service import get_omdb_data, clean_omdb_response, get_letterboxd_data
+from services.movies_data_service import (
+    get_omdb_data,
+    get_letterboxd_data,
+)
 from utils.logger_utils import logger
+
 
 def get_reviews(
     name: str = None,
@@ -11,7 +15,7 @@ def get_reviews(
     """Obtiene las reviews de las películas que el usuario ha visto, ya sea por nombre o por review_id de la película
      obtenida de una petición anterior del usuario.
       Antes de llamar a esta función es necesario obtener los registros de películas del usuario
-    
+
     Params:
         name (str): nombre de la película en inglés.
         review_id (str): review_id de la película
