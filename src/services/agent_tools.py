@@ -1,8 +1,37 @@
 from typing import Dict, Any, Literal
 
 from services.sqlite_service import Database, Operator
-from services.movies_data_service import get_omdb_data, get_letterboxd_data
+from services.movies_data_service import get_omdb_data, clean_omdb_response, get_letterboxd_data
 from utils.logger_utils import logger
+
+def get_reviews(
+    name: str = None,
+    review_id: str = None,
+):
+    """Obtiene las reviews de las películas que el usuario ha visto, ya sea por nombre o por review_id de la película
+     obtenida de una petición anterior del usuario.
+      Antes de llamar a esta función es necesario obtener los registros de películas del usuario
+    
+    Params:
+        name (str): nombre de la película en inglés.
+        review_id (str): review_id de la película
+
+    Returns:
+        str: Descripción de las reviews.
+    """
+    db = Database("letterboxd.db")
+    if review_id:
+        filter = [{"column": "id", "operator": Operator.EQUAL, "value": review_id}]
+    else:
+        filter = [{"column": "name", "operator": Operator.LIKE, "value": name}]
+
+    logger.info(f"🔍 Filters: {filter}")
+    reviews = db.filter_reviews(filter)
+
+    return (
+        "El usuario ha hecho las siguientes reviews de las películas que ha visto:\n"
+        + str(reviews)
+    )
 
 
 def get_movies(
@@ -49,7 +78,9 @@ def get_movies(
 
 
 def get_movie_details(title: str, letterboxd_url: str):
-    """Obtiene los detalles de una película mediante el titulo en inglés y el uso de una API externa
+    """Obtiene los detalles de una película mediante el titulo en inglés y el uso de una API externa.
+        Esta función es la única manera de conseguir el detalle de la película.
+        Antes de llamar a esta función es necesario obtener los registros de películas del usuario
 
     Params:
         title (str): nombre de la película en inglés.

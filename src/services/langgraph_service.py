@@ -11,7 +11,7 @@ from utils.logger_utils import logger
 from utils.langgraph_utils import State
 from services.agent_tools import (
     get_movies,
-    get_letterboxd_film_details,
+    get_reviews,
     get_movie_details,
 )
 
@@ -29,7 +29,7 @@ class ChatboxdAgent:
                 username=username,
             )
         )
-        self.tools = [get_movies, get_movie_details]
+        self.tools = [get_movies, get_movie_details, get_reviews]
 
         self.llm = llm.bind_tools(self.tools).with_config({"run_name": "chatboxd_llm"})
         ## Create graph
