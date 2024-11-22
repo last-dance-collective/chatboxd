@@ -82,7 +82,18 @@ def display_tool_call_info(event, info_container):
 
     if tool_name == "get_movies" and kind == "on_tool_start":
         get_movies_tool_info(tool_args, info_container)
+    elif tool_name == "get_reviews" and kind == "on_tool_start":
+        get_reviews_tool_info(tool_args, info_container)
 
+
+def get_reviews_tool_info(tool_args, info_container):
+    filter_str = title_info(tool_args)
+    filter_str += review_id_info(tool_args)
+    
+    initial_str = ("Buscando reseñas con los siguientes filtros:\n" 
+                    if filter_str else "Buscando reseñas...\n")
+    
+    info_container.info(initial_str + filter_str, icon="🔎")
 
 def get_movies_tool_info(tool_args, info_container):
     filter_str = title_info(tool_args)
@@ -96,6 +107,11 @@ def get_movies_tool_info(tool_args, info_container):
     
     info_container.info(initial_str + filter_str, icon="🔎")
 
+
+def review_id_info(tool_args):
+    review_id = tool_args.get("review_id")
+    info_str = f"* Título: {review_id}\n" if review_id else ""
+    return info_str
 
 def title_info(tool_args):
     name = tool_args.get("name")
