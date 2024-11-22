@@ -24,7 +24,8 @@ def get_reviews(
         filter = [{"column": "id", "operator": Operator.EQUAL, "value": review_id}]
     else:
         filter = [{"column": "name", "operator": Operator.LIKE, "value": name}]
-        
+
+    logger.info(f"🔍 Filters: {filter}")
     reviews = db.filter_reviews(filter)
 
     return (
