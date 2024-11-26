@@ -1,5 +1,6 @@
-from typing import Dict, Any, Literal
+from typing import Dict, List, Any, Literal
 
+from services.graph_services import GRAPH_TYPES
 from services.sqlite_service import Database, Operator
 from services.movies_data_service import (
     get_omdb_data,
@@ -129,9 +130,27 @@ def get_letterboxd_film_details(url: str):
     """
     data = get_letterboxd_data(url)
     return {
-        "obj_type": "movie_detail",
         "movies": data,
         "indicaciones": "no se tiene que mostrar la imagen, solo los detalles de la pelicula",
+    }
+    
+
+def get_graph(movies: List[Dict[str, Any]]):
+    """
+    Genera una gráfica en base a tus películas filtradas
+
+    Params:
+        movies (List[Dict[str, Any]]): Lista de las películas con las que se hará la gráfica.
+
+    Returns:
+        Dict: Un diccionario con el tipo de gráfica y la información a mostrar
+    """
+    ratings = [movie['rating'] for movie in movies]
+    return {
+        "obj_type": "graph",
+        "graph_type": GRAPH_TYPES.RATING_DISTRIBUTION.value,
+        "data": ratings,
+        "indicaciones": "No devuelvas ningún dato, se le mostrará una gráfica"
     }
 
 

@@ -4,6 +4,7 @@ import streamlit as st
 from utils.session_utils import get_session_val, set_session_val, save_session_message
 from utils.agent_utils import extract_image_data
 from utils.frame_utils import return_img_preview
+from utils.agent_utils import display_graph
 
 set_session_val("print_response", True)
 
@@ -73,7 +74,7 @@ async def display_agent_response(agent_call):
                         else:
                             text_placeholder.markdown(stream)
                         save_session_message("assistant", stream)
-
+        display_graph(event)
 
 def display_tool_call_info(event, info_container):
     kind = event["event"]
