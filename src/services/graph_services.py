@@ -5,7 +5,7 @@ from enum import Enum
 COLORS = {
   "GREEN": "#00D271",
   "BLUE": "#46C2F5",
-  "ORANGE": "#323947"
+  "ORANGE": "#FF8000"
 }
 
 class GRAPH_TYPES(Enum):
@@ -20,7 +20,7 @@ def display_rating_graph(ratings):
 
   fig = px.histogram(
       x=ratings,
-      nbins=len(bins)-1,
+      nbins=len(bins),
       range_x=[0, 5],
       title='Histogram of Movie Ratings',
       labels={'x': 'Rating (0 - 5)', 'y': 'Cantidad de películas'},
