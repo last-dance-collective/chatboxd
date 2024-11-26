@@ -13,4 +13,6 @@ dependencies = [
     "langchain>=0.3.7",
     "bs4>=0.0.2",
     "sqlalchemy>=2.0.36",
+    "matplotlib>=3.9.2",
+    "plotly>=5.24.1",
 ]
