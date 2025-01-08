@@ -3,11 +3,13 @@ import pandas as pd
 
 from utils.session_utils import reset_session
 from services.sqlite_service import Database, Operator
+from services.daily_message_service import get_daily_message
 
 
 def display_interface():
     st.logo("public/chatboxd.png", size="large")
     display_header()
+    display_daily_message()
     reset_conversation()
     display_chat_input()
     # display_table()
@@ -36,6 +38,12 @@ def display_header():
     with cols[n_cols // 2]:
         st.image("public/chatboxd.png", width=220)
     st.caption("Chatboxd allows you to chat with your LetterBoxd stats!")
+
+
+def display_daily_message():
+    daily_message = get_daily_message()
+    if daily_message:
+        st.info(daily_message, icon="📅")
 
 
 def return_img_preview(
