@@ -2,8 +2,6 @@ from datetime import datetime
 
 from services.sqlite_service import Database, Operator
 
-db_file = "letterboxd.db"
-username = "mavilam"
 db = Database("letterboxd.db")
 
 
@@ -39,13 +37,13 @@ def compose_message(entries):
 
 
 def compose_message_for_one_movie(movie):
-    watched_date, name, letterboxd_uri, rating, *_ = movie
-    return f"Tal día como hoy en {watched_date[:4]} viste {name} ({letterboxd_uri}). Le pusiste un {rating}"
+    return f"Tal día como hoy en {movie["date"][:4]} viste [{movie["name"]} ({movie["year"]})]({movie["letterboxd_uri"]}). Le pusiste un {movie["rating"]}."
 
 
 def compose_message_more_than_one_movie(movies):
     start_message = "Tal día como hoy viste varias películas de peso: \n"
     content = "\n".join(
-        f"* En {movie["date"][:4]} viste {movie["name"]} ({movie["year"]})." for movie in movies
+        f"* En {movie["date"][:4]} viste {movie["name"]} ({movie["year"]})."
+        for movie in movies
     )
     return f"{start_message}{content}"
