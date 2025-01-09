@@ -11,14 +11,19 @@ def initialize_app():
     initialize_session()
     setup_page()
     display_interface()
-    setup_agent()
+    if not get_session_val("start_page"):
+        setup_agent()
 
 
 def setup_page():
+    if get_session_val("start_page"):
+        layout = "centered"
+    else:
+        layout = "wide"
     st.set_page_config(
         page_title="Chatboxd",
         page_icon="💬",
-        layout="wide",
+        layout=layout,
         initial_sidebar_state="expanded",
     )
 

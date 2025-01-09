@@ -1,18 +1,40 @@
 import streamlit as st
 import pandas as pd
 
-from utils.session_utils import reset_session, get_session_val
+from utils.session_utils import reset_session, get_session_val, set_session_val
+from catalog.translations import LANGUAGE_NAMES
 from services.sqlite_service import Database, Operator
 from services.daily_message_service import get_daily_message
 
 
 def display_interface():
-    st.logo("public/chatboxd.png", size="large")
     display_header()
-    display_daily_message()
-    reset_conversation()
-    display_chat_input()
-    # display_table()
+
+    if get_session_val("start_page"):
+        display_start_page()
+    else:
+        st.logo("public/chatboxd.png", size="large")
+        display_daily_message()
+        reset_conversation()
+        display_chat_input()
+
+
+def display_start_page():
+    st.markdown(get_session_val("texts")["start_page_markdown"])
+
+    selected_language = st.selectbox(
+        label="Idioma",
+        options=get_session_val("available_languages"),
+        format_func=lambda x: LANGUAGE_NAMES.get(x),
+    )
+
+    if selected_language != get_session_val("language"):
+        set_session_val("language", selected_language)
+        st.rerun()
+
+    if st.button(get_session_val("texts")["continue"]):
+        set_session_val("start_page", False)
+        st.rerun()
 
 
 def reset_conversation():
@@ -35,7 +57,7 @@ def display_chat_input():
 
 
 def display_header():
-    n_cols = 5
+    n_cols = 3
     cols = st.columns(n_cols)
     texts = get_session_val("texts")
     with cols[n_cols // 2]:
