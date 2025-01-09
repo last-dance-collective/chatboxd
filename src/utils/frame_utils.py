@@ -22,12 +22,15 @@ def display_interface():
 def display_start_page():
     st.markdown(get_session_val("texts")["start_page_markdown"])
 
-    st.selectbox(
+    selected_language = st.selectbox(
         label="Idioma",
         options=get_session_val("available_languages"),
-        key="language",
         format_func=lambda x: LANGUAGE_NAMES.get(x),
     )
+
+    if selected_language != get_session_val("language"):
+        set_session_val("language", selected_language)
+        st.rerun()
 
     if st.button(get_session_val("texts")["continue"]):
         set_session_val("start_page", False)
