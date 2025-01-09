@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-from utils.session_utils import reset_session
+from utils.session_utils import reset_session, get_session_val
 from services.sqlite_service import Database, Operator
 from services.daily_message_service import get_daily_message
 
@@ -16,9 +16,10 @@ def display_interface():
 
 
 def reset_conversation():
+    texts = get_session_val("texts")
     with st.sidebar:
         st.button(
-            "Reset Conversation",
+            texts["reset_chat"],
             icon="🔄",
             on_click=reset_session,
             use_container_width=True,
@@ -26,8 +27,9 @@ def reset_conversation():
 
 
 def display_chat_input():
+    texts = get_session_val("texts")
     st.chat_input(
-        placeholder="Type your message here...",
+        placeholder=texts["chat_placeholder"],
         key="chat_input",
     )
 
@@ -35,9 +37,10 @@ def display_chat_input():
 def display_header():
     n_cols = 5
     cols = st.columns(n_cols)
+    texts = get_session_val("texts")
     with cols[n_cols // 2]:
         st.image("public/chatboxd.png", width=220)
-    st.caption("Chatboxd allows you to chat with your LetterBoxd stats!")
+    st.caption(texts["header_caption"])
 
 
 def display_daily_message():

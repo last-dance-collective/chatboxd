@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from services.sqlite_service import Database, Operator
+from utils.session_utils import get_session_val
 
 db = Database("letterboxd.db")
 
@@ -37,13 +38,23 @@ def compose_message(entries):
 
 
 def compose_message_for_one_movie(movie):
-    return f"Tal día como hoy en {movie["date"][:4]} viste [{movie["name"]} ({movie["year"]})]({movie["letterboxd_uri"]}). Le pusiste un {movie["rating"]}."
+    texts = get_session_val("texts")
+    return texts["one_movie_daily_msg"].format(
+        year=movie["date"][:4],
+        m_name=movie["name"],
+        m_year=movie["year"],
+        m_uri=movie["letterboxd_uri"],
+        m_rating=movie["rating"],
+    )
 
 
 def compose_message_more_than_one_movie(movies):
-    start_message = "Tal día como hoy viste varias películas de peso: \n"
+    texts = get_session_val("texts")
+
     content = "\n".join(
-        f"* En {movie["date"][:4]} viste {movie["name"]} ({movie["year"]})."
+        texts["many_movies_daily_msg"].format(
+            year=movie["date"][:4], name=movie["name"], m_year=movie["year"]
+        )
         for movie in movies
     )
-    return f"{start_message}{content}"
+    return f"{texts["daly_msg_start"]}{content}"
