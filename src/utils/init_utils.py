@@ -11,7 +11,8 @@ def initialize_app():
     initialize_session()
     setup_page()
     display_interface()
-    setup_agent()
+    if get_session_val("language"):
+        setup_agent()
 
 
 def setup_page():
