@@ -9,10 +9,15 @@ def initialize_session():
         if key not in st.session_state:
             st.session_state[key] = default_value
 
-    initialize_key("language")
+    initialize_key("start_page", True)
     initialize_key("session_id", uuid.uuid4())
-    initialize_key("texts", TRANSLATIONS[LANGUAGE])
     initialize_key("messages", [])
+    initialize_key("available_languages", TRANSLATIONS.keys())
+    set_language()
+
+
+def set_language():
+    set_session_val("texts", TRANSLATIONS[get_session_val("language", LANGUAGE)])
 
 
 def reset_session():
