@@ -21,7 +21,11 @@ def set_language():
 
 
 def reset_session():
-    st.session_state.clear()
+    keys = ["messages", "session_id"]
+    for key in keys:
+        if key in st.session_state:
+            del st.session_state[key]
+    initialize_session()
 
 
 def set_session_val(key: str, value=None, cache_obj=st.session_state):
