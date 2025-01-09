@@ -1,5 +1,7 @@
 import uuid
 import streamlit as st
+from catalog.translations import TRANSLATIONS
+from config import LANGUAGE
 
 
 def initialize_session():
@@ -8,6 +10,7 @@ def initialize_session():
             st.session_state[key] = default_value
 
     initialize_key("session_id", uuid.uuid4())
+    initialize_key("texts", TRANSLATIONS[LANGUAGE])
     initialize_key("messages", [])
 
 
