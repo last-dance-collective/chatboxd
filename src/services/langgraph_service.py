@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 from langchain.globals import set_debug
@@ -30,7 +31,13 @@ class ChatboxdAgent:
                 username=username,
             )
         )
-        self.tools = [get_movies, get_movie_details, get_reviews, get_graph]
+        self.tools = [get_movies, get_reviews, get_graph]
+
+        if os.environ.get("OMDB_API_KEY"):
+            logger.info("🎞️✅ OMDB key is present, get details tool enabled")
+            self.tools.append(get_movie_details)
+        else:
+            logger.info("🎞️❌ OMDB key is NOT present, get details tool disabled")
 
         self.llm = llm.bind_tools(self.tools).with_config({"run_name": "chatboxd_llm"})
         ## Create graph
