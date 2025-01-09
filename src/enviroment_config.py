@@ -1,46 +1,35 @@
 import os
-import json
 from utils.logger_utils import logger
 
 keys_cache = {}
 
-
-def get_open_ai_dict_model(model):
-    return keys_cache["OPEN_AI_API_DICT"][model]
-
-
-def load_env_config(env_path):
-    try:
-        with open(env_path, "r") as archivo:
-            datos = json.load(archivo)
-        return datos
-    except Exception as e:
-        logger.error(f"🔑🔴 Error loading credentials: {e}")
-        return None
+# These variables are meant to place the openai values
+# if you don't want to use the env variables
+OPEN_AI_CONFIG = {
+    "AZURE_OPENAI_ENDPOINT": None,
+    "OPENAI_API_VERSION": None,
+    "OPENAI_API_KEY": None,
+}
 
 
-def load_credentials():
-    if os.environ.get("CREDENTIALS_FILE_PATH"):
-        logger.info("🔑 Credentials file found")
-
+def configure_openai_api_key():
+    load_openai_env_vars()
+    if (
+        os.environ.get("AZURE_OPENAI_ENDPOINT")
+        and os.environ.get("OPENAI_API_VERSION")
+        and os.environ.get("OPENAI_API_KEY")
+    ):
+        logger.info("🔑 Model env variables are loaded")
     else:
-        logger.error("🔑🔴 Credentials file not found")
-
-    return load_env_config(os.environ.get("CREDENTIALS_FILE_PATH"))
+        logger.error("🔑🔴 Model env variables not loaded")
 
 
-keys_json = load_credentials()
+def load_openai_env_vars():
+    load_env_var("AZURE_OPENAI_ENDPOINT")
+    load_env_var("OPENAI_API_VERSION")
+    load_env_var("OPENAI_API_KEY")
 
 
-if keys_json:
-    keys_cache["OPEN_AI_API_DICT"] = keys_json.get("open_ai_dict")
-
-    logger.info("🔑 Credentials loaded")
-else:
-    logger.error("🔑🔴 Credentials not loaded")
-
-
-def configure_openai_api_key(model):
-    os.environ["AZURE_OPENAI_ENDPOINT"] = get_open_ai_dict_model(model)["endpoint"]
-    os.environ["OPENAI_API_VERSION"] = get_open_ai_dict_model(model)["api_version"]
-    os.environ["OPENAI_API_KEY"] = get_open_ai_dict_model(model)["key"]
+def load_env_var(name):
+    if not os.environ.get(name):
+        os.environ[name] = OPEN_AI_CONFIG[name]

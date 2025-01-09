@@ -19,7 +19,7 @@ def ollama_model(model=OLLAMA_MODEL, temperature=0):
 
 def openai_model(model=OPENAI_MODEL, temperature=0):
     """Returns the OpenAI LLM object for the specified model."""
-    configure_openai_api_key(model)
+    configure_openai_api_key()
     logger.info("⚙️  Using OpenAI")
     return AzureChatOpenAI(
         model=model,
