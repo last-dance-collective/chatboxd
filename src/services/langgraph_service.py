@@ -7,9 +7,10 @@ from langgraph.graph import StateGraph, START
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.prebuilt import ToolNode, tools_condition
 
-from catalog.prompts import AGENT_SYSTEM_PROMPT
+from catalog.prompts import PROMPTS
 from utils.logger_utils import logger
 from utils.langgraph_utils import State
+from utils.session_utils import get_session_val
 from services.agent_tools import (
     get_movies,
     get_reviews,
@@ -25,8 +26,10 @@ class ChatboxdAgent:
         database=None,
         username=None,
     ):
+        language = get_session_val("language")
+
         self.sys_msg = SystemMessage(
-            content=AGENT_SYSTEM_PROMPT.format(
+            content=PROMPTS[language]["AGENT_SYSTEM_PROMPT"].format(
                 current_date=datetime.today().strftime("%Y-%m-%d"),
                 username=username,
             )
