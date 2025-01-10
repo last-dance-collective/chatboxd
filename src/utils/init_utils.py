@@ -12,7 +12,13 @@ def initialize_app():
     setup_page()
     display_interface()
     if not get_session_val("start_page"):
-        setup_agent()
+        try:
+            setup_agent()
+        except Exception:
+            st.error(
+                "🔴 Failed to initialize agent, please make sure you have set up your keys correctly at secrets.env"
+            )
+            st.stop()
 
 
 def setup_page():
