@@ -82,7 +82,7 @@ def get_movies(
     )
 
 
-def get_movie_details(title: str, letterboxd_url: str):
+def get_movie_details_extended(title: str, letterboxd_url: str):
     """Obtiene los detalles de una película mediante el titulo en inglés y el uso de una API externa.
         Esta función es la única manera de conseguir el detalle de la película.
         Antes de llamar a esta función es necesario obtener los registros de películas del usuario
@@ -114,6 +114,34 @@ def get_movie_details(title: str, letterboxd_url: str):
     return (
         "🎬 Los detalles de la película son (Añade emojis para que visualmente se vea mejor):\n"
         + str(omdb_data)
+        + "\n\n  En ningún caso debes mostrar una imagen ni la sinopsis, ni los Ratings. El diccionario que viene a continuación es irrelevante para ti, no lo hagas caso. "
+    ), {"movies": data}
+    
+    
+def get_movie_details(letterboxd_url: str):
+    """Obtiene los detalles de una película mediante el titulo en inglés y el uso de una API externa.
+        Esta función es la única manera de conseguir el detalle de la película.
+        Antes de llamar a esta función es necesario obtener los registros de películas del usuario
+
+    Params:
+        title (str): nombre de la película en inglés.
+        letterboxd_url (str): url de la película en letterboxd.
+
+    Returns:
+        str: Descripción de la película.
+    """
+    letterboxd_data = get_letterboxd_data(letterboxd_url)
+
+    if letterboxd_data == {}:
+        return "No se encontraron detalles de la película"
+
+    data = {
+        "title": letterboxd_data["title"],
+        "url": letterboxd_url,
+        "image_url": letterboxd_data["image_url"],
+    }
+    return (
+        "🎬 Los detalles de la película son (Añade emojis para que visualmente se vea mejor):\n"
         + "\n\n  En ningún caso debes mostrar una imagen ni la sinopsis, ni los Ratings. El diccionario que viene a continuación es irrelevante para ti, no lo hagas caso. "
     ), {"movies": data}
 
