@@ -15,6 +15,7 @@ from services.agent_tools import (
     get_reviews,
     get_graph,
     get_movie_details,
+    get_movie_details_extended,
 )
 
 
@@ -34,10 +35,13 @@ class ChatboxdAgent:
         self.tools = [get_movies, get_reviews, get_graph]
 
         if os.environ.get("OMDB_API_KEY"):
-            logger.info("🎞️✅ OMDB key is present, get details tool enabled")
-            self.tools.append(get_movie_details)
+            logger.info("🎞️✅ OMDB key is present, get details tool extended enabled")
+            self.tools.append(get_movie_details_extended)
         else:
-            logger.info("🎞️❌ OMDB key is NOT present, get details tool disabled")
+            logger.info(
+                "🎞️❌ OMDB key is NOT present, get details tool extended disabled"
+            )
+            self.tools.append(get_movie_details)
 
         self.llm = llm.bind_tools(self.tools).with_config({"run_name": "chatboxd_llm"})
         ## Create graph
