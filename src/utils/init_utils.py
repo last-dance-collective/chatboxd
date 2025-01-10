@@ -16,7 +16,7 @@ def initialize_app():
             setup_agent()
         except Exception:
             st.error(
-                "🔴 Failed to initialize agent, please make sure you have set up your keys correctly at secrets.env"
+                get_session_val("texts")["keys_not_set"],
             )
             st.stop()
 
