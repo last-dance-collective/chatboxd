@@ -1,4 +1,40 @@
-# chatboxd
+
+![image](https://github.com/user-attachments/assets/7bf3804c-9956-4f78-ac2a-be0ea59cbfb5)
+
+
+----
+
+Chatboxd is a web application that allows you to easily interact with your LeeterBoxd statistics thanks to the power of GenAI.
+
+It is multi-language, allows the use of several LLM models and contains many other features.
+
+## Contents
+
+1. [Execution](#execution)
+   - [Environment Variables](#environment-variables)
+   - [Load Data](#load-data)
+   - [Run App](#run-app)
+     
+2. [How It Works](#how-it-works)
+   - [Agent](#agent)
+   - [Tools](#tools)
+   - [BBDD](#bbdd)
+
+## Execution
+
+### Environment Variables
+
+### Load Data
+
+### Run App
+
+## How It Works
+
+### Agent
+
+### Tools
+
+### BBDD
 
 ## UV Basics
 
