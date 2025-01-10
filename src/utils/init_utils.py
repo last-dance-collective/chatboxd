@@ -12,7 +12,13 @@ def initialize_app():
     setup_page()
     display_interface()
     if not get_session_val("start_page"):
-        setup_agent()
+        try:
+            setup_agent()
+        except Exception:
+            st.error(
+                get_session_val("texts")["keys_not_set"],
+            )
+            st.stop()
 
 
 def setup_page():
