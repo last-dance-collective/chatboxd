@@ -29,6 +29,7 @@ TRANSLATIONS = {
         "daly_msg_start": "Tal día como hoy viste varias películas de peso: \n",
         "many_movies_daily_msg": "* En {year} viste {name} ({m_year}).",
         "start_page_markdown": "# ¡Bienvenido/a a Chatboxd!\n\nPara empezar, configura el idioma en el que te gustaría utilizar la aplicación.",
+        "keys_not_set": "🔴 Error al iniciar el agente, por favor asegúrate de configurar correctamente sus claves en secrets.env",
     },
     "EN": {
         "reset_chat": "Reset Conversation",
@@ -51,6 +52,7 @@ TRANSLATIONS = {
         "daly_msg_start": "On this day, you watched several notable films: \n",
         "many_movies_daily_msg": "* In {year}, you watched {name} ({m_year}).",
         "start_page_markdown": "# Welcome to Chatboxd!\n\nTo get started, set the language you'd like to use the app in.",
+        "keys_not_set": "🔴 Failed to initialize agent, please make sure you have set up your keys correctly at secrets.env",
     },
     "FR": {
         "reset_chat": "Réinitialiser la Conversation",
@@ -73,6 +75,7 @@ TRANSLATIONS = {
         "daly_msg_start": "En ce jour, vous avez regardé plusieurs films remarquables : \n",
         "many_movies_daily_msg": "* En {year}, vous avez regardé {name} ({m_year}).",
         "start_page_markdown": "# Bienvenue sur Chatboxd !\n\nPour commencer, configurez la langue dans laquelle vous souhaitez utiliser l'application.",
+        "keys_not_set": "🔴 Échec de l'initialisation de l'agent, veuillez vous assurer que vous avez correctement configuré vos clés dans secrets.env",
     },
     "DE": {
         "reset_chat": "Konversation zurücksetzen",
@@ -95,6 +98,7 @@ TRANSLATIONS = {
         "daly_msg_start": "An diesem Tag hast du mehrere bemerkenswerte Filme gesehen: \n",
         "many_movies_daily_msg": "* Im Jahr {year} hast du {name} ({m_year}) gesehen.",
         "start_page_markdown": "# Willkommen bei Chatboxd!\n\nUm loszulegen, stellen Sie die Sprache ein, in der Sie die App verwenden möchten.",
+        "keys_not_set": "🔴 Agent konnte nicht initialisiert werden, bitte stellen Sie sicher, dass Sie Ihre Schlüssel richtig in secrets.env eingerichtet haben",
     },
     "IT": {
         "reset_chat": "Reimposta Conversazione",
@@ -117,6 +121,7 @@ TRANSLATIONS = {
         "daly_msg_start": "In questo giorno, hai visto diversi film notevoli: \n",
         "many_movies_daily_msg": "* Nel {year}, hai visto {name} ({m_year}).",
         "start_page_markdown": "# Benvenuto/a su Chatboxd!\n\nPer iniziare, imposta la lingua che desideri utilizzare nell'applicazione.",
+        "keys_not_set": "🔴 Impossibile inizializzare l'agente, assicurati di aver impostato correttamente le tue chiavi in secrets.env",
     },
     "PT": {
         "reset_chat": "Reiniciar conversa",
@@ -134,5 +139,6 @@ TRANSLATIONS = {
         "daly_msg_start": "Tal dia como hoje viu vários filmes de peso: \n",
         "many_movies_daily_msg": "* Em {year} viu {name} ({m_year}).",
         "start_page_markdown": "# Bem-vindo/a ao Chatboxd!\n\nPara começar, configure o idioma que gostaria de usar no aplicativo.",
+        "keys_not_set": "🔴 Falha ao inicializar agente, certifique-se de configurar corretamente suas chaves em secrets.env",
     },
 }
