@@ -46,7 +46,10 @@ async def display_agent_response(agent_call):
 
                 display_tool_call_info(event, info_container)
 
-                if kind == "on_tool_end" and event["name"] == "get_movie_details":
+                if kind == "on_tool_end" and (
+                    event["name"] == "get_movie_details"
+                    or event["name"] == "get_movie_details_extended"
+                ):
                     is_card = True
                     movie_detail = extract_image_data(event)
                     card = return_img_preview(
