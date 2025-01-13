@@ -2,7 +2,7 @@
 
 ---
 
-Chatboxd is a web application that allows you to easily interact with information logged into my Letterboxd account thanks to the power of LLMs.
+Chatboxd is a web application that allows you to easily interact with information logged into your Letterboxd account thanks to the power of LLMs.
 
 It is multi-language, allows the use of several LLM models and contains many other features.
 
