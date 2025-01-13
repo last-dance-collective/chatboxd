@@ -28,7 +28,7 @@ def setup_page():
         layout = "wide"
     st.set_page_config(
         page_title="Chatboxd",
-        page_icon="💬",
+        page_icon="public/chatboxd.png",
         layout=layout,
         initial_sidebar_state="expanded",
     )
