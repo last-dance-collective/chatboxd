@@ -159,14 +159,13 @@ def get_ratings_badges(ratings: list):
 
 
 def display_suggest_labels():
-    three_random_suggestions = random.sample(
-        get_session_val("texts")["suggestions_list"], 3
-    )
+    texts = get_session_val("texts")
+    three_random_suggestions = random.sample(texts["suggestions_list"], 3)
     cols = st.columns([1, 8, 1])
     if not get_session_val("suggestions"):
         with cols[3 // 2]:
             val = st.pills(
-                "¿No sabes qué preguntar? Puedes elegir alguna de estas sugerencias:",
+                texts["suggestions_label"],
                 three_random_suggestions,
                 key="suggestions",
                 selection_mode="single",

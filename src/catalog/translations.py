@@ -30,6 +30,7 @@ TRANSLATIONS = {
         "many_movies_daily_msg": "* En {year} viste {name} ({m_year}).",
         "start_page_markdown": "# ¡Bienvenido/a a Chatboxd!\n\nPara empezar, configura el idioma en el que te gustaría utilizar la aplicación.",
         "keys_not_set": "🔴 Error al iniciar el agente, por favor asegúrate de configurar correctamente sus claves en secrets.env",
+        "suggestions_label": "¿No sabes qué preguntar? Puedes elegir alguna de estas sugerencias:",
         "suggestions_list": [
             "¿Mi Top 10 pelliculas favoritas?",
             "¿A qué peliculas les he puesto 1 estrella?",
@@ -61,6 +62,7 @@ TRANSLATIONS = {
         "many_movies_daily_msg": "* In {year}, you watched {name} ({m_year}).",
         "start_page_markdown": "# Welcome to Chatboxd!\n\nTo get started, set the language you'd like to use the app in.",
         "keys_not_set": "🔴 Failed to initialize agent, please make sure you have set up your keys correctly at secrets.env",
+        "suggestions_label": "Don't know what to ask? You can choose one of these suggestions:",
         "suggestions_list": [
             "What are my top 10 favorite movies?",
             "What movies have I rated 1 star?",
@@ -92,6 +94,7 @@ TRANSLATIONS = {
         "many_movies_daily_msg": "* En {year}, vous avez regardé {name} ({m_year}).",
         "start_page_markdown": "# Bienvenue sur Chatboxd !\n\nPour commencer, configurez la langue dans laquelle vous souhaitez utiliser l'application.",
         "keys_not_set": "🔴 Échec de l'initialisation de l'agent, veuillez vous assurer que vous avez correctement configuré vos clés dans secrets.env",
+        "suggestions_label": "Ne sais pas quoi poser ? Vous pouvez choisir l'une de ces suggestions :",
         "suggestions_list": [
             "Quels sont mes 10 films préférés ?",
             "Quels films j'ai noté 1 étoile ?",
@@ -123,6 +126,7 @@ TRANSLATIONS = {
         "many_movies_daily_msg": "* Im Jahr {year} hast du {name} ({m_year}) gesehen.",
         "start_page_markdown": "# Willkommen bei Chatboxd!\n\nUm loszulegen, stellen Sie die Sprache ein, in der Sie die App verwenden möchten.",
         "keys_not_set": "🔴 Agent konnte nicht initialisiert werden, bitte stellen Sie sicher, dass Sie Ihre Schlüssel richtig in secrets.env eingerichtet haben",
+        "suggestions_label": "Weißt du nicht, was zu fragen ist? Du kannst eine dieser Vorschläge wählen:",
         "suggestions_list": [
             "Was sind meine Top 10 Lieblingsfilme?",
             "Welche Filme habe ich mit 1 Stern bewertet?",
@@ -154,6 +158,7 @@ TRANSLATIONS = {
         "many_movies_daily_msg": "* Nel {year}, hai visto {name} ({m_year}).",
         "start_page_markdown": "# Benvenuto/a su Chatboxd!\n\nPer iniziare, imposta la lingua che desideri utilizzare nell'applicazione.",
         "keys_not_set": "🔴 Impossibile inizializzare l'agente, assicurati di aver impostato correttamente le tue chiavi in secrets.env",
+        "suggestions_label": "Non sai cosa chiedere? Puoi scegliere una di queste suggerimenti:",
         "suggestions_list": [
             "Quali sono i miei film preferiti?",
             "Quali film ho votato 1 stella?",
@@ -180,6 +185,7 @@ TRANSLATIONS = {
         "many_movies_daily_msg": "* Em {year} viu {name} ({m_year}).",
         "start_page_markdown": "# Bem-vindo/a ao Chatboxd!\n\nPara começar, configure o idioma que gostaria de usar no aplicativo.",
         "keys_not_set": "🔴 Falha ao inicializar agente, certifique-se de configurar corretamente suas chaves em secrets.env",
+        "suggestions_label": "Não sei o que perguntar? Você pode escolher uma dessas sugestões:",
         "suggestions_list": [
             "Quais são meus filmes favoritos?",
             "Quais filmes eu devo avaliar com 1 estrela?",
