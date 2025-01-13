@@ -70,12 +70,13 @@ export OPENAI_API_KEY=<Your OpenAI API key>
 
 ### Load Your Data
 
+**All files related to the data ingestion are located in the folder *data_ingestion* located in the root directory**
 To load your data into a new SQLite database, follow these steps:
 
 1. **Prepare Your Data Files**:
     - Go to the [export data section](https://letterboxd.com/settings/data/) on Letterboxd and download your data.
     - Extract the data and find the two CSV files named `reviews.csv` and `diary.csv`.
-    - Place these files in the `user_data` directory located in the same directory as your `main.py` script.
+    - Place these files in the `data_ingestion/user_data` directory.
 
 2. **CSV File Structure**:
     - `reviews.csv` should have the following columns:
@@ -99,9 +100,9 @@ To load your data into a new SQLite database, follow these steps:
       ```sh
       uv sync
       ```
-    - Open a terminal and navigate to the directory containing `main.py`.
-    - Run the following command to execute the script:
+    - Run the following commands to execute the script:
       ```sh
+      cd data_ingestion
       python main.py
       ```
 
