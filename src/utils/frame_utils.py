@@ -59,11 +59,15 @@ def display_chat_input():
 
 def display_header():
     n_cols = 3
-    cols = st.columns(n_cols)
-    texts = get_session_val("texts")
+    cols = (
+        st.columns([1, 5, 1])
+        if get_session_val("start_page")
+        else st.columns([1, 1, 1])
+    )
+    # texts = get_session_val("texts")
     with cols[n_cols // 2]:
-        st.image("public/chatboxd.png", width=220)
-    st.caption(texts["header_caption"])
+        st.image("public/banner.png", use_container_width=True)
+    # st.caption(texts["header_caption"])
 
 
 def display_daily_message():
