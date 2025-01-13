@@ -46,7 +46,7 @@ If you need another method, you can find it [UV Installation Guide](https://docs
 
 ### Environment Variables
 
-Since it is a chatbot with generative ia, it is necessary to configure some environment variables with the model credentials.
+Since Chatboxd is powered by Generative AI, it is necessary to configure some environment variables with the model credentials.
 
 Currently, the repository supports Azure hosted LLMs, but we are working on supporting more models regardless of whether they are hosted in Azure or not.
 
@@ -58,9 +58,15 @@ In the `template_secrets.env` file you can find the following variables:
 
 You can find the API endpoint, API version, and API key in the Azure portal under the "Keys and Endpoint" section of your Azure OpenAI service.
 
-Once you have enter the values in the `template_secrets.env` file, you have to rename it to `secrets.env`.
+Once you have entered the values in the `template_secrets.env` file, you have to rename it to `secrets.env`.
 
 If you prefer, you can declare the environment variables in your terminal before running the application.
+
+```bash
+export AZURE_OPENAI_ENDPOINT=<Your Azure OpenAI endpoint>
+export OPENAI_API_VERSION=<Your OpenAI API version>
+export OPENAI_API_KEY=<Your OpenAI API key>
+```
 
 ### Load Data
 
