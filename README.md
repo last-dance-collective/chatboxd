@@ -70,7 +70,51 @@ export OPENAI_API_KEY=<Your OpenAI API key>
 
 ### Load Your Data
 
-`Coming Soon`
+**All files related to the data ingestion are located in the folder *data_ingestion* located in the root directory**
+To load your data into a new SQLite database, follow these steps:
+
+1. **Prepare Your Data Files**:
+    - Go to the [export data section](https://letterboxd.com/settings/data/) on Letterboxd and download your data.
+    - Extract the data and find the two CSV files named `reviews.csv` and `diary.csv`.
+    - Place these files in the `data_ingestion/user_data` directory.
+
+2. **CSV File Structure**:
+    - `reviews.csv` should have the following columns:
+        - `Date`: The date of the review.
+        - `Name`: The name of the movie.
+        - `Review`: The review text.
+    - `diary.csv` should have the following columns:
+        - `Date`: The date the movie was watched.
+        - `Name`: The name of the movie.
+        - `Year`: The year the movie was released.
+        - `Letterboxd URI`: The URI of the movie on Letterboxd.
+        - `Rating`: The rating given to the movie.
+        - `Rewatch`: Indicates if the movie was rewatched.
+        - `Tags`: Any tags associated with the movie.
+        - `Watched Date`: The date the movie was watched.
+        - `Username`: The username of the person who watched the movie.
+
+3. **Run the Data Ingestion Script**:
+    - **Important**: There is a variable called USER_NAME where you can specify the username of the person who watched the movies. This is intended to be used when multiple people are using the same database.
+    - Make sure you have the necessary dependencies installed by running the following command:
+      ```sh
+      uv sync
+      ```
+    - Run the following commands to execute the script:
+      ```sh
+      cd data_ingestion
+      python main.py
+      ```
+
+4. **What the Script Does**:
+    - The script will create the necessary tables (`reviews` and `diary`) in the SQLite database if they do not already exist.
+    - It will then read the data from `reviews.csv` and `diary.csv` and insert the entries into the respective tables.
+    - The script will also link diary entries to their corresponding reviews based on the movie name and date.
+
+5. **Database Location**:
+    - The SQLite database file (`letterboxd.db`) will be created in the parent directory of the script.
+
+By following these steps, you will be able to load your data into the SQLite database and interact with the data.
 
 ### Run App
 
