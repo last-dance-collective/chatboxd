@@ -30,6 +30,14 @@ TRANSLATIONS = {
         "many_movies_daily_msg": "* En {year} viste {name} ({m_year}).",
         "start_page_markdown": "# ¡Bienvenido/a a Chatboxd!\n\nPara empezar, configura el idioma en el que te gustaría utilizar la aplicación.",
         "keys_not_set": "🔴 Error al iniciar el agente, por favor asegúrate de configurar correctamente sus claves en secrets.env",
+        "suggestions_list": [
+            "¿Mi Top 10 pelliculas favoritas?",
+            "¿A qué peliculas les he puesto 1 estrella?",
+            "¿Qué peliculas he visto los ultimos 3 meses?",
+            "¿Última review que he escrito?",
+            "¿Pelis de este año que he visto?",
+            "Gráfico de las peliculas del año pasado",
+        ],
     },
     "EN": {
         "reset_chat": "Reset Conversation",
@@ -53,6 +61,14 @@ TRANSLATIONS = {
         "many_movies_daily_msg": "* In {year}, you watched {name} ({m_year}).",
         "start_page_markdown": "# Welcome to Chatboxd!\n\nTo get started, set the language you'd like to use the app in.",
         "keys_not_set": "🔴 Failed to initialize agent, please make sure you have set up your keys correctly at secrets.env",
+        "suggestions_list": [
+            "What are my top 10 favorite movies?",
+            "What movies have I rated 1 star?",
+            "What movies did I watch last 3 months?",
+            "What was my last review?",
+            "What movies did I watch in this year?",
+            "Make a graph of the movies from last year",
+        ],
     },
     "FR": {
         "reset_chat": "Réinitialiser la Conversation",
@@ -76,6 +92,14 @@ TRANSLATIONS = {
         "many_movies_daily_msg": "* En {year}, vous avez regardé {name} ({m_year}).",
         "start_page_markdown": "# Bienvenue sur Chatboxd !\n\nPour commencer, configurez la langue dans laquelle vous souhaitez utiliser l'application.",
         "keys_not_set": "🔴 Échec de l'initialisation de l'agent, veuillez vous assurer que vous avez correctement configuré vos clés dans secrets.env",
+        "suggestions_list": [
+            "Quels sont mes 10 films préférés ?",
+            "Quels films j'ai noté 1 étoile ?",
+            "Quels films j'ai regardé les 3 derniers mois ?",
+            "Quelle est ma dernière critique ?",
+            "Quels films j'ai vus cette année ?",
+            "Fais un graphe des films de l'année dernière",
+        ],
     },
     "DE": {
         "reset_chat": "Konversation zurücksetzen",
@@ -99,6 +123,14 @@ TRANSLATIONS = {
         "many_movies_daily_msg": "* Im Jahr {year} hast du {name} ({m_year}) gesehen.",
         "start_page_markdown": "# Willkommen bei Chatboxd!\n\nUm loszulegen, stellen Sie die Sprache ein, in der Sie die App verwenden möchten.",
         "keys_not_set": "🔴 Agent konnte nicht initialisiert werden, bitte stellen Sie sicher, dass Sie Ihre Schlüssel richtig in secrets.env eingerichtet haben",
+        "suggestions_list": [
+            "Was sind meine Top 10 Lieblingsfilme?",
+            "Welche Filme habe ich mit 1 Stern bewertet?",
+            "Welche Filme habe ich letzten 3 Monate gesehen?",
+            "Was war meine letzte Bewertung?",
+            "Welche Filme habe ich dieses Jahr gesehen?",
+            "Erstelle einen Graphen der Filme des letzten Jahres",
+        ],
     },
     "IT": {
         "reset_chat": "Reimposta Conversazione",
@@ -122,6 +154,14 @@ TRANSLATIONS = {
         "many_movies_daily_msg": "* Nel {year}, hai visto {name} ({m_year}).",
         "start_page_markdown": "# Benvenuto/a su Chatboxd!\n\nPer iniziare, imposta la lingua che desideri utilizzare nell'applicazione.",
         "keys_not_set": "🔴 Impossibile inizializzare l'agente, assicurati di aver impostato correttamente le tue chiavi in secrets.env",
+        "suggestions_list": [
+            "Quali sono i miei film preferiti?",
+            "Quali film ho votato 1 stella?",
+            "Quali film ho visto negli ultimi 3 mesi?",
+            "Qual è la mia ultima recensione?",
+            "Quali film ho visto quest'anno?",
+            "Fai un grafico dei film dell'anno scorso",
+        ],
     },
     "PT": {
         "reset_chat": "Reiniciar conversa",
@@ -140,5 +180,13 @@ TRANSLATIONS = {
         "many_movies_daily_msg": "* Em {year} viu {name} ({m_year}).",
         "start_page_markdown": "# Bem-vindo/a ao Chatboxd!\n\nPara começar, configure o idioma que gostaria de usar no aplicativo.",
         "keys_not_set": "🔴 Falha ao inicializar agente, certifique-se de configurar corretamente suas chaves em secrets.env",
+        "suggestions_list": [
+            "Quais são meus filmes favoritos?",
+            "Quais filmes eu devo avaliar com 1 estrela?",
+            "Quais filmes eu vi last 3 meses?",
+            "Qual foi minha última avaliação?",
+            "Quais filmes eu vi esse ano?",
+            "Faça um gráfico dos filmes desse ano passado",
+        ],
     },
 }
