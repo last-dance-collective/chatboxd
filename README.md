@@ -2,7 +2,7 @@
 
 ---
 
-Chatboxd is a web application that allows you to easily interact with your LeeterBoxd statistics thanks to the power of GenAI.
+Chatboxd is a web application that allows you to easily interact with information logged into my Letterboxd account thanks to the power of LLMs.
 
 It is multi-language, allows the use of several LLM models and contains many other features.
 
@@ -10,7 +10,7 @@ It is multi-language, allows the use of several LLM models and contains many oth
 
 1. [Execution](#execution)
     - [Environment Variables](#environment-variables)
-    - [Load Data](#load-data)
+    - [Load Your Data](#load-data)
     - [Run App](#run-app)
 2. [How It Works](#how-it-works)
     - [Agent](#agent)
@@ -46,7 +46,7 @@ If you need another method, you can find it [UV Installation Guide](https://docs
 
 ### Environment Variables
 
-Since Chatboxd is powered by Generative AI, it is necessary to configure some environment variables with the model credentials.
+Since Chatboxd is an application that leverages a LLM, it is necessary to configure some environment variables with the model credentials.
 
 Currently, the repository supports Azure hosted LLMs, but we are working on supporting more models regardless of whether they are hosted in Azure or not.
 
@@ -68,7 +68,7 @@ export OPENAI_API_VERSION=<Your OpenAI API version>
 export OPENAI_API_KEY=<Your OpenAI API key>
 ```
 
-### Load Data
+### Load Your Data
 
 `Coming Soon`
 
