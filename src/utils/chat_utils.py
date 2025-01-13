@@ -10,11 +10,21 @@ set_session_val("print_response", True)
 
 
 def process_user_input():
-    user_input = get_session_val("chat_input")
+    user_input = get_user_query()
     if user_input:
         save_session_message("user", user_input)
     display_history_messages()
-    return get_session_val("chat_input")
+    return user_input
+
+
+def get_user_query():
+    user_query = get_session_val("chat_input")
+
+    # Check if Label Clicked
+    if not user_query and get_session_val("suggestions"):
+        user_query = get_session_val("suggestions")
+
+    return user_query
 
 
 def display_history_messages():

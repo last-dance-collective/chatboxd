@@ -1,3 +1,4 @@
+import random
 import streamlit as st
 import pandas as pd
 
@@ -16,6 +17,7 @@ def display_interface():
     else:
         st.logo("public/chatboxd.png", size="large")
         display_daily_message()
+        display_suggest_labels()
         reset_conversation()
         display_chat_input()
 
@@ -154,3 +156,18 @@ def get_ratings_badges(ratings: list):
         return f"<span class='badge badge-primary'>IMDB: {ratings[0]['Value']}</span><span class='badge badge-secondary'>RT: {ratings[1]['Value']}</span>"
     else:
         return f"<span class='badge badge-primary'>IMDB: {ratings[0]['Value']}</span><span class='badge badge-secondary'>RT: {ratings[1]['Value']}</span><span class='badge badge-terciary'>MC: {ratings[2]['Value']}</span>"
+
+
+def display_suggest_labels():
+    texts = get_session_val("texts")
+    three_random_suggestions = random.sample(texts["suggestions_list"], 3)
+    cols = st.columns([1, 8, 1])
+    if not get_session_val("suggestions"):
+        with cols[3 // 2]:
+            val = st.pills(
+                texts["suggestions_label"],
+                three_random_suggestions,
+                key="suggestions",
+                selection_mode="single",
+            )
+            print(val)
