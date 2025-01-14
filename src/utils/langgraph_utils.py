@@ -17,7 +17,7 @@ def rewrite_tool_responses(state: State) -> list:
         messages = []
         for msg in state["messages"]:
             if isinstance(msg, ToolMessage):
-                msg.content = "<La respuesta de la tool está omitida>"
+                msg.content = "<The tool's response is omitted>"
             messages.append(msg)
         return messages
     else:
