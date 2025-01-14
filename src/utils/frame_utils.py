@@ -162,12 +162,11 @@ def display_suggest_labels():
     texts = get_session_val("texts")
     three_random_suggestions = random.sample(texts["suggestions_list"], 3)
     cols = st.columns([1, 8, 1])
-    if not get_session_val("suggestions"):
+    if not get_session_val("suggestions") and not get_session_val("chat_input"):
         with cols[3 // 2]:
-            val = st.pills(
+            st.pills(
                 texts["suggestions_label"],
                 three_random_suggestions,
                 key="suggestions",
                 selection_mode="single",
             )
-            print(val)
