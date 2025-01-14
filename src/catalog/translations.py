@@ -196,3 +196,48 @@ TRANSLATIONS = {
         ],
     },
 }
+
+TOOL_RESPONSES = {
+    "ES": {
+        "get_reviews_response": "El usuario ha hecho las siguientes reviews de las películas que ha visto:\n",
+        "get_movies_response": "De acuerdo a los filtros proporcionados, el usuario ha visto las siguientes películas:\n",
+        "movie_details_not_found": "No se encontraron detalles de la película",
+        "get_movie_details_response": "🎬 Los detalles de la película son (Añade emojis para que visualmente se vea mejor):\n{movie_detail}\n\nEn ningún caso debes mostrar una imagen ni la sinopsis, ni los Ratings. El diccionario que viene a continuación es irrelevante para ti, no le hagas caso.",
+        "get_graph_response": "No devuelvas ningún dato, la gráfica será mostrada al usuario.",
+    },
+    "EN": {
+        "get_reviews_response": "The user has made the following reviews of the movies they've watched:\n",
+        "get_movies_response": "According to the provided filters, the user has watched the following movies:\n",
+        "movie_details_not_found": "No movie details were found",
+        "get_movie_details_response": "🎬 The details of the movie are (Add emojis to make it visually better):\n{movie_detail}\n\nUnder no circumstances should you show an image, synopsis, or Ratings. The dictionary below is irrelevant to you, do not pay attention to it.",
+        "get_graph_response": "Do not return any data, the graph will be displayed to the user.",
+    },
+    "FR": {
+        "get_reviews_response": "L'utilisateur a écrit les critiques suivantes pour les films qu'il a regardés :\n",
+        "get_movies_response": "Selon les filtres fournis, l'utilisateur a regardé les films suivants :\n",
+        "movie_details_not_found": "Aucun détail du film n'a été trouvé",
+        "get_movie_details_response": "🎬 Les détails du film sont (Ajoutez des émojis pour améliorer la présentation visuelle) :\n{movie_detail}\n\nEn aucun cas, vous ne devez afficher une image, un synopsis ou des notes. Le dictionnaire ci-dessous est sans importance pour vous, ne vous y attardez pas.",
+        "get_graph_response": "Ne retournez aucune donnée, le graphique sera affiché à l'utilisateur.",
+    },
+    "DE": {
+        "get_reviews_response": "Der Benutzer hat die folgenden Rezensionen zu den Filmen geschrieben, die er gesehen hat:\n",
+        "get_movies_response": "Entsprechend den angegebenen Filtern hat der Benutzer die folgenden Filme gesehen:\n",
+        "movie_details_not_found": "Keine Filmdetails gefunden",
+        "get_movie_details_response": "🎬 Die Details des Films sind (Fügen Sie Emojis hinzu, um es visuell besser zu machen):\n{movie_detail}\n\nUnter keinen Umständen sollten Sie ein Bild, eine Zusammenfassung oder Bewertungen anzeigen. Das untenstehende Wörterbuch ist für Sie irrelevant, ignorieren Sie es.",
+        "get_graph_response": "Geben Sie keine Daten zurück, das Diagramm wird dem Benutzer angezeigt.",
+    },
+    "IT": {
+        "get_reviews_response": "L'utente ha scritto le seguenti recensioni dei film che ha visto:\n",
+        "get_movies_response": "Secondo i filtri forniti, l'utente ha visto i seguenti film:\n",
+        "movie_details_not_found": "Dettagli del film non trovati",
+        "get_movie_details_response": "🎬 I dettagli del film sono (Aggiungi emoji per migliorare la visualizzazione):\n{movie_detail}\n\nIn nessun caso devi mostrare un'immagine, una sinossi o le valutazioni. Il dizionario sottostante è irrilevante per te, non farci caso.",
+        "get_graph_response": "Non restituire alcun dato, il grafico sarà mostrato all'utente.",
+    },
+    "PT": {
+        "get_reviews_response": "O usuário fez as seguintes análises dos filmes que assistiu:\n",
+        "get_movies_response": "De acordo com os filtros fornecidos, o usuário assistiu aos seguintes filmes:\n",
+        "movie_details_not_found": "Nenhum detalhe do filme foi encontrado",
+        "get_movie_details_response": "🎬 Os detalhes do filme são (Adicione emojis para melhorar visualmente):\n{movie_detail}\n\nEm nenhuma circunstância você deve mostrar uma imagem, sinopse ou classificações. O dicionário abaixo é irrelevante para você, ignore-o.",
+        "get_graph_response": "Não retorne nenhum dado, o gráfico será exibido ao usuário.",
+    },
+}

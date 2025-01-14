@@ -7,6 +7,7 @@ from services.movies_data_service import (
     get_letterboxd_data,
 )
 from utils.logger_utils import logger
+from catalog.translations import TOOL_RESPONSES
 
 
 def get_reviews(
@@ -32,10 +33,7 @@ def get_reviews(
     logger.info(f"🔍 Filters: {filter}")
     reviews = db.filter_reviews(filter)
 
-    return (
-        "El usuario ha hecho las siguientes reviews de las películas que ha visto:\n"
-        + str(reviews)
-    )
+    return TOOL_RESPONSES["EN"]["get_reviews_response"] + str(reviews)
 
 
 def get_movies(
@@ -75,10 +73,7 @@ def get_movies(
     db = Database("letterboxd.db")
     movies = db.filter_diary_entries(filters=filters)
 
-    return (
-        "De acuerdo a los filtros que me has dado, el usuario ha visto las siguiente películas:\n"
-        + str(movies)
-    )
+    return TOOL_RESPONSES["EN"]["get_movies_response"] + str(movies)
 
 
 def get_movie_details_extended(title: str, letterboxd_url: str):
@@ -97,7 +92,7 @@ def get_movie_details_extended(title: str, letterboxd_url: str):
     letterboxd_data = get_letterboxd_data(letterboxd_url)
 
     if omdb_data == {} or letterboxd_data == {}:
-        return "No se encontraron detalles de la película"
+        return TOOL_RESPONSES["EN"]["movie_details_not_found"]
 
     data = {
         "title": letterboxd_data["title"],
@@ -111,9 +106,9 @@ def get_movie_details_extended(title: str, letterboxd_url: str):
     del omdb_data["Ratings"]
 
     return (
-        "🎬 Los detalles de la película son (Añade emojis para que visualmente se vea mejor):\n"
-        + str(omdb_data)
-        + "\n\n  En ningún caso debes mostrar una imagen ni la sinopsis, ni los Ratings. El diccionario que viene a continuación es irrelevante para ti, no lo hagas caso. "
+        TOOL_RESPONSES["EN"]["get_movie_details_response"].format(
+            {"movie_detail": str(omdb_data)}
+        )
     ), {"movies": data}
 
 
@@ -131,16 +126,15 @@ def get_movie_details(letterboxd_url: str):
     letterboxd_data = get_letterboxd_data(letterboxd_url)
 
     if letterboxd_data == {}:
-        return "No se encontraron detalles de la película"
+        return TOOL_RESPONSES["EN"]["movie_details_not_found"]
 
     data = {
         "title": letterboxd_data["title"],
         "url": letterboxd_url,
         "image_url": letterboxd_data["image_url"],
     }
-    return (
-        "🎬 Los detalles de la película son (Añade emojis para que visualmente se vea mejor):\n"
-        + "\n\n  En ningún caso debes mostrar una imagen ni la sinopsis, ni los Ratings. El diccionario que viene a continuación es irrelevante para ti, no lo hagas caso. "
+    return TOOL_RESPONSES["EN"]["get_movie_details_response"].format(
+        {"movie_detail": str(data)}
     ), {"movies": data}
 
 
@@ -159,7 +153,7 @@ def get_graph(movies: List[Dict[str, Any]]):
         "obj_type": "graph",
         "graph_type": GRAPH_TYPES.RATING_DISTRIBUTION.value,
         "data": ratings,
-        "indicaciones": "No devuelvas ningún dato, se le mostrará una gráfica",
+        "indicaciones": TOOL_RESPONSES["EN"]["get_graph_response"],
     }
 
 
