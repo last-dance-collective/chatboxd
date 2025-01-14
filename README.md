@@ -30,14 +30,17 @@ For the execution of the application, you need to have installed:
 uv is an extremely fast Python package and project manager, written in Rust. For installation, you can use one of the following methods:
 
 -   `curl`
+  
     ```bash
     curl -LsSf https://astral.sh/uv/install.sh | sh
     ```
 -   `wget`
+  
     ```bash
     wget -qO- https://astral.sh/uv/install.sh | sh
     ```
 -   `Homebrew`
+  
     ```bash
     brew install uv
     ```
@@ -128,7 +131,23 @@ Note that the first time you run this command, it creates the virtual environmen
 
 ## How It Works
 
+This section documents the engineering process carried out for the operation of the project. It is a section in which technical concepts will be deepened in detail for those people who want the necessary knowledge to carry out a similar project.
+
+
 ### Agent
+
+We have developed a ReAct agent architecture based on the following concepts:
+
+* `act` - Let the model call specific tools.
+* `observe` - Pass the tool output back to the model.
+* `reason` - Let the model reason about the tool output to decide what to do next (e.g., call another tool or just respond directly).
+
+Here is a simple diagram of our architecture used:
+
+![Architecture Diagram](https://github.com/user-attachments/assets/d4f39b93-896d-4496-84d3-f03677933458)
+
+
+The operation and details of the tools are explained below.
 
 ### Tools
 
