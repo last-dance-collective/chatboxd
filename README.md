@@ -140,11 +140,30 @@ We have developed a ReAct agent architecture based on the following concepts:
 
 Here is a simple diagram of our architecture used:
 
-![Architecture Diagram](https://github.com/user-attachments/assets/153f7c15-3702-4d67-9347-0ddf8ded345b)
+![Architecture Diagram](https://github.com/user-attachments/assets/e48dedcc-73a0-4e05-9b40-ad28871eacb7)
+
 
 We have added a previous node called `Filter` which is in charge of filtering the message history so that it is not excessively long after several iterations.
 The operation and details of the tools are explained below.
 
 ### Tools
 
+The agent has at its disposal several tools that allow it to access the SQLite database that we have created with our data and also perform queries to external APIs. According to the user's request, the agent will decide to call one tool, several, or directly answer as mentioned above.
+
+The list of tools is:
+- `get_movies`: Filters the user movie registry according to the search parameters identified in the user query, then retrieves the search result.
+- `get_reviews`: Retrieve reviews from movies watched by the user, searching by movie name or by review id.
+- `get_graph`: Generates and displays a graph based upon the provided list of movies.
+- `get_movie_details`: Retrieves the detail of a movie by its Letterboxd URL.
+- `get_movie_details_extended`: Retrieves the detail of a movie by its title (in English) using the OmdbAPI and its Letterboxd URL.
+
+> [!NOTE]
+> If the user has an `OMDb API KEY`, the agent will always use `get_movie_details_extended` for movie requests in detail. If not, the agent will use `get_movie_details`.
+
 ### BBDD
+
+Although it has been previously commented on the structure of the csv, for a more adequate knowledge of the database used, the following E/R model is attached:
+
+![E/R Model](https://github.com/user-attachments/assets/47c8e353-c457-4a1a-ac9d-25731a78afc9)
+
+
