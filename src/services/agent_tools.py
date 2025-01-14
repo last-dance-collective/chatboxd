@@ -13,16 +13,15 @@ def get_reviews(
     name: str = None,
     review_id: str = None,
 ):
-    """Obtiene las reviews de las películas que el usuario ha visto, ya sea por nombre o por review_id de la película
-     obtenida de una petición anterior del usuario.
-      Antes de llamar a esta función es necesario obtener los registros de películas del usuario
+    """Retrieve reviews from movies watched by the user, searching by movie name or by review id.
+    Before calling this tool, it is necessary to retrieve the registry of watched movies.
 
     Params:
-        name (str): nombre de la película en inglés.
-        review_id (str): review_id de la película
+        name (str): movie title (in English).
+        review_id (str): movie review_id
 
     Returns:
-        str: Descripción de las reviews.
+        str: Description of retrieved reviews.
     """
     db = Database("letterboxd.db")
     if review_id:
@@ -48,20 +47,20 @@ def get_movies(
     rewatch: Literal["Yes"] = None,
     year: int = None,
 ):
-    """Filtra las películas registradas del usuario de acuerdo a los parámetros
-     identificados en la petición del usuario y obtiene la información relacionada con ella
+    """Filters the user movie registry according to the search parameters identified in the user query,
+    then retrieves the search result.
 
     Params:
-        name (str): nombre de la película en inglés.
-        from_watched_date (str): fecha desde la que se inicia el abanico de búsqueda de cuando se vio la película.
-        to_watched_date (str): fecha que cierra el abanico de búsqueda de cuando se vio la película.
-        from_rating (float): nota que puso el usuario a la película desde la que se inicia el abanico de búsqueda.
-        to_rating (float): nota que puso el usuario a la película que cierra el abanico de búsqueda.
-        rewatch (str): flag para obtener unicamente las segundas o más vistas de una película.
-        year (int): año en el que se estrenó la película.
+        name (str): movie title (in English).
+        from_watched_date (str): start of the watched date range.
+        to_watched_date (str): end of the watched date range.
+        from_rating (float): minimum user rating (out of 5 stars).
+        to_rating (float): maximum user rating (out of 5 stars).
+        rewatch (str): flag to retrieve only rewatches (movies that were already watched).
+        year (int): year in which the movie was released.
 
     Returns:
-        str: Descripción de las películas filtrados.
+        str: Description of retrieved movies.
     """
     filters = [
         create_two_params_filter("watched_date", from_watched_date, to_watched_date),
@@ -83,16 +82,16 @@ def get_movies(
 
 
 def get_movie_details_extended(title: str, letterboxd_url: str):
-    """Obtiene los detalles de una película mediante el titulo en inglés y el uso de una API externa.
-        Esta función es la única manera de conseguir el detalle de la película.
-        Antes de llamar a esta función es necesario obtener los registros de películas del usuario
+    """Retrieves the detail of a movie by its title (in English) and its Letterboxd URL. This tool
+    is the only way to obtain the detail of any movie. Before calling this tool, it is necessary to
+    obtain the registry of watched movies.
 
     Params:
-        title (str): nombre de la película en inglés.
-        letterboxd_url (str): url de la película en letterboxd.
+        title (str): movie title (in English).
+        letterboxd_url (str): Letterboxd URL for the movie.
 
     Returns:
-        str: Descripción de la película.
+        str: Detailed description of the movie.
     """
     omdb_data = get_omdb_data(title)
     letterboxd_data = get_letterboxd_data(letterboxd_url)
@@ -116,19 +115,18 @@ def get_movie_details_extended(title: str, letterboxd_url: str):
         + str(omdb_data)
         + "\n\n  En ningún caso debes mostrar una imagen ni la sinopsis, ni los Ratings. El diccionario que viene a continuación es irrelevante para ti, no lo hagas caso. "
     ), {"movies": data}
-    
-    
+
+
 def get_movie_details(letterboxd_url: str):
-    """Obtiene los detalles de una película mediante el titulo en inglés y el uso de una API externa.
-        Esta función es la única manera de conseguir el detalle de la película.
-        Antes de llamar a esta función es necesario obtener los registros de películas del usuario
+    """Retrieves the detail of a movie by its Letterboxd URL. This tool is the
+    only way to obtain the detail of any movie. Before calling this tool, it is
+    necessary to obtain the registry of watched movies.
 
     Params:
-        title (str): nombre de la película en inglés.
-        letterboxd_url (str): url de la película en letterboxd.
+        letterboxd_url (str): Letterboxd URL for the movie.
 
     Returns:
-        str: Descripción de la película.
+        str: Detailed description of the movie.
     """
     letterboxd_data = get_letterboxd_data(letterboxd_url)
 
@@ -146,39 +144,22 @@ def get_movie_details(letterboxd_url: str):
     ), {"movies": data}
 
 
-def get_letterboxd_film_details(url: str):
-    """
-    Obtiene los detalles de una película desde Letterboxd.
-
-    Params:
-        url (str): La url de la película en Letterboxd.
-
-    Returns:
-        str: Un elemento html con una tarjeta para ser mostrada en el frontal
-    """
-    data = get_letterboxd_data(url)
-    return {
-        "movies": data,
-        "indicaciones": "no se tiene que mostrar la imagen, solo los detalles de la pelicula",
-    }
-    
-
 def get_graph(movies: List[Dict[str, Any]]):
     """
-    Genera una gráfica en base a tus películas filtradas
+    Generates and displays a graph based upon the provided list of movies.
 
     Params:
-        movies (List[Dict[str, Any]]): Lista de las películas con las que se hará la gráfica.
+        movies (List[Dict[str, Any]]): a list of movies to be included in the graph.
 
     Returns:
-        Dict: Un diccionario con el tipo de gráfica y la información a mostrar
+        dict: A dictionary including the graph type and the information to be displayed.
     """
-    ratings = [movie['rating'] for movie in movies]
+    ratings = [movie["rating"] for movie in movies]
     return {
         "obj_type": "graph",
         "graph_type": GRAPH_TYPES.RATING_DISTRIBUTION.value,
         "data": ratings,
-        "indicaciones": "No devuelvas ningún dato, se le mostrará una gráfica"
+        "indicaciones": "No devuelvas ningún dato, se le mostrará una gráfica",
     }
 
 
