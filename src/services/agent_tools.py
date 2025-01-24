@@ -107,7 +107,7 @@ def get_movie_details_extended(title: str, letterboxd_url: str):
 
     return (
         TOOL_RESPONSES["EN"]["get_movie_details_response"].format(
-            {"movie_detail": str(omdb_data)}
+            movie_detail=str(omdb_data)
         )
     ), {"movies": data}
 
