@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chatboxd</title>
+  <style>
+    body {
+      background-color: #323947;
+      /* Fondo oscuro */
+      color: #cccccc;
+      /* Texto principal en gris claro */
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    a {
+      color: #ff8000;
+      /* Naranja brillante estilo Letterboxd */
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: #00ac1c;
+      /* Verde brillante al pasar el mouse */
+      text-decoration: underline;
+    }
+
+    .container {
+      width: 80%;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .banner {
+      width: 100%;
+    }
+
+    hr {
+      border: 1px solid #00ac1c;
+      /* Línea verde */
+    }
+
+    pre {
+      background-color: #444c56;
+      /* Fondo gris oscuro para bloques de código */
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+
+    ul,
+    ol {
+      padding-left: 20px;
+    }
+
+    ul li,
+    ol li {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <img src="./public/banner.png" alt="Chatboxd Banner" class="banner">
+    <hr>
+    <h1>Chatboxd</h1>
+    <p>Chatboxd is a web application that allows you to easily interact with information logged into your Letterboxd
+      account thanks to the power of LLMs.</p>
+    <p>It is multi-language, allows the use of several LLM models and contains many other features.</p>
+    <h2>Contents</h2>
+    <ul>
+      <li><a href="#execution">Execution</a>
+        <ul>
+          <li><a href="#environment-variables">Environment Variables</a></li>
+          <li><a href="#load-data">Load Your Data</a></li>
+          <li><a href="#run-app">Run App</a></li>
+        </ul>
+      </li>
+      <li><a href="#how-it-works">How It Works</a>
+        <ul>
+          <li><a href="#agent">Agent</a></li>
+          <li><a href="#tools">Tools</a></li>
+          <li><a href="#bbdd">BBDD</a></li>
+        </ul>
+      </li>
+    </ul>
+    <h2 id="execution">Execution</h2>
+    <p>In this section, we will explain how to execute the application once you have cloned the repository.</p>
+    <h3 id="requirements">Requirements</h3>
+    <p>For the execution of the application, you need to have installed:</p>
+    <h4><a href="https://docs.astral.sh/uv/">UV</a></h4>
+    <p>uv is an extremely fast Python package and project manager, written in Rust. For installation, you can use one of
+      the following methods:</p>
+    <ul>
+      <li><code>curl</code>
+        <pre><code>curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+      </li>
+      <li><code>wget</code>
+        <pre><code>wget -qO- https://astral.sh/uv/install.sh | sh</code></pre>
+      </li>
+      <li><code>Homebrew</code>
+        <pre><code>brew install uv</code></pre>
+      </li>
+    </ul>
+    <p>If you need another method, you can find it <a href="https://docs.astral.sh/uv/getting-started/installation/">UV
+        Installation Guide</a>.</p>
+    <h3 id="environment-variables">Environment Variables</h3>
+    <p>Since Chatboxd is an application that leverages a LLM, it is necessary to configure some environment variables
+      with the model credentials.</p>
+    <p>Currently, the repository supports Azure hosted LLMs, but we are working on supporting more models regardless of
+      whether they are hosted in Azure or not.</p>
+    <p>In the <code>template_secrets.env</code> file you can find the following variables:</p>
+    <ul>
+      <li><code>OPENAI_API_ENDPOINT</code>: The API endpoint of the Azure OpenAI service.</li>
+      <li><code>OPENAI_API_VERSION</code>: The API version of the Azure OpenAI service.</li>
+      <li><code>OPENAI_API_KEY</code>: The API key of the Azure OpenAI service.</li>
+    </ul>
+    <p>You can find the API endpoint, API version, and API key in the Azure portal under the "Keys and Endpoint" section
+      of your Azure OpenAI service.</p>
+    <p>Once you have entered the values in the <code>template_secrets.env</code> file, you have to rename it to
+      <code>secrets.env</code>.
+    </p>
+    <p>If you prefer, you can declare the environment variables in your terminal before running the application.</p>
+    <pre><code>export AZURE_OPENAI_ENDPOINT=&lt;Your Azure OpenAI endpoint&gt;
+export OPENAI_API_VERSION=&lt;Your OpenAI API version&gt;
+export OPENAI_API_KEY=&lt;Your OpenAI API key&gt;</code></pre>
+  </div>
+</body>
+
+</html>
