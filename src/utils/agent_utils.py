@@ -1,10 +1,11 @@
 import json
+from yaml import StreamEndEvent
 
 from utils.logger_utils import logger
 from services.graph_services import display_rating_graph
 
 
-def display_graph(event):
+def display_graph(event: StreamEndEvent) -> None:
     if event["data"]["output"]["messages"]:
         if not event["data"]["output"]["messages"][-2].content:
             return None
@@ -18,7 +19,7 @@ def display_graph(event):
     return None
 
 
-def extract_image_data(event):
+def extract_image_data(event: StreamEndEvent) -> dict:
     message = json.loads(event["data"]["output"].content)
     if message[1].get("movies", None):
         return message[1].get("movies", {})

@@ -7,7 +7,7 @@ from utils.chat_utils import (
 from utils.session_utils import get_session_val
 
 
-async def handle_user_input(prompt):
+async def handle_user_input(prompt: str):
     if prompt:
         await display_agent_response(
             get_session_val("agent").run_async(prompt, get_session_val("session_id"))

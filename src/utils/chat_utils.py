@@ -1,5 +1,7 @@
-from typing import Literal
+from typing import AsyncIterator, Literal
 import streamlit as st
+from yaml import StreamEndEvent
+from streamlit.delta_generator import DeltaGenerator
 
 from utils.session_utils import get_session_val, set_session_val, save_session_message
 from utils.agent_utils import extract_image_data
@@ -9,7 +11,7 @@ from utils.agent_utils import display_graph
 set_session_val("print_response", True)
 
 
-def process_user_input():
+def process_user_input() -> str:
     user_input = get_user_query()
     if user_input:
         save_session_message("user", user_input)
@@ -17,7 +19,7 @@ def process_user_input():
     return user_input
 
 
-def get_user_query():
+def get_user_query() -> str:
     user_query = get_session_val("chat_input")
 
     # Check if Label Clicked
@@ -38,7 +40,7 @@ def display_chat_msg(msg: str, author: Literal["user", "assistant", "ai", "human
     save_session_message(author, msg)
 
 
-async def display_agent_response(agent_call):
+async def display_agent_response(agent_call: AsyncIterator[StreamEndEvent]):
     with st.chat_message("assistant"):
         with st.spinner(get_session_val("texts")["chat_loading"]):
             stream = ""
@@ -90,7 +92,7 @@ async def display_agent_response(agent_call):
         display_graph(event)
 
 
-def display_tool_call_info(event, info_container):
+def display_tool_call_info(event: StreamEndEvent, info_container: DeltaGenerator):
     kind = event["event"]
     tool_name = event["name"]
     tool_args = event["data"].get("input", {})
@@ -101,7 +103,7 @@ def display_tool_call_info(event, info_container):
         get_reviews_tool_info(tool_args, info_container)
 
 
-def get_reviews_tool_info(tool_args, info_container):
+def get_reviews_tool_info(tool_args: dict, info_container: DeltaGenerator):
     filter_str = title_info(tool_args)
     filter_str += review_id_info(tool_args)
     texts = get_session_val("texts")
@@ -113,7 +115,7 @@ def get_reviews_tool_info(tool_args, info_container):
     info_container.info(initial_str + filter_str, icon="🔎")
 
 
-def get_movies_tool_info(tool_args, info_container):
+def get_movies_tool_info(tool_args: dict, info_container: DeltaGenerator):
     filter_str = title_info(tool_args)
     filter_str += watched_date_info(tool_args)
     filter_str += rating_info(tool_args)
@@ -126,21 +128,21 @@ def get_movies_tool_info(tool_args, info_container):
     info_container.info(initial_str + filter_str, icon="🔎")
 
 
-def review_id_info(tool_args):
+def review_id_info(tool_args: dict) -> str:
     review_id = tool_args.get("review_id")
     texts = get_session_val("texts")
     info_str = texts["title_filter"].format(name=review_id) if review_id else ""
     return info_str
 
 
-def title_info(tool_args):
+def title_info(tool_args: dict) -> str:
     name = tool_args.get("name")
     texts = get_session_val("texts")
     info_str = texts["title_filter"].format(name=name) if name else ""
     return info_str
 
 
-def watched_date_info(tool_args):
+def watched_date_info(tool_args: dict) -> str:
     from_date = tool_args.get("from_watched_date")
     to_date = tool_args.get("to_watched_date")
     texts = get_session_val("texts")
@@ -157,7 +159,7 @@ def watched_date_info(tool_args):
     return info_str
 
 
-def rating_info(tool_args):
+def rating_info(tool_args: dict) -> str:
     from_rating = tool_args.get("from_rating")
     to_rating = tool_args.get("to_rating")
     texts = get_session_val("texts")
@@ -177,14 +179,14 @@ def rating_info(tool_args):
     return info_str
 
 
-def release_year_info(tool_args):
+def release_year_info(tool_args: dict) -> str:
     year = tool_args.get("year")
     texts = get_session_val("texts")
     info_str = texts["year_filter"].format(year=year) if year else ""
     return info_str
 
 
-def rewatch_info(tool_args):
+def rewatch_info(tool_args: dict) -> str:
     rewatch = tool_args.get("rewatch")
     texts = get_session_val("texts")
     info_str = texts["rewatch"] if rewatch else ""

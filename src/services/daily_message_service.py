@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any, Dict, List
 
 from services.sqlite_service import Database, Operator
 from utils.session_utils import get_session_val
@@ -12,7 +13,7 @@ def get_daily_message():
     return compose_message(entries)
 
 
-def find_diary_entry(date):
+def find_diary_entry(date: str) -> List[Dict[str, Any]]:
     filters = [
         {
             "column": "watched_date",
@@ -29,7 +30,7 @@ def find_diary_entry(date):
     return entries
 
 
-def compose_message(entries):
+def compose_message(entries: List[Dict[str, Any]]) -> str:
     number_of_entries = len(entries)
     if number_of_entries == 1:
         return compose_message_for_one_movie(entries[0])
@@ -37,7 +38,7 @@ def compose_message(entries):
         return compose_message_more_than_one_movie(entries)
 
 
-def compose_message_for_one_movie(movie):
+def compose_message_for_one_movie(movie: Dict[str, Any]) -> str:
     texts = get_session_val("texts")
     return texts["one_movie_daily_msg"].format(
         year=movie["date"][:4],
@@ -48,7 +49,7 @@ def compose_message_for_one_movie(movie):
     )
 
 
-def compose_message_more_than_one_movie(movies):
+def compose_message_more_than_one_movie(movies: List[Dict[str, Any]]) -> str:
     texts = get_session_val("texts")
 
     content = "\n".join(
