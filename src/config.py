@@ -1,4 +1,4 @@
-OLLAMA_MODEL = "ollama/llama2-13b"
+OLLAMA_MODEL = "llama3.1"
 OPENAI_MODEL = "gpt-4o-mini"
 LANGUAGE = "ES"
 USE_OLLAMA = False
