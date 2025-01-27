@@ -1,10 +1,14 @@
 import os
 from datetime import datetime
+from typing import AsyncIterator
 
 from langchain_core.messages import SystemMessage, HumanMessage, RemoveMessage
+from langchain_ollama import ChatOllama
+from langchain_openai import AzureChatOpenAI
 from langgraph.graph import StateGraph, START
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.prebuilt import ToolNode, tools_condition
+from yaml import StreamEndEvent
 
 from config import CONVERS_TURNS
 from catalog.prompts import PROMPTS
@@ -23,9 +27,8 @@ from services.agent_tools import (
 class ChatboxdAgent:
     def __init__(
         self,
-        llm=None,
-        database=None,
-        username=None,
+        llm: ChatOllama | AzureChatOpenAI,
+        username: str = "",
     ):
         language = get_session_val("language")
 
@@ -95,7 +98,7 @@ class ChatboxdAgent:
         checkpointer = MemorySaver()
         self.graph = graph_builder.compile(checkpointer=checkpointer)
 
-    def run(self, user_msg, thread_id="1"):
+    def run(self, user_msg: str, thread_id: str = "1"):
         config = {"configurable": {"thread_id": thread_id}}
         return self.graph.invoke(
             {
@@ -106,9 +109,9 @@ class ChatboxdAgent:
 
     def run_async(
         self,
-        user_msg,
-        thread_id="1",
-    ):
+        user_msg: str,
+        thread_id: str = "1",
+    ) -> AsyncIterator[StreamEndEvent]:
         config = {"configurable": {"thread_id": thread_id}}
         logger.info("▶️ Running")
         return self.graph.astream_events(

@@ -1,7 +1,9 @@
 import logging
 
 
-def initialize_logger(name="chatboxd", level=logging.INFO):
+def initialize_logger(
+    name: str = "chatboxd", level: int = logging.INFO
+) -> logging.Logger:
     logging.getLogger("py4j.clientserver").setLevel(logging.WARNING)
     logging.getLogger("httpx").setLevel(logging.WARNING)
     logging.basicConfig(
