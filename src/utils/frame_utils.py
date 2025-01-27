@@ -16,7 +16,7 @@ def display_interface():
         display_start_page()
     else:
         st.logo("public/chatboxd.png", size="large")
-        display_daily_message()
+        # display_daily_message()
         display_suggest_labels()
         reset_conversation()
         display_chat_input()
@@ -26,7 +26,7 @@ def display_start_page():
     st.markdown(get_session_val("texts")["start_page_markdown"])
 
     selected_language = st.selectbox(
-        label="Idioma",
+        label="Selecciona tu idioma",
         options=get_session_val("available_languages"),
         format_func=lambda x: LANGUAGE_NAMES.get(x),
     )
@@ -34,6 +34,26 @@ def display_start_page():
     if selected_language != get_session_val("language"):
         set_session_val("language", selected_language)
         st.rerun()
+
+    st.caption("Selecciona tu proveedor de LLM")
+    providers = ["OpenAI", "Ollama"]
+    cols = st.columns(2 + len(providers), gap="medium")
+    for i, col in enumerate(cols[1:-1]):
+        with col.container(border=True):
+            is_current_provider = get_session_val("provider") == providers[i]
+            emoji = "🔘" if not is_current_provider else "🟢"
+            st.image(
+                "public/" + providers[i].lower() + ".png",
+                use_container_width=True,
+            )
+            if st.button(
+                providers[i],
+                icon=emoji,
+                key=providers[i],
+                use_container_width=True,
+            ):
+                set_session_val("provider", providers[i])
+                st.rerun()
 
     if st.button(get_session_val("texts")["continue"]):
         set_session_val("start_page", False)
