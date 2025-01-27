@@ -80,7 +80,7 @@ def display_daily_message():
 
 def return_img_preview(
     og_image: str, og_title: str, og_url: str, plot: str, ratings: list
-):
+) -> str:
     details = compose_extra_details(plot, ratings)
 
     tarjeta_html = f"""
@@ -110,7 +110,7 @@ def return_img_preview(
     return card_css + tarjeta_html
 
 
-def compose_extra_details(plot, ratings):
+def compose_extra_details(plot: str, ratings: list):
     details_html = ""
     if (ratings is not None) and (len(ratings) > 0):
         details_html = f"""
@@ -147,7 +147,7 @@ def display_table():
     st.dataframe(df, use_container_width=True)
 
 
-def get_ratings_badges(ratings: list):
+def get_ratings_badges(ratings: list) -> str:
     if len(ratings) == 0:
         return ""
     elif len(ratings) == 1:

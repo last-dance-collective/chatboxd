@@ -6,7 +6,7 @@ from enviroment_config import configure_openai_api_key
 from utils.logger_utils import logger
 
 
-def ollama_model(model=OLLAMA_MODEL, temperature=0):
+def ollama_model(model: str = OLLAMA_MODEL, temperature: int = 0) -> ChatOllama:
     """Returns the Ollama LLM object for the specified model.
     Ollama must be running in background using the command `ollama serve`
     """
@@ -17,7 +17,7 @@ def ollama_model(model=OLLAMA_MODEL, temperature=0):
     )
 
 
-def openai_model(model=OPENAI_MODEL, temperature=0):
+def openai_model(model: str = OPENAI_MODEL, temperature: int = 0) -> AzureChatOpenAI:
     """Returns the OpenAI LLM object for the specified model."""
     configure_openai_api_key()
     logger.info("⚙️  Using OpenAI")

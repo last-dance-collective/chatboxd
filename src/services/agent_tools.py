@@ -13,7 +13,7 @@ from catalog.translations import TOOL_RESPONSES
 def get_reviews(
     name: str = None,
     review_id: str = None,
-):
+) -> str:
     """Retrieve reviews from movies watched by the user, searching by movie name or by review id.
     Before calling this tool, it is necessary to retrieve the registry of watched movies.
 
@@ -44,7 +44,7 @@ def get_movies(
     to_rating: float = None,
     rewatch: Literal["Yes"] = None,
     year: int = None,
-):
+) -> str:
     """Filters the user movie registry according to the search parameters identified in the user query,
     then retrieves the search result.
 
@@ -76,7 +76,7 @@ def get_movies(
     return TOOL_RESPONSES["EN"]["get_movies_response"] + str(movies)
 
 
-def get_movie_details_extended(title: str, letterboxd_url: str):
+def get_movie_details_extended(title: str, letterboxd_url: str) -> tuple[str, dict]:
     """Retrieves the detail of a movie by its title (in English) and its Letterboxd URL. This tool
     is the only way to obtain the detail of any movie. Before calling this tool, it is necessary to
     obtain the registry of watched movies.
@@ -112,7 +112,7 @@ def get_movie_details_extended(title: str, letterboxd_url: str):
     ), {"movies": data}
 
 
-def get_movie_details(letterboxd_url: str):
+def get_movie_details(letterboxd_url: str) -> tuple[str, dict]:
     """Retrieves the detail of a movie by its Letterboxd URL. This tool is the
     only way to obtain the detail of any movie. Before calling this tool, it is
     necessary to obtain the registry of watched movies.
@@ -138,7 +138,7 @@ def get_movie_details(letterboxd_url: str):
     ), {"movies": data}
 
 
-def get_graph(movies: List[Dict[str, Any]]):
+def get_graph(movies: List[Dict[str, Any]]) -> Dict[str, Any]:
     """
     Generates and displays a graph based upon the provided list of movies.
 

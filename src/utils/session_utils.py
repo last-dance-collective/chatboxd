@@ -36,5 +36,5 @@ def get_session_val(key: str, default=None, cache_obj=st.session_state):
     return cache_obj.get(key, default)
 
 
-def save_session_message(author, content):
+def save_session_message(author: str, content: str):
     st.session_state.messages.append({"role": author, "content": content})
