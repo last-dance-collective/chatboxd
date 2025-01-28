@@ -241,3 +241,28 @@ TOOL_RESPONSES = {
         "get_graph_response": "Não retorne nenhum dado, o gráfico será exibido ao usuário.",
     },
 }
+
+MODEL_PROVIDERS = {
+    "ES": {
+        "Ollama": """**Ollama** te permite ejecutar un modelo de lenguaje en tu propio dispositivo. 
+
+Para ello, deberás instalar Ollama en tu sistema y descargar el modelo a utilizar mediante `ollama pull <model_name>` (asegúrate de que el mismo modelo esté configurado en `config.py`). 
+        
+Para disponibilizar el modelo, ejecuta `ollama serve`. 
+        
+Una vez hecho esto, puedes comenzar a chatear con **Chatboxd**.
+""",
+        "OpenAI": """**OpenAI** permite el acceso a modelos de lenguaje a través de su API. 
+
+Para comenzar, necesitarás registrarte en la plataforma y obtener tus credenciales de API. Una vez que tengas tus credenciales, deberás almacenarlas en variables de entorno o en el fichero `secrets.env`:
+        
+```
+AZURE_OPENAI_ENDPOINT=...
+OPENAI_API_VERSION=...
+OPENAI_API_KEY=...
+```
+
+Una vez configuradas las credenciales, puedes comenzar a chatear con **Chatboxd**. Ten en cuenta que el uso de la API de OpenAI puede acarrear costes.""",
+        None: "Selecciona un proveedor para continuar.",
+    },
+}
