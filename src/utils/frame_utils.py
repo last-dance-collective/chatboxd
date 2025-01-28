@@ -3,7 +3,7 @@ import streamlit as st
 import pandas as pd
 
 from utils.session_utils import reset_session, get_session_val, set_session_val
-from catalog.translations import LANGUAGE_NAMES
+from catalog.translations import LANGUAGE_NAMES, MODEL_PROVIDERS
 from services.sqlite_service import Database, Operator
 from services.daily_message_service import get_daily_message
 from catalog.styles import card_css
@@ -35,12 +35,22 @@ def display_start_page():
         set_session_val("language", selected_language)
         st.rerun()
 
+    display_provider_selection()
+
+    if st.button(
+        get_session_val("texts")["continue"], disabled=not get_session_val("provider")
+    ):
+        set_session_val("start_page", False)
+        st.rerun()
+
+
+def display_provider_selection():
     st.caption("Selecciona tu proveedor de LLM")
     providers = ["OpenAI", "Ollama"]
     cols = st.columns(2 + len(providers), gap="medium")
     for i, col in enumerate(cols[1:-1]):
+        is_current_provider = get_session_val("provider") == providers[i]
         with col.container(border=True):
-            is_current_provider = get_session_val("provider") == providers[i]
             emoji = "🔘" if not is_current_provider else "🟢"
             st.image(
                 "public/" + providers[i].lower() + ".png",
@@ -55,9 +65,9 @@ def display_start_page():
                 set_session_val("provider", providers[i])
                 st.rerun()
 
-    if st.button(get_session_val("texts")["continue"]):
-        set_session_val("start_page", False)
-        st.rerun()
+    st.markdown(
+        MODEL_PROVIDERS[get_session_val("language")][get_session_val("provider")]
+    )
 
 
 def reset_conversation():
