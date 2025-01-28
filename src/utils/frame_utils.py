@@ -16,7 +16,7 @@ def display_interface():
         display_start_page()
     else:
         st.logo("public/chatboxd.png", size="large")
-        # display_daily_message()
+        display_daily_message()
         display_suggest_labels()
         reset_conversation()
         display_chat_input()
