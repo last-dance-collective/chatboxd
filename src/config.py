@@ -1,5 +1,4 @@
 OLLAMA_MODEL = "llama3.1"
 OPENAI_MODEL = "gpt-4o-mini"
 LANGUAGE = "ES"
-USE_OLLAMA = False
 CONVERS_TURNS = 6

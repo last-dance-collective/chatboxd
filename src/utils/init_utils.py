@@ -4,7 +4,7 @@ from utils.session_utils import initialize_session, get_session_val, set_session
 from utils.frame_utils import display_interface
 from services.langgraph_service import ChatboxdAgent
 from services.llm_service import ollama_model, openai_model
-from config import USE_OLLAMA
+from config import OLLAMA_MODEL, OPENAI_MODEL
 
 
 def initialize_app():
@@ -36,8 +36,12 @@ def setup_page():
 
 def setup_agent():
     if not get_session_val("agent"):
-        if USE_OLLAMA:
-            llm = ollama_model()
+        provider = get_session_val("provider")
+        if provider.lower() == "ollama":
+            llm = ollama_model(OLLAMA_MODEL)
+        elif provider.lower() == "openai":
+            llm = openai_model(OPENAI_MODEL)
         else:
-            llm = openai_model()
+            raise Exception("Invalid provider")
+
         set_session_val("agent", ChatboxdAgent(llm=llm))
