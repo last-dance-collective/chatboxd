@@ -9,6 +9,8 @@ LANGUAGE_NAMES = {
 
 TRANSLATIONS = {
     "ES": {
+        "select_language": "Selecciona tu idioma",
+        "select_provider": "Selecciona tu proveedor de LLM",
         "reset_chat": "Reiniciar Conversación",
         "chat_placeholder": "Escribe tu mensaje aquí...",
         "header_caption": "¡Chatboxd te permite chatear con tus estadisticas de LetterBoxd!",
@@ -41,6 +43,8 @@ TRANSLATIONS = {
         ],
     },
     "EN": {
+        "select_language": "Select your language",
+        "select_provider": "Select your LLM provider",
         "reset_chat": "Reset Conversation",
         "chat_placeholder": "Type your message here...",
         "header_caption": "Chatboxd lets you chat with your LetterBoxd stats!",
@@ -73,6 +77,8 @@ TRANSLATIONS = {
         ],
     },
     "FR": {
+        "select_language": "Sélectionnez votre langue",
+        "select_provider": "Sélectionnez votre fournisseur de LLM",
         "reset_chat": "Réinitialiser la Conversation",
         "chat_placeholder": "Tapez votre message ici...",
         "header_caption": "Chatboxd vous permet de discuter avec vos statistiques LetterBoxd !",
@@ -105,6 +111,8 @@ TRANSLATIONS = {
         ],
     },
     "DE": {
+        "select_language": "Wähle deine Sprache",
+        "select_provider": "Wähle deinen LLM-Anbieter",
         "reset_chat": "Konversation zurücksetzen",
         "chat_placeholder": "Geben Sie hier Ihre Nachricht ein...",
         "header_caption": "Chatboxd ermöglicht es Ihnen, mit Ihren LetterBoxd-Statistiken zu chatten!",
@@ -137,6 +145,8 @@ TRANSLATIONS = {
         ],
     },
     "IT": {
+        "select_language": "Seleziona la tua lingua",
+        "select_provider": "Seleziona il tuo provider di LLM",
         "reset_chat": "Reimposta Conversazione",
         "chat_placeholder": "Scrivi qui il tuo messaggio...",
         "header_caption": "Chatboxd ti permette di chattare con le tue statistiche di LetterBoxd!",
@@ -169,6 +179,8 @@ TRANSLATIONS = {
         ],
     },
     "PT": {
+        "select_language": "Selecione seu idioma",
+        "select_provider": "Selecione seu provedor de LLM",
         "reset_chat": "Reiniciar conversa",
         "chat_placeholder": "Digite sua mensagem aqui...",
         "header_caption": "Chatboxd permite que você converse com suas estatísticas LetterBoxd!",

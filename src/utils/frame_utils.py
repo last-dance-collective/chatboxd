@@ -25,8 +25,10 @@ def display_interface():
 def display_start_page():
     st.markdown(get_session_val("texts")["start_page_markdown"])
 
+    st.caption(get_session_val("texts")["select_language"])
     selected_language = st.selectbox(
         label="Selecciona tu idioma",
+        label_visibility="collapsed",
         options=get_session_val("available_languages"),
         format_func=lambda x: LANGUAGE_NAMES.get(x),
     )
@@ -45,7 +47,7 @@ def display_start_page():
 
 
 def display_provider_selection():
-    st.caption("Selecciona tu proveedor de LLM")
+    st.caption(get_session_val("texts")["select_provider"])
     providers = ["OpenAI", "Ollama"]
     cols = st.columns(2 + len(providers), gap="medium")
     for i, col in enumerate(cols[1:-1]):
@@ -66,7 +68,9 @@ def display_provider_selection():
                 st.rerun()
 
     st.markdown(
-        MODEL_PROVIDERS[get_session_val("language")][get_session_val("provider")]
+        MODEL_PROVIDERS.get(get_session_val("language"), MODEL_PROVIDERS["ES"])[
+            get_session_val("provider")
+        ]
     )
 
 
