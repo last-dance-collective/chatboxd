@@ -1,3 +1,4 @@
+import itertools
 import random
 import streamlit as st
 import pandas as pd
@@ -7,6 +8,7 @@ from catalog.translations import LANGUAGE_NAMES, MODEL_PROVIDERS
 from services.sqlite_service import Database, Operator
 from services.daily_message_service import get_daily_message
 from catalog.styles import card_css
+from config import MODELS
 
 
 def display_interface():
@@ -25,8 +27,10 @@ def display_interface():
 def display_start_page():
     st.markdown(get_session_val("texts")["start_page_markdown"])
 
+    st.caption(get_session_val("texts")["select_language"])
     selected_language = st.selectbox(
         label="Selecciona tu idioma",
+        label_visibility="collapsed",
         options=get_session_val("available_languages"),
         format_func=lambda x: LANGUAGE_NAMES.get(x),
     )
@@ -45,28 +49,37 @@ def display_start_page():
 
 
 def display_provider_selection():
-    st.caption("Selecciona tu proveedor de LLM")
-    providers = ["OpenAI", "Ollama"]
-    cols = st.columns(2 + len(providers), gap="medium")
-    for i, col in enumerate(cols[1:-1]):
-        is_current_provider = get_session_val("provider") == providers[i]
-        with col.container(border=True):
-            emoji = "🔘" if not is_current_provider else "🟢"
-            st.image(
-                "public/" + providers[i].lower() + ".png",
-                use_container_width=True,
-            )
-            if st.button(
-                providers[i],
-                icon=emoji,
-                key=providers[i],
-                use_container_width=True,
-            ):
-                set_session_val("provider", providers[i])
-                st.rerun()
+    st.caption(get_session_val("texts")["select_provider"])
+
+    providers = MODELS.keys()  # MODELS = {provider: model_list}
+    all_models = list(itertools.chain(*MODELS.values()))
+
+    cols = st.columns(len(all_models), gap="medium")
+    col_i = 0
+    for provider in providers:
+        for model in MODELS[provider]:
+            is_current_model = get_session_val("model") == model
+            with cols[col_i]:
+                emoji = "🔘" if not is_current_model else "🟢"
+                st.image(
+                    "public/" + provider.lower() + ".png",
+                    use_container_width=True,
+                )
+                if st.button(
+                    model,
+                    icon=emoji,
+                    key=f"{provider}_{model}",
+                    use_container_width=True,
+                ):
+                    set_session_val("provider", provider)
+                    set_session_val("model", model)
+                    st.rerun()
+            col_i += 1
 
     st.markdown(
-        MODEL_PROVIDERS[get_session_val("language")][get_session_val("provider")]
+        MODEL_PROVIDERS.get(get_session_val("language"), MODEL_PROVIDERS["ES"])[
+            get_session_val("provider")
+        ]
     )
 
 
