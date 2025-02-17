@@ -4,6 +4,11 @@ import streamlit as st
 import pandas as pd
 
 from utils.session_utils import reset_session, get_session_val, set_session_val
+from enviroment_config import (
+    get_local_ollama_models,
+    provider_available,
+    configure_openai_api_key,
+)
 from catalog.translations import LANGUAGE_NAMES, MODEL_PROVIDERS
 from services.sqlite_service import Database, Operator
 from services.daily_message_service import get_daily_message
@@ -51,13 +56,56 @@ def display_start_page():
 def display_provider_selection():
     st.caption(get_session_val("texts")["select_provider"])
 
-    providers = MODELS.keys()  # MODELS = {provider: model_list}
-    all_models = list(itertools.chain(*MODELS.values()))
+    # The provider-model list must be set in the config file.
+    # It follows the format: MODELS = {provider: model_list}
 
-    cols = st.columns(len(all_models), gap="medium")
-    col_i = 0
+    providers = MODELS.keys()
+
+    configure_openai_api_key()
+
+    available_providers = [
+        provider for provider in providers if provider_available(provider)
+    ]
+
+    if "Ollama" in available_providers:
+        MODELS["Ollama"] = get_local_ollama_models()
+
+    available_models = sorted(
+        [model for provider in available_providers for model in MODELS[provider]]
+    )
+
+    if len(available_models) > 5:
+        display_model_dropdown(available_providers)
+    elif available_models:
+        display_model_buttons(available_models, available_providers)
+
     for provider in providers:
-        for model in MODELS[provider]:
+        if provider in available_providers:
+            expander_text = f"✅ Provider **{provider}** is available"
+        else:
+            expander_text = f"⚠️ Provider **{provider}** not available"
+
+        with st.expander(expander_text):
+            st.markdown(
+                MODEL_PROVIDERS.get(get_session_val("language"), MODEL_PROVIDERS["ES"])[
+                    provider
+                ]
+            )
+
+
+def display_model_buttons(available_models, available_providers):
+    if len(available_models) == 1:
+        col_i = 2
+    elif len(available_models) < 4:
+        col_i = 1
+    else:
+        col_i = 0
+
+    cols = st.columns(2 * col_i + len(available_models), gap="medium")
+
+    for provider in available_providers:
+        models = MODELS[provider]
+        for model in models:
             is_current_model = get_session_val("model") == model
             with cols[col_i]:
                 emoji = "🔘" if not is_current_model else "🟢"
@@ -76,11 +124,26 @@ def display_provider_selection():
                     st.rerun()
             col_i += 1
 
-    st.markdown(
-        MODEL_PROVIDERS.get(get_session_val("language"), MODEL_PROVIDERS["ES"])[
-            get_session_val("provider")
-        ]
+
+def display_model_dropdown(available_providers):
+    model_providers = {
+        model: provider
+        for provider in available_providers
+        for model in sorted(MODELS[provider])
+    }
+
+    model = st.selectbox(
+        label="Selecciona tu modelo",
+        label_visibility="collapsed",
+        placeholder="Selecciona un modelo",
+        options=model_providers.keys(),
+        format_func=lambda x: f"{model_providers.get(x)} - {x}",
     )
+
+    if model != get_session_val("model"):
+        set_session_val("model", model)
+        set_session_val("provider", model_providers.get(model))
+        st.rerun()
 
 
 def reset_conversation():
