@@ -54,7 +54,7 @@ def display_start_page():
 
 
 def display_provider_selection():
-    st.caption(get_session_val("texts")["select_provider"])
+    st.caption(get_session_val("texts")["select_model"])
 
     # The provider-model list must be set in the config file.
     # It follows the format: MODELS = {provider: model_list}
@@ -80,12 +80,13 @@ def display_provider_selection():
         display_model_buttons(available_models, available_providers)
 
     for provider in providers:
-        if provider in available_providers:
-            expander_text = f"✅ Provider **{provider}** is available"
-        else:
-            expander_text = f"⚠️ Provider **{provider}** not available"
+        expander_text = (
+            get_session_val("texts")["available_provider"]
+            if provider in available_providers
+            else get_session_val("texts")["not_available_provider"]
+        )
 
-        with st.expander(expander_text):
+        with st.expander(expander_text.format(provider=provider)):
             st.markdown(
                 MODEL_PROVIDERS.get(get_session_val("language"), MODEL_PROVIDERS["ES"])[
                     provider
@@ -133,9 +134,9 @@ def display_model_dropdown(available_providers):
     }
 
     model = st.selectbox(
-        label="Selecciona tu modelo",
+        label=get_session_val("texts")["select_model"],
         label_visibility="collapsed",
-        placeholder="Selecciona un modelo",
+        placeholder=get_session_val("texts")["select_model"],
         options=model_providers.keys(),
         format_func=lambda x: f"{model_providers.get(x)} - {x}",
     )
