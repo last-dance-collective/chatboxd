@@ -10,7 +10,9 @@ LANGUAGE_NAMES = {
 TRANSLATIONS = {
     "ES": {
         "select_language": "Selecciona tu idioma",
-        "select_provider": "Selecciona tu proveedor de LLM",
+        "select_model": "Selecciona un LLM",
+        "available_provider": "✅ Proveedor {provider} disponible",
+        "not_available_provider": "⚠️ Proveedor {provider} no disponible",
         "reset_chat": "Reiniciar Conversación",
         "chat_placeholder": "Escribe tu mensaje aquí...",
         "header_caption": "¡Chatboxd te permite chatear con tus estadisticas de LetterBoxd!",
@@ -44,7 +46,9 @@ TRANSLATIONS = {
     },
     "EN": {
         "select_language": "Select your language",
-        "select_provider": "Select your LLM provider",
+        "select_model": "Choose a Large Language Model",
+        "available_provider": "✅ Provider {provider} available",
+        "not_available_provider": "⚠️ Provider {provider} not available",
         "reset_chat": "Reset Conversation",
         "chat_placeholder": "Type your message here...",
         "header_caption": "Chatboxd lets you chat with your LetterBoxd stats!",
@@ -78,7 +82,9 @@ TRANSLATIONS = {
     },
     "FR": {
         "select_language": "Sélectionnez votre langue",
-        "select_provider": "Sélectionnez votre fournisseur de LLM",
+        "select_model": "Sélectionnez un LLM",
+        "available_provider": "✅ Fournisseur {provider} disponible",
+        "not_available_provider": "⚠️ Fournisseur {provider} non disponible",
         "reset_chat": "Réinitialiser la Conversation",
         "chat_placeholder": "Tapez votre message ici...",
         "header_caption": "Chatboxd vous permet de discuter avec vos statistiques LetterBoxd !",
@@ -112,7 +118,9 @@ TRANSLATIONS = {
     },
     "DE": {
         "select_language": "Wähle deine Sprache",
-        "select_provider": "Wähle deinen LLM-Anbieter",
+        "select_model": "Wähle ein LLM",
+        "available_provider": "✅ Provider {provider} verfügbar",
+        "not_available_provider": "⚠️ Provider {provider} nicht verfügbar",
         "reset_chat": "Konversation zurücksetzen",
         "chat_placeholder": "Geben Sie hier Ihre Nachricht ein...",
         "header_caption": "Chatboxd ermöglicht es Ihnen, mit Ihren LetterBoxd-Statistiken zu chatten!",
@@ -146,7 +154,9 @@ TRANSLATIONS = {
     },
     "IT": {
         "select_language": "Seleziona la tua lingua",
-        "select_provider": "Seleziona il tuo provider di LLM",
+        "select_model": "Seleziona un LLM",
+        "available_provider": "✅ Provider {provider} disponibile",
+        "not_available_provider": "⚠️ Provider {provider} non disponibile",
         "reset_chat": "Reimposta Conversazione",
         "chat_placeholder": "Scrivi qui il tuo messaggio...",
         "header_caption": "Chatboxd ti permette di chattare con le tue statistiche di LetterBoxd!",
@@ -180,7 +190,9 @@ TRANSLATIONS = {
     },
     "PT": {
         "select_language": "Selecione seu idioma",
-        "select_provider": "Selecione seu provedor de LLM",
+        "select_model": "Selecione um LLM",
+        "available_provider": "✅ Provedor {provider} disponível",
+        "not_available_provider": "⚠️ Provedor {provider} não disponível",
         "reset_chat": "Reiniciar conversa",
         "chat_placeholder": "Digite sua mensagem aqui...",
         "header_caption": "Chatboxd permite que você converse com suas estatísticas LetterBoxd!",
@@ -275,6 +287,92 @@ OPENAI_API_KEY=...
 ```
 
 Una vez configuradas las credenciales, puedes comenzar a chatear con **Chatboxd**. Ten en cuenta que el uso de la API de OpenAI puede acarrear costes.""",
-        None: "Selecciona un proveedor para continuar.",
+    },
+    "EN": {
+        "Ollama": """**Ollama** allows you to run a Large Language Model in your own device.
+
+To use Ollama, first you must install it in your machine and download the model you want to use, by running `ollama pull <model_name>` (make sure the same model is set in `config.py`).
+
+To make the model available, run `ollama serve`.
+
+Once you're done, you can start chatting with **Chatboxd**.
+""",
+        "OpenAI": """**OpenAI** allows you to access Large Language Models through their API.
+
+To get started, you must sign up on the platform and get your API credentials. Once you have your credentials, you must store them in environment variables or in the `secrets.env` file:
+
+```
+AZURE_OPENAI_ENDPOINT=...
+OPENAI_API_VERSION=...
+OPENAI_API_KEY=...
+```
+
+Once you have your credentials, you can start chatting with **Chatboxd**. Note that using the OpenAI API may incur costs.""",
+    },
+    "FR": {
+        "Ollama": """**Ollama** vous permet d'exécuter un modèle de langage à votre propre appareil.
+
+Pour l'utiliser, vous devez d'abord l'installer sur votre machine et télécharger le modèle que vous souhaitez utiliser, en exécutant `ollama pull <model_name>` (assurez-vous que le même modèle est configuré dans `config.py`).
+
+Pour rendre le modèle disponible, exécutez `ollama serve`.
+
+Une fois que vous avez terminé, vous pouvez commencer à discuter avec **Chatboxd**.
+""",
+        "OpenAI": """**OpenAI** vous permet d'accéder aux modèles de langage à travers leur API.
+
+Pour commencer, vous devez vous inscrire sur la plateforme et obtenir vos identifiants d'API. Une fois que vous avez vos identifiants, vous devez les stocker dans des variables d'environnement ou dans le fichier `secrets.env`:
+
+```
+AZURE_OPENAI_ENDPOINT=...
+OPENAI_API_VERSION=...
+OPENAI_API_KEY=...
+```
+
+Après cela, vous pouvez commencer à utiliser **Chatboxd**. Notez que l'utilisation de l'API OpenAI peut entraîner des frais.
+""",
+    },
+    "DE": {
+        "Ollama": """**Ollama** ermöglicht es Ihnen, ein Sprachmodell auf Ihrem eigenen Gerät auszuführen. 
+
+Dazu müssen Sie Ollama auf Ihrem System installieren und das zu verwendende Modell mit `ollama pull <model_name>` herunterladen (stellen Sie sicher, dass dasselbe Modell in `config.py` konfiguriert ist). 
+        
+Um das Modell bereitzustellen, führen Sie `ollama serve` aus. 
+        
+Sobald dies erledigt ist, können Sie mit **Chatboxd** chatten.
+""",
+        "OpenAI": """**OpenAI** ermöglicht den Zugriff auf Sprachmodelle über seine API. 
+
+Um zu beginnen, müssen Sie sich auf der Plattform registrieren und Ihre API-Anmeldedaten erhalten. Sobald Sie Ihre Anmeldedaten haben, sollten Sie diese in Umgebungsvariablen oder in der Datei `secrets.env` speichern:
+
+```
+AZURE_OPENAI_ENDPOINT=...
+OPENAI_API_VERSION=...
+OPENAI_API_KEY=...
+```
+
+Nachdem die Anmeldedaten konfiguriert wurden, können Sie mit **Chatboxd** chatten. Beachten Sie, dass die Nutzung der OpenAI-API Kosten verursachen kann.
+""",
+    },
+    "PT": {
+        "Ollama": """**Ollama** permite que você execute um modelo de linguagem em seu próprio dispositivo. 
+
+Para isso, você precisará instalar o Ollama em seu sistema e baixar o modelo a ser usado com `ollama pull <model_name>` (certifique-se de que o mesmo modelo esteja configurado em `config.py`). 
+        
+Para disponibilizar o modelo, execute `ollama serve`. 
+        
+Depois de fazer isso, você pode começar a conversar com **Chatboxd**.
+""",
+        "OpenAI": """**OpenAI** permite o acesso a modelos de linguagem através de sua API. 
+
+Para começar, você precisará se registrar na plataforma e obter suas credenciais de API. Depois de obter suas credenciais, armazene-as em variáveis de ambiente ou no arquivo `secrets.env`:
+
+```
+AZURE_OPENAI_ENDPOINT=...
+OPENAI_API_VERSION=...
+OPENAI_API_KEY=...
+```
+
+Após configurar as credenciais, você pode começar a conversar com **Chatboxd**. Observe que o uso da API do OpenAI pode acarretar custos.
+""",
     },
 }
