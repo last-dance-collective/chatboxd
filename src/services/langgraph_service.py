@@ -4,7 +4,7 @@ from typing import AsyncIterator
 
 from langchain_core.messages import SystemMessage, HumanMessage, RemoveMessage
 from langchain_ollama import ChatOllama
-from langchain_openai import AzureChatOpenAI
+from langchain_openai import ChatOpenAI
 from langgraph.graph import StateGraph, START
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.prebuilt import ToolNode, tools_condition
@@ -27,7 +27,7 @@ from services.agent_tools import (
 class ChatboxdAgent:
     def __init__(
         self,
-        llm: ChatOllama | AzureChatOpenAI,
+        llm: ChatOllama | ChatOpenAI,
         username: str = "",
     ):
         language = get_session_val("language")

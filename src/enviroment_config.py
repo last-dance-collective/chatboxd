@@ -19,11 +19,7 @@ def provider_available(provider_name):
 
 
 def openai_available():
-    available = (
-        os.environ.get("AZURE_OPENAI_ENDPOINT")
-        and os.environ.get("OPENAI_API_VERSION")
-        and os.environ.get("OPENAI_API_KEY")
-    )
+    available = os.environ.get("OPENAI_API_KEY")
     if not available:
         logger.warning("OpenAI is not available")
 
@@ -34,11 +30,7 @@ def configure_openai_api_key():
     env_path = Path(".") / "secrets.env"
     load_dotenv(dotenv_path=env_path)
 
-    if (
-        os.environ.get("AZURE_OPENAI_ENDPOINT")
-        and os.environ.get("OPENAI_API_VERSION")
-        and os.environ.get("OPENAI_API_KEY")
-    ):
+    if os.environ.get("OPENAI_API_KEY"):
         logger.info("🔑 Model env variables are loaded")
     else:
         logger.error("🔑🔴 Model env variables not loaded")
