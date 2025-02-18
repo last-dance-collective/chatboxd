@@ -1,7 +1,6 @@
 from langchain_ollama import ChatOllama
-from langchain_openai import AzureChatOpenAI
+from langchain_openai import ChatOpenAI
 
-from enviroment_config import configure_openai_api_key
 from utils.logger_utils import logger
 
 
@@ -16,10 +15,10 @@ def ollama_model(model: str, temperature: int = 0) -> ChatOllama:
     )
 
 
-def openai_model(model: str, temperature: int = 0) -> AzureChatOpenAI:
+def openai_model(model: str, temperature: int = 0) -> ChatOpenAI:
     """Returns the OpenAI LLM object for the specified model."""
     logger.info("⚙️  Using OpenAI")
-    return AzureChatOpenAI(
+    return ChatOpenAI(
         model=model,
         temperature=temperature,
     )
