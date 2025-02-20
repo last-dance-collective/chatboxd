@@ -133,6 +133,12 @@ uv run -m streamlit run src/main.py
 
 This section documents the engineering process carried out for the operation of the project. It is a section in which technical concepts will be deepened in detail for those people who want the necessary knowledge to carry out a similar project.
 
+### Design
+
+Chatboxd leverages several components to create its chat-based experience. In the core of the application lies a Large Language Model, orchestrated through [LangChain](https://www.langchain.com/) and [LangGraph](https://www.langchain.com/langgraph), and served either through the [OpenAI API](https://platform.openai.com/) or [Ollama](https://www.ollama.com/). The database is built in SQLite employing the user data from Letterboxd, whereas the user interface is powered by [Streamlit](https://streamlit.io/).   
+
+![Chatboxd Diagram](public/chatboxd_diagram_round.png)
+
 ### Agent
 
 We have developed a ReAct agent architecture based on the following concepts:
@@ -141,7 +147,7 @@ We have developed a ReAct agent architecture based on the following concepts:
 -   `observe` - Pass the tool output back to the model.
 -   `reason` - Let the model reason about the tool output to decide what to do next (e.g., call another tool or just respond directly).
 
-Here is a simple diagram of our architecture used:
+Here is a simple diagram of the agent architecture:
 
 ![Architecture Diagram](https://github.com/user-attachments/assets/e48dedcc-73a0-4e05-9b40-ad28871eacb7)
 
