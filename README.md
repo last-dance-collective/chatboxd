@@ -9,6 +9,7 @@ It is multi-language, allows the use of several LLM models and contains many oth
 ## Contents
 
 1. [Execution](#execution)
+    - [Requirements](#requirements)
     - [Environment Variables](#environment-variables)
     - [Load Your Data](#load-your-data)
     - [Run App](#run-app)
@@ -82,14 +83,14 @@ To load your data into a new SQLite database, follow these steps:
 2. Extract the data and find the two CSV files named `reviews.csv` and `diary.csv`.
 3. Place these files in the `data_ingestion/user_data/` directory.
 
-> [!NOTE] > `reviews.csv` should have the following columns:
->
+> [!NOTE]
+> `reviews.csv` should have the following columns:
 > -   `Date`: The date of the review.
 > -   `Name`: The name of the movie.
 > -   `Review`: The review text.
 
-> [!NOTE] > `diary.csv` should have the following columns:
->
+> [!NOTE]
+>  `diary.csv` should have the following columns:
 > -   `Date`: The date the movie was watched.
 > -   `Name`: The name of the movie.
 > -   `Year`: The year the movie was released.
