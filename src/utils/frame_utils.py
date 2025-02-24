@@ -74,8 +74,10 @@ def display_provider_selection():
     # It follows the format: MODELS = {provider: model_list}
 
     providers = MODELS.keys()
-
-    configure_openai_api_key()
+    try:
+        configure_openai_api_key()
+    except Exception:
+        st.error(get_session_val("texts")["not_openai_api_key"])
 
     available_providers = [
         provider for provider in providers if provider_available(provider)
