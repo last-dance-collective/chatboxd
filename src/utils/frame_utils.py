@@ -1,9 +1,13 @@
-import itertools
 import random
 import streamlit as st
 import pandas as pd
 
-from utils.session_utils import reset_session, get_session_val, set_session_val
+from utils.session_utils import (
+    reset_session,
+    get_session_val,
+    set_session_val,
+    open_settings,
+)
 from enviroment_config import (
     get_local_ollama_models,
     provider_available,
@@ -26,21 +30,31 @@ def display_interface():
         display_daily_message()
         display_suggest_labels()
         reset_conversation()
+        configure_app()
         display_chat_input()
 
 
 def display_start_page():
-    st.markdown(get_session_val("texts")["start_page_markdown"])
+    if not get_session_val("settings"):
+        st.markdown(get_session_val("texts")["start_page_markdown"])
+    else:
+        st.markdown("# " + get_session_val("texts")["configure_app"])
 
     st.caption(get_session_val("texts")["select_language"])
+
+    available_languages = get_session_val("available_languages")
+    current_lang = get_session_val("language")
+    lang_index = list(available_languages).index(current_lang) if current_lang else 0
+
     selected_language = st.selectbox(
         label="Selecciona tu idioma",
         label_visibility="collapsed",
-        options=get_session_val("available_languages"),
+        options=available_languages,
         format_func=lambda x: LANGUAGE_NAMES.get(x),
+        index=lang_index,
     )
 
-    if selected_language != get_session_val("language"):
+    if selected_language != current_lang:
         set_session_val("language", selected_language)
         st.rerun()
 
@@ -60,7 +74,6 @@ def display_provider_selection():
     # It follows the format: MODELS = {provider: model_list}
 
     providers = MODELS.keys()
-
     configure_openai_api_key()
 
     available_providers = [
@@ -133,15 +146,21 @@ def display_model_dropdown(available_providers):
         for model in sorted(MODELS[provider])
     }
 
+    current_model = get_session_val("model")
+    model_index = (
+        list(model_providers.keys()).index(current_model) if current_model else 0
+    )
+
     model = st.selectbox(
         label=get_session_val("texts")["select_model"],
         label_visibility="collapsed",
         placeholder=get_session_val("texts")["select_model"],
         options=model_providers.keys(),
         format_func=lambda x: f"{model_providers.get(x)} - {x}",
+        index=model_index,
     )
 
-    if model != get_session_val("model"):
+    if model != current_model:
         set_session_val("model", model)
         set_session_val("provider", model_providers.get(model))
         st.rerun()
@@ -154,6 +173,17 @@ def reset_conversation():
             texts["reset_chat"],
             icon="🔄",
             on_click=reset_session,
+            use_container_width=True,
+        )
+
+
+def configure_app():
+    text = get_session_val("texts")
+    with st.sidebar:
+        st.button(
+            text["configure_app"],
+            icon="⚙️",
+            on_click=open_settings,
             use_container_width=True,
         )
 

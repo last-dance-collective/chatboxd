@@ -34,7 +34,6 @@ def configure_openai_api_key():
         logger.info("🔑 Model env variables are loaded")
     else:
         logger.error("🔑🔴 Model env variables not loaded")
-        raise Exception
 
 
 def ollama_available():

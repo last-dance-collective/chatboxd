@@ -38,3 +38,8 @@ def get_session_val(key: str, default=None, cache_obj=st.session_state):
 
 def save_session_message(author: str, content: str):
     st.session_state.messages.append({"role": author, "content": content})
+
+
+def open_settings():
+    set_session_val("start_page", True)
+    set_session_val("settings", True)
