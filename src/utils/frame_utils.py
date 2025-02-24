@@ -1,3 +1,4 @@
+import os
 import random
 import streamlit as st
 import pandas as pd
@@ -8,6 +9,7 @@ from utils.session_utils import (
     set_session_val,
     open_settings,
 )
+from utils.file_loader_utils import save_uploaded_files, cleanup_files
 from enviroment_config import (
     get_local_ollama_models,
     provider_available,
@@ -19,19 +21,69 @@ from services.daily_message_service import get_daily_message
 from catalog.styles import card_css
 from config import MODELS
 
+from data_ingestion.main import main as data_ingestion_main
+
+
+EXPECTED_FILENAMES = {"reviews.csv", "diary.csv"}
+
 
 def display_interface():
     display_header()
 
-    if get_session_val("start_page"):
-        display_start_page()
+    if not get_session_val("is_db_created"):
+        data_source_selector()
     else:
-        st.logo("public/chatboxd.png", size="large")
-        display_daily_message()
-        display_suggest_labels()
-        reset_conversation()
-        configure_app()
-        display_chat_input()
+        if get_session_val("start_page"):
+            display_start_page()
+        else:
+            st.logo("public/chatboxd.png", size="large")
+            display_daily_message()
+            display_suggest_labels()
+            reset_conversation()
+            display_chat_input()
+
+
+def data_source_selector():
+    st.markdown(get_session_val("start_page_markdown_no_db"))
+    with st.form("files_uploader_form"):
+        uploaded_files = st.file_uploader(
+            "Upload files",
+            type=["csv"],
+            accept_multiple_files=True,
+            help="Drag and drop your reviews and diary csv files",
+        )
+        submitted = st.form_submit_button("Submit")
+
+    if submitted:
+        if len(uploaded_files) != 2:
+            st.warning(
+                "You only has uploaded one file. Remember, you have to upload both csv, reviews and diary"
+            )
+            st.stop()
+
+        uploaded_filenames = {file.name for file in uploaded_files}
+        if uploaded_filenames != EXPECTED_FILENAMES:
+            st.error(
+                "Error: Uploaded files must be named 'reviews.csv' and 'diary.csv'. Please try again."
+            )
+            st.stop()
+
+        target_dir = os.path.join(os.getcwd(), "src", "data_ingestion", "user_data")
+        st.write(f"Target directory: {target_dir}")
+
+        saved_file_paths = save_uploaded_files(uploaded_files, target_dir)
+
+        try:
+            data_ingestion_main()
+            st.success("Data ingestion process executed successfully.")
+        except Exception as e:
+            st.error(f"Error executing data ingestion process: {e}")
+            cleanup_files(saved_file_paths)
+            st.stop()
+
+        cleanup_files(saved_file_paths)
+        set_session_val("is_db_created", True)
+        st.rerun()
 
 
 def display_start_page():
