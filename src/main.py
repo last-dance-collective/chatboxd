@@ -17,8 +17,9 @@ async def handle_user_input(prompt: str):
 async def main():
     initialize_app()
 
-    prompt = process_user_input()
-    await handle_user_input(prompt)
+    if not get_session_val("start_page"):
+        prompt = process_user_input()
+        await handle_user_input(prompt)
 
 
 if __name__ == "__main__":
