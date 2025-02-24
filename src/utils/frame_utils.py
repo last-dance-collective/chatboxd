@@ -1,9 +1,13 @@
-import itertools
 import random
 import streamlit as st
 import pandas as pd
 
-from utils.session_utils import reset_session, get_session_val, set_session_val
+from utils.session_utils import (
+    reset_session,
+    get_session_val,
+    set_session_val,
+    open_settings,
+)
 from enviroment_config import (
     get_local_ollama_models,
     provider_available,
@@ -26,21 +30,31 @@ def display_interface():
         display_daily_message()
         display_suggest_labels()
         reset_conversation()
+        configure_app()
         display_chat_input()
 
 
 def display_start_page():
-    st.markdown(get_session_val("texts")["start_page_markdown"])
+    if not get_session_val("settings"):
+        st.markdown(get_session_val("texts")["start_page_markdown"])
+    else:
+        st.markdown("# " + get_session_val("texts")["configure_app"])
 
     st.caption(get_session_val("texts")["select_language"])
+
+    available_languages = get_session_val("available_languages")
+    current_lang = get_session_val("language")
+    lang_index = list(available_languages).index(current_lang) if current_lang else 0
+
     selected_language = st.selectbox(
         label="Selecciona tu idioma",
         label_visibility="collapsed",
-        options=get_session_val("available_languages"),
+        options=available_languages,
         format_func=lambda x: LANGUAGE_NAMES.get(x),
+        index=lang_index,
     )
 
-    if selected_language != get_session_val("language"):
+    if selected_language != current_lang:
         set_session_val("language", selected_language)
         st.rerun()
 
@@ -154,6 +168,17 @@ def reset_conversation():
             texts["reset_chat"],
             icon="🔄",
             on_click=reset_session,
+            use_container_width=True,
+        )
+
+
+def configure_app():
+    text = get_session_val("texts")
+    with st.sidebar:
+        st.button(
+            text["configure_app"],
+            icon="⚙️",
+            on_click=open_settings,
             use_container_width=True,
         )
 
