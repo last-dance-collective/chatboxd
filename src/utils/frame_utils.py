@@ -146,15 +146,21 @@ def display_model_dropdown(available_providers):
         for model in sorted(MODELS[provider])
     }
 
+    current_model = get_session_val("model")
+    model_index = (
+        list(model_providers.keys()).index(current_model) if current_model else 0
+    )
+
     model = st.selectbox(
         label=get_session_val("texts")["select_model"],
         label_visibility="collapsed",
         placeholder=get_session_val("texts")["select_model"],
         options=model_providers.keys(),
         format_func=lambda x: f"{model_providers.get(x)} - {x}",
+        index=model_index,
     )
 
-    if model != get_session_val("model"):
+    if model != current_model:
         set_session_val("model", model)
         set_session_val("provider", model_providers.get(model))
         st.rerun()
