@@ -74,7 +74,7 @@ export OPENAI_API_KEY=<Your OpenAI API key>
 
 ### Load Your Data
 
-**All files related to the data ingestion are located in the folder _data_ingestion_ located in the root directory**
+**All files related to the data ingestion are located in the folder _data_ingestion_ located in the src directory**
 To load your data into a new SQLite database, follow these steps:
 
 #### Prepare Your Data Files

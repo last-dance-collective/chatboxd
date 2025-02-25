@@ -1,10 +1,30 @@
+import os
 import sqlite3
 import csv
 from pathlib import Path
-from utils.sqlite_utils import run_query, run_insert
+from utils.logger_utils import logger
+from data_ingestion.sqlite_utils import run_query, run_insert
+
+current_dir = os.getcwd()
+os.path.join(current_dir, "src", "data_ingestion", "user_data")
 
 USER_NAME = "mavilam"  # Change this to your username or the username you want to use
-DB_PATH = "../letterboxd.db"
+DB_PATH = os.path.join(current_dir, "letterboxd.db")
+
+REVIEWS_FILE = "reviews.csv"
+DIARY_FILE = "diary.csv"
+
+REQUIRED_REVIEWS_COLUMNS = ["Date", "Name", "Review"]
+REQUIRED_DIARY_COLUMNS = [
+    "Date",
+    "Name",
+    "Year",
+    "Letterboxd URI",
+    "Rating",
+    "Rewatch",
+    "Tags",
+    "Watched Date",
+]
 
 
 def create_reviews_table(db):
@@ -54,7 +74,7 @@ def create_file_parser(file_name):
 
 
 def insert_reviews_entries(db):
-    parser = create_file_parser("reviews.csv")
+    parser = create_file_parser(REVIEWS_FILE)
     query = """
         INSERT INTO reviews (date, name, review)
         VALUES (?, ?, ?)
@@ -62,11 +82,11 @@ def insert_reviews_entries(db):
     for row in parser:
         params = (row["Date"], row["Name"], row["Review"])
         run_insert(db, query, params)
-    print("Reviews entries read successfully.")
+    logger.info("Reviews entries read successfully.")
 
 
 def insert_diary_entries(db):
-    parser = create_file_parser("diary.csv")
+    parser = create_file_parser(DIARY_FILE)
     query = """
         INSERT INTO diary (date, name, year, letterboxd_uri, rating, rewatch, tags, watched_date, username, review_id)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -91,17 +111,35 @@ def insert_diary_entries(db):
             entry_id,
         )
         run_insert(db, query, params)
-    print("Diary entries read successfully.")
+    logger.info("Diary entries read successfully.")
+
+
+def check_file_rows(file_name, required_columns):
+    parser = create_file_parser(file_name)
+    for row in parser:
+        for column in required_columns:
+            if column not in row:
+                raise ValueError(f"Missing required column '{column}' in {file_name}")
+    logger.info(f"{file_name} has the proper rows.")
 
 
 def main():
+    db_path = Path(DB_PATH).resolve()
+    logger.info(f"Database path: {db_path}")
     db = sqlite3.connect(DB_PATH)
     try:
+        check_file_rows(REVIEWS_FILE, REQUIRED_REVIEWS_COLUMNS)
+        check_file_rows(
+            DIARY_FILE,
+            REQUIRED_DIARY_COLUMNS,
+        )
         create_tables(db)
         insert_reviews_entries(db)
         insert_diary_entries(db)
+    except ValueError as err:
+        raise err
     except Exception as err:
-        print("Error in main:", err)
+        logger.error("Error in main:", err)
     finally:
         db.close()
 

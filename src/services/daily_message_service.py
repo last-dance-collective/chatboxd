@@ -4,8 +4,6 @@ from typing import Any, Dict, List
 from services.sqlite_service import Database, Operator
 from utils.session_utils import get_session_val
 
-db = Database("letterboxd.db")
-
 
 def get_daily_message():
     now = datetime.now().strftime("%Y-%m-%d")
@@ -14,6 +12,8 @@ def get_daily_message():
 
 
 def find_diary_entry(date: str) -> List[Dict[str, Any]]:
+    db = Database("letterboxd.db")
+
     filters = [
         {
             "column": "watched_date",
@@ -58,4 +58,4 @@ def compose_message_more_than_one_movie(movies: List[Dict[str, Any]]) -> str:
         )
         for movie in movies
     )
-    return f"{texts["daly_msg_start"]}{content}"
+    return f"{texts['daly_msg_start']}{content}"

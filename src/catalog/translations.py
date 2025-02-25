@@ -7,6 +7,10 @@ LANGUAGE_NAMES = {
     "PT": "🇵🇹 Português",
 }
 
+NO_DB_TEXT = """# Welcome to Chatboxd!
+Looks like you don't have a database with the letterboxd data. 
+Go to the [export data section](https://letterboxd.com/settings/data/) on Letterboxd and download your data. Extract the data and find the two CSV files named `reviews.csv` and `diary.csv`. These two files are the ones required for building the database."""
+
 TRANSLATIONS = {
     "ES": {
         "select_language": "Selecciona tu idioma",
