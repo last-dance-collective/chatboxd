@@ -170,7 +170,7 @@ def display_model_buttons(available_models, available_providers):
     cols = st.columns(2 * col_i + len(available_models), gap="medium")
 
     for provider in available_providers:
-        models = MODELS[provider]
+        models = sorted(MODELS[provider])
         for model in models:
             is_current_model = get_session_val("model") == model
             with cols[col_i]:

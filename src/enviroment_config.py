@@ -5,6 +5,7 @@ import subprocess
 
 import streamlit as st
 
+from config import OLLAMA_SUPPORTED_MODELS
 from utils.logger_utils import logger
 
 
@@ -50,14 +51,22 @@ def ollama_available():
     return available
 
 
-def get_local_ollama_models():
+def get_local_ollama_models(only_supported=True):
     try:
         result = subprocess.run(
             ["ollama", "list"], capture_output=True, text=True, check=True
         )
         output = result.stdout.splitlines()
 
-        ollama_models = [line.split()[0] for line in output[1:] if line]
+        if only_supported:
+            ollama_models = [
+                line.split()[0]
+                for line in output[1:]
+                if line.split(":")[0] in OLLAMA_SUPPORTED_MODELS
+            ]
+
+        else:
+            ollama_models = [line.split()[0] for line in output[1:] if line]
 
         return ollama_models
 
