@@ -16,4 +16,5 @@ dependencies = [
     "matplotlib>=3.9.2",
     "plotly>=5.24.1",
     "python-dotenv>=1.0.1",
+    "langchain-google-genai>=2.0.7",
 ]

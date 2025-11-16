@@ -8,7 +8,7 @@ LANGUAGE_NAMES = {
 }
 
 NO_DB_TEXT = """# Welcome to Chatboxd!
-Looks like you don't have a database with the letterboxd data. 
+Looks like you don't have a database with the letterboxd data.
 Go to the [export data section](https://letterboxd.com/settings/data/) on Letterboxd and download your data. Extract the data and find the two CSV files named `reviews.csv` and `diary.csv`. These two files are the ones required for building the database."""
 
 TRANSLATIONS = {
@@ -284,23 +284,32 @@ TOOL_RESPONSES = {
 
 MODEL_PROVIDERS = {
     "ES": {
-        "Ollama": """**Ollama** te permite ejecutar un modelo de lenguaje en tu propio dispositivo. 
+        "Ollama": """**Ollama** te permite ejecutar un modelo de lenguaje en tu propio dispositivo.
 
-Para ello, deberás instalar Ollama en tu sistema y descargar el modelo a utilizar mediante `ollama pull <model_name>` (asegúrate de que el mismo modelo esté configurado en `config.py`). 
-        
-Para disponibilizar el modelo, ejecuta `ollama serve`. 
-        
+Para ello, deberás instalar Ollama en tu sistema y descargar el modelo a utilizar mediante `ollama pull <model_name>` (asegúrate de que el mismo modelo esté configurado en `config.py`).
+
+Para disponibilizar el modelo, ejecuta `ollama serve`.
+
 Una vez hecho esto, puedes comenzar a chatear con **Chatboxd**.
 """,
-        "OpenAI": """**OpenAI** permite el acceso a modelos de lenguaje a través de su API. 
+        "OpenAI": """**OpenAI** permite el acceso a modelos de lenguaje a través de su API.
 
 Para comenzar, necesitarás registrarte en la plataforma y obtener tus credenciales de API. Una vez que tengas tus credenciales, deberás almacenarlas en variables de entorno o en el fichero `secrets.env`:
-        
+
 ```
 OPENAI_API_KEY=...
 ```
 
 Una vez configuradas las credenciales, puedes comenzar a chatear con **Chatboxd**. Ten en cuenta que el uso de la API de OpenAI puede acarrear costes.""",
+        "Google": """**Google** permite el acceso a modelos de lenguaje a través de su API.
+
+Para comenzar, necesitarás registrarte en la plataforma y obtener tus credenciales de API. Una vez que tengas tus credenciales, deberás almacenarlas en variables de entorno o en el fichero `secrets.env`:
+
+```
+GOOGLE_API_KEY=...
+```
+
+Una vez configuradas las credenciales, puedes comenzar a chatear con **Chatboxd**. Ten en cuenta que el uso de la API de Gemini puede acarrear costes.""",
     },
     "EN": {
         "Ollama": """**Ollama** allows you to run a Large Language Model in your own device.
@@ -320,6 +329,15 @@ OPENAI_API_KEY=...
 ```
 
 Once you have your credentials, you can start chatting with **Chatboxd**. Note that using the OpenAI API may incur costs.""",
+        "Google": """**Google** allows you to access Large Language Models through their API.
+
+To get started, you must sign up on the platform and get your API credentials. Once you have your credentials, you must store them in environment variables or in the `secrets.env` file:
+
+```
+GOOGLE_API_KEY=...
+```
+
+Once you have your credentials, you can start chatting with **Chatboxd**. Note that using the Gemini API may incur costs.""",
     },
     "FR": {
         "Ollama": """**Ollama** vous permet d'exécuter un modèle de langage à votre propre appareil.
@@ -340,17 +358,26 @@ OPENAI_API_KEY=...
 
 Après cela, vous pouvez commencer à utiliser **Chatboxd**. Notez que l'utilisation de l'API OpenAI peut entraîner des frais.
 """,
+        "Google": """**Google** vous permet d'accéder à des modèles de langage à travers leur API.
+
+Pour commencer, vous devez vous inscrire sur la plateforme et obtenir vos identifiants d'API. Une fois que vous avez vos identifiants, vous devez les stocker dans des variables d'environnement ou dans le fichier `secrets.env`:
+
+```
+GOOGLE_API_KEY=...
+```
+
+Une fois que vous avez vos identifiants, vous pouvez commencer à discuter avec **Chatboxd**. Notez que l'utilisation de l'API de Gemini peut entraîner des frais.""",
     },
     "DE": {
-        "Ollama": """**Ollama** ermöglicht es Ihnen, ein Sprachmodell auf Ihrem eigenen Gerät auszuführen. 
+        "Ollama": """**Ollama** ermöglicht es Ihnen, ein Sprachmodell auf Ihrem eigenen Gerät auszuführen.
 
-Dazu müssen Sie Ollama auf Ihrem System installieren und das zu verwendende Modell mit `ollama pull <model_name>` herunterladen (stellen Sie sicher, dass dasselbe Modell in `config.py` konfiguriert ist). 
-        
-Um das Modell bereitzustellen, führen Sie `ollama serve` aus. 
-        
+Dazu müssen Sie Ollama auf Ihrem System installieren und das zu verwendende Modell mit `ollama pull <model_name>` herunterladen (stellen Sie sicher, dass dasselbe Modell in `config.py` konfiguriert ist).
+
+Um das Modell bereitzustellen, führen Sie `ollama serve` aus.
+
 Sobald dies erledigt ist, können Sie mit **Chatboxd** chatten.
 """,
-        "OpenAI": """**OpenAI** ermöglicht den Zugriff auf Sprachmodelle über seine API. 
+        "OpenAI": """**OpenAI** ermöglicht den Zugriff auf Sprachmodelle über seine API.
 
 Um zu beginnen, müssen Sie sich auf der Plattform registrieren und Ihre API-Anmeldedaten erhalten. Sobald Sie Ihre Anmeldedaten haben, sollten Sie diese in Umgebungsvariablen oder in der Datei `secrets.env` speichern:
 
@@ -360,17 +387,26 @@ OPENAI_API_KEY=...
 
 Nachdem die Anmeldedaten konfiguriert wurden, können Sie mit **Chatboxd** chatten. Beachten Sie, dass die Nutzung der OpenAI-API Kosten verursachen kann.
 """,
+        "Google": """**Google** ermöglicht den Zugriff auf Sprachmodelle über ihre API.
+
+Um zu beginnen, müssen Sie sich auf der Plattform registrieren und Ihre API-Anmeldedaten erhalten. Sobald Sie Ihre Anmeldedaten haben, sollten Sie diese in Umgebungsvariablen oder in der Datei `secrets.env` speichern:
+
+```
+GOOGLE_API_KEY=...
+```
+
+Nachdem die Anmeldedaten konfiguriert wurden, können Sie mit **Chatboxd** chatten. Beachten Sie, dass die Nutzung der Gemini-API Kosten verursachen kann.""",
     },
     "PT": {
-        "Ollama": """**Ollama** permite que você execute um modelo de linguagem em seu próprio dispositivo. 
+        "Ollama": """**Ollama** permite que você execute um modelo de linguagem em seu próprio dispositivo.
 
-Para isso, você precisará instalar o Ollama em seu sistema e baixar o modelo a ser usado com `ollama pull <model_name>` (certifique-se de que o mesmo modelo esteja configurado em `config.py`). 
-        
-Para disponibilizar o modelo, execute `ollama serve`. 
-        
+Para isso, você precisará instalar o Ollama em seu sistema e baixar o modelo a ser usado com `ollama pull <model_name>` (certifique-se de que o mesmo modelo esteja configurado em `config.py`).
+
+Para disponibilizar o modelo, execute `ollama serve`.
+
 Depois de fazer isso, você pode começar a conversar com **Chatboxd**.
 """,
-        "OpenAI": """**OpenAI** permite o acesso a modelos de linguagem através de sua API. 
+        "OpenAI": """**OpenAI** permite o acesso a modelos de linguagem através de sua API.
 
 Para começar, você precisará se registrar na plataforma e obter suas credenciais de API. Depois de obter suas credenciais, armazene-as em variáveis de ambiente ou no arquivo `secrets.env`:
 
@@ -380,5 +416,43 @@ OPENAI_API_KEY=...
 
 Após configurar as credenciais, você pode começar a conversar com **Chatboxd**. Observe que o uso da API do OpenAI pode acarretar custos.
 """,
+        "Google": """**Google** permite o acesso a modelos de linguagem através de sua API.
+
+Para começar, você precisará se registrar na plataforma e obter suas credenciais de API. Depois de obter suas credenciais, armazene-as em variáveis de ambiente ou no arquivo `secrets.env`:
+
+```
+GOOGLE_API_KEY=...
+```
+
+Após configurar as credenciais, você pode começar a conversar com **Chatboxd**. Observe que o uso da API de Gemini pode acarretar custos.""",
+    },
+    "IT": {
+        "Ollama": """**Ollama** permette di eseguire un modello di linguaggio sul tuo dispositivo.
+
+Per utilizzare Ollama, prima devi installarlo sul tuo sistema e scaricare il modello che vuoi utilizzare, eseguendo `ollama pull <model_name>` (assicurati che lo stesso modello sia configurato in `config.py`).
+
+Per rendere il modello disponibile, esegui `ollama serve`.
+
+Una volta fatto, puoi iniziare a chattare con **Chatboxd**.
+""",
+        "OpenAI": """**OpenAI** permette di accedere a modelli di linguaggio attraverso la loro API.
+
+Per iniziare, devi registrarti sulla piattaforma e ottenere le tue credenziali API. Una volta ottenute le tue credenziali, devi memorizzarle in variabili di ambiente o nel file `secrets.env`:
+
+```
+OPENAI_API_KEY=...
+```
+
+Una volta configurate le credenziali, puoi iniziare a conversare con **Chatboxd**. Nota che l'utilizzo dell'API OpenAI può comportare costi.
+""",
+        "Google": """**Google** permette di accedere a modelli di linguaggio attraverso la loro API.
+
+Per iniziare, devi registrarti sulla piattaforma e ottenere le tue credenziali API. Una volta ottenute le tue credenziali, devi memorizzarle in variabili di ambiente o nel file `secrets.env`:
+
+```
+GOOGLE_API_KEY=...
+```
+
+Una volta configurate le credenziali, puoi iniziare a conversare con **Chatboxd**. Nota che l'utilizzo dell'API Gemini può comportare costi.""",
     },
 }
