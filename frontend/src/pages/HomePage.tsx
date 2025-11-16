@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { ChatMessage } from "@/components/custom/ChatMessage";
 import { ChatInput } from "@/components/custom/ChatInput";
 import { ChatHeader } from "@/components/custom/ChatHeader";
-// import { AppSidebar } from "@/components/custom/AppSidebar";
+import { ChatMessage } from "@/components/custom/ChatMessage";
+import { SidebarCustom } from "@/components/custom/SidebarCustom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
 interface Message {
@@ -59,11 +59,11 @@ export const HomePage = () => {
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-background">
-        {/* <AppSidebar
+        <SidebarCustom
           onReset={handleReset}
           selectedModel={selectedModel}
           onModelChange={setSelectedModel}
-        /> */}
+        />
 
         <div className="flex flex-col flex-1 h-screen">
           <header className="h-12 flex items-center border-b border-border">
