@@ -1,10 +1,16 @@
 LANGUAGE = "ES"
 
 MODELS = {
-    "Ollama": [],
+    # "Ollama": [],
     "OpenAI": [
         "gpt-4o-mini",
         "gpt-4o",
+    ],
+    "Google": [
+        "gemini-2.5-flash",
+        # "gemini-2.5-flash-lite",
+        "gemini-2.0-flash",
+        # "gemini-2.0-flash-lite",
     ],
 }
 

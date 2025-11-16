@@ -3,7 +3,7 @@ import streamlit as st
 from utils.session_utils import initialize_session, get_session_val, set_session_val
 from utils.frame_utils import display_interface
 from services.langgraph_service import ChatboxdAgent
-from services.llm_service import ollama_model, openai_model
+from services.llm_service import ollama_model, openai_model, gemini_model
 
 
 def initialize_app():
@@ -40,6 +40,8 @@ def setup_agent():
             llm = ollama_model(get_session_val("model"))
         elif provider.lower() == "openai":
             llm = openai_model(get_session_val("model"))
+        elif provider.lower() == "google":
+            llm = gemini_model(get_session_val("model"))
         else:
             raise Exception("Invalid provider")
 

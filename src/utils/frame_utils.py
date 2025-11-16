@@ -13,7 +13,7 @@ from utils.file_loader_utils import save_uploaded_files, cleanup_files
 from enviroment_config import (
     get_local_ollama_models,
     provider_available,
-    configure_openai_api_key,
+    configure_models_api_key,
 )
 from catalog.translations import LANGUAGE_NAMES, MODEL_PROVIDERS
 from services.sqlite_service import Database, Operator
@@ -126,7 +126,7 @@ def display_provider_selection():
     # It follows the format: MODELS = {provider: model_list}
 
     providers = MODELS.keys()
-    configure_openai_api_key()
+    configure_models_api_key()
 
     available_providers = [
         provider for provider in providers if provider_available(provider)

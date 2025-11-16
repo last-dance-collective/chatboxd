@@ -14,6 +14,8 @@ def provider_available(provider_name):
         return ollama_available()
     elif provider_name.lower() == "openai":
         return openai_available()
+    elif provider_name.lower() == "google":
+        return google_available()
     else:
         logger.warning("Provider `{provider_name}` unknown")
         return False
@@ -27,14 +29,27 @@ def openai_available():
     return available
 
 
-def configure_openai_api_key():
+def google_available():
+    available = os.environ.get("GOOGLE_API_KEY")
+    if not available:
+        logger.warning("Google is not available")
+
+    return available
+
+
+def configure_models_api_key():
     env_path = Path(".") / "secrets.env"
     load_dotenv(dotenv_path=env_path)
 
     if os.environ.get("OPENAI_API_KEY"):
-        logger.info("🔑 Model env variables are loaded")
+        logger.info("🔑 OpenAI Model env variables are loaded")
     else:
-        logger.error("🔑🔴 Model env variables not loaded")
+        logger.error("🔑🔴 OpenAI Model env variables not loaded")
+
+    if os.environ.get("GOOGLE_API_KEY"):
+        logger.info("🔑 Google Model env variables are loaded")
+    else:
+        logger.error("🔑🔴 Google Model env variables not loaded")
 
 
 def ollama_available():
