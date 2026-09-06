@@ -86,9 +86,9 @@ export function ChatScreen({
       <div className="chat-main">
         <div className="chat-scroll">
           {dailyMessage ? (
-            <p className="daily">
+            <div className="daily">
               <RichText text={dailyMessage} />
-            </p>
+            </div>
           ) : null}
 
           {showSuggestions ? (
@@ -113,8 +113,17 @@ export function ChatScreen({
           <ol className="transcript">
             {messages.map((message) => (
               <li key={message.id} className={`bubble bubble-${message.role}`}>
-                {message.status ? <p className="status">{message.status}</p> : null}
-                {message.content ? <RichText text={message.content} /> : null}
+                {message.status ? (
+                  <div className="status">
+                    <RichText text={message.status} />
+                  </div>
+                ) : null}
+                {message.role === 'user' && message.content ? (
+                  <p className="bubble-plain">{message.content}</p>
+                ) : null}
+                {message.role === 'assistant' && message.content ? (
+                  <RichText text={message.content} />
+                ) : null}
                 {message.error ? <p className="error">{message.error}</p> : null}
                 {message.movie ? <MovieCard movie={message.movie} /> : null}
                 {message.graph ? <RatingChart ratings={message.graph} /> : null}

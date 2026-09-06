@@ -1,10 +1,19 @@
 import { useState, type FormEvent } from 'react'
 import { ingestFiles } from '../api'
-import { headingFromMarkdown, RichText } from '../components/RichText'
+import { RichText } from '../components/RichText'
 
 type Props = {
   intro: string
   onUploaded: () => Promise<void>
+}
+
+function headingFromMarkdown(markdown: string): { title: string; body: string } {
+  const lines = markdown.trim().split('\n')
+  const first = lines[0] ?? ''
+  if (first.startsWith('# ')) {
+    return { title: first.slice(2).trim(), body: lines.slice(1).join('\n').trim() }
+  }
+  return { title: first.replace(/^#+ /, ''), body: lines.slice(1).join('\n').trim() }
 }
 
 export function UploadScreen({ intro, onUploaded }: Props) {
@@ -38,9 +47,9 @@ export function UploadScreen({ intro, onUploaded }: Props) {
     <main className="page page-narrow">
       <img className="banner" src="/banner.png" alt="Chatboxd" />
       <h1>{title}</h1>
-      <p className="lede">
+      <div className="lede">
         <RichText text={body} />
-      </p>
+      </div>
       <form className="upload-form" onSubmit={onSubmit}>
         <label className="file-drop">
           <span>Drop diary.csv and reviews.csv here</span>

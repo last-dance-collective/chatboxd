@@ -1,20 +1,24 @@
-const LINK = /\[([^\]]+)\]\(([^)]+)\)/g
+import type { Components } from 'react-markdown'
+import Markdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+
+const markdownComponents = {
+  a({ href, children }) {
+    return (
+      <a href={href} target="_blank" rel="noreferrer">
+        {children}
+      </a>
+    )
+  },
+} satisfies Components
 
 export function RichText({ text }: { text: string }) {
-  const html = text
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replace(LINK, '<a href="$2" target="_blank" rel="noreferrer">$1</a>')
-    .replaceAll('\n', '<br />')
-  return <span dangerouslySetInnerHTML={{ __html: html }} />
+  return (
+    <div className="rich-text">
+      <Markdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+        {text}
+      </Markdown>
+    </div>
+  )
 }
 
-export function headingFromMarkdown(markdown: string): { title: string; body: string } {
-  const lines = markdown.trim().split('\n')
-  const first = lines[0] ?? ''
-  if (first.startsWith('# ')) {
-    return { title: first.slice(2).trim(), body: lines.slice(1).join('\n').trim() }
-  }
-  return { title: first.replace(/^#+ /, ''), body: lines.slice(1).join('\n').trim() }
-}
