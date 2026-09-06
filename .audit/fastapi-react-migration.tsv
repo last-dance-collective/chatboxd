@@ -1,0 +1,13 @@
+ts	phase	decision	why	evidence	result
+2026-09-05T17:47:28Z	frame	migrate Streamlit monolith to FastAPI plus React, done when chat streams, settings work, CSV ingest works, Letterboxd palette is visible, Streamlit is gone	user asked for a decoupled app; Streamlit files are the UI to replace, agent and sqlite stay	README.md:1,src/main.py,src/services/langgraph_service.py	open
+2026-09-05T17:47:28Z	design	SSE chat events over HTTP, Vite SPA, keep src/ Python layout, no Streamlit compatibility layer	streaming is the current chat loop; a second HTTP round-trip for the full answer would feel worse; dual-running Streamlit would leave dead code	src/services/langgraph_service.py:111	open
+2026-09-05T18:07:35Z	scaffold	SSE ChatEvent union and FastAPI routes live under src/api	agent stays HTTP-free; events parse langgraph tool output at the boundary	src/api/schemas.py,src/api/app.py	VERIFIED
+2026-09-05T18:07:35Z	decouple	removed Streamlit session_state from ChatboxdAgent and daily message	FastAPI cannot host st.session_state; language is a constructor argument	src/services/langgraph_service.py	VERIFIED
+2026-09-05T18:07:35Z	models	dropped gemini-2.0-flash, added gemini-3.6-flash	Google 404 on 2.0-flash during live chat; 2.5 and 3.6 both streamed tokens	src/config.py	VERIFIED
+2026-09-05T18:07:35Z	frontend	Vite React app proxies /api, serves Letterboxd banner, production build succeeds	UI is the user-facing product; tsc -b && vite build exited 0	frontend/src/App.tsx	VERIFIED
+2026-09-05T18:07:56Z	verify	GET /api/health returns ok, bootstrap lists providers, daily-message returns a 2019 Once Upon a Time watch	prove against the running uvicorn, not compile	curl http://127.0.0.1:8000/api/health	VERIFIED
+2026-09-05T18:07:56Z	verify	POST /api/chat streams status then token then done for a 2024 diary query via gemini-2.5-flash	tool path is the load-bearing chat loop	curl POST /api/chat	VERIFIED
+2026-09-05T18:07:56Z	subtract	deleted Streamlit UI modules and removed streamlit pandas matplotlib plotly	no compatibility layer; outcome is FastAPI plus React only	src/main.py deleted	VERIFIED
+2026-09-05T18:09:16Z	verify	OpenAI chat returned SSE error 429 no credits then done	failure path must still emit typed events	curl POST /api/chat provider OpenAI	VERIFIED
+2026-09-05T18:09:16Z	verify	gemini-3.6-flash streamed a Hola token then done	config change needed a live model, not only a 2.5 check	curl POST /api/chat model gemini-3.6-flash	VERIFIED
+2026-09-05T18:09:16Z	gaps	browser click-through of setup upload chat and live CSV ingest remain unproven	no browser tool in this session; ingest would duplicate letterboxd.db	predicate leftovers	open
