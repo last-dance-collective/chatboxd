@@ -6,7 +6,7 @@ from langchain_ollama import ChatOllama
 from langchain_openai import ChatOpenAI
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langgraph.graph import StateGraph, START
-from langgraph.checkpoint.memory import MemorySaver
+from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.prebuilt import ToolNode, tools_condition
 
 from config import CONVERS_TURNS
@@ -80,7 +80,7 @@ class ChatboxdAgent:
         graph_builder.add_edge("filter_messages", "chatbot")
         graph_builder.add_conditional_edges("chatbot", tools_condition)
         graph_builder.add_edge("tools", "chatbot")
-        checkpointer = MemorySaver()
+        checkpointer = InMemorySaver()
         self.graph = graph_builder.compile(checkpointer=checkpointer)
 
     def run(self, user_msg: str, thread_id: str = "1"):
