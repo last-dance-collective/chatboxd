@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { MovieCard } from '../components/MovieCard'
 import { RatingChart } from '../components/RatingChart'
 import { RichText } from '../components/RichText'
-import type { ChatMessage, ModelChoice, ProviderInfo, Texts } from '../types'
+import { orderedProviders, type ChatMessage, type ModelChoice, type ProviderInfo, type Texts } from '../types'
 
 type Props = {
   texts: Texts
@@ -169,7 +169,7 @@ export function ChatScreen({
               }}
             >
               {model ? null : <option value="">{texts.select_model}</option>}
-              {providers
+              {orderedProviders(providers)
                 .filter((item) => item.available && item.models.length > 0)
                 .map((item) => (
                   <optgroup key={item.id} label={item.id}>

@@ -68,7 +68,7 @@ def bootstrap() -> BootstrapResponse:
         ProviderInfo(
             id=provider,
             available=provider in available,
-            models=sorted(models.get(provider, [])),
+            models=list(models.get(provider, [])),
         )
         for provider in models
     ]
