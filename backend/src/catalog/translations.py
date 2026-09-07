@@ -286,7 +286,7 @@ MODEL_PROVIDERS = {
     "ES": {
         "Ollama": """**Ollama** te permite ejecutar un modelo de lenguaje en tu propio dispositivo.
 
-Para ello, deberás instalar Ollama en tu sistema y descargar el modelo a utilizar mediante `ollama pull <model_name>` (asegúrate de que el mismo modelo esté configurado en `config.py`).
+Para ello, deberás instalar Ollama en tu sistema y descargar el modelo a utilizar mediante `ollama pull <model_name>` (asegúrate de que el mismo modelo esté en la lista de permitidos de `llm_service.py`).
 
 Para disponibilizar el modelo, ejecuta `ollama serve`.
 
@@ -310,11 +310,20 @@ GOOGLE_API_KEY=...
 ```
 
 Una vez configuradas las credenciales, puedes comenzar a chatear con **Chatboxd**. Ten en cuenta que el uso de la API de Gemini puede acarrear costes.""",
+        "Groq": """**Groq** permite el acceso a modelos de lenguaje a través de su API.
+
+Para comenzar, necesitarás registrarte en https://console.groq.com y obtener tus credenciales de API. Una vez que tengas tus credenciales, deberás almacenarlas en variables de entorno o en el fichero `secrets.env`:
+
+```
+GROQ_API_KEY=...
+```
+
+Una vez configuradas las credenciales, puedes comenzar a chatear con **Chatboxd**. Ten en cuenta que el uso de la API de Groq puede acarrear costes.""",
     },
     "EN": {
         "Ollama": """**Ollama** allows you to run a Large Language Model in your own device.
 
-To use Ollama, first you must install it in your machine and download the model you want to use, by running `ollama pull <model_name>` (make sure the same model is set in `config.py`).
+To use Ollama, first you must install it in your machine and download the model you want to use, by running `ollama pull <model_name>` (make sure the same model is on the allow-list in `llm_service.py`).
 
 To make the model available, run `ollama serve`.
 
@@ -338,11 +347,20 @@ GOOGLE_API_KEY=...
 ```
 
 Once you have your credentials, you can start chatting with **Chatboxd**. Note that using the Gemini API may incur costs.""",
+        "Groq": """**Groq** allows you to access Large Language Models through their API.
+
+To get started, you must sign up at https://console.groq.com and get your API credentials. Once you have your credentials, you must store them in environment variables or in the `secrets.env` file:
+
+```
+GROQ_API_KEY=...
+```
+
+Once you have your credentials, you can start chatting with **Chatboxd**. Note that using the Groq API may incur costs.""",
     },
     "FR": {
         "Ollama": """**Ollama** vous permet d'exécuter un modèle de langage à votre propre appareil.
 
-Pour l'utiliser, vous devez d'abord l'installer sur votre machine et télécharger le modèle que vous souhaitez utiliser, en exécutant `ollama pull <model_name>` (assurez-vous que le même modèle est configuré dans `config.py`).
+Pour l'utiliser, vous devez d'abord l'installer sur votre machine et télécharger le modèle que vous souhaitez utiliser, en exécutant `ollama pull <model_name>` (assurez-vous que le même modèle figure dans la liste autorisée de `llm_service.py`).
 
 Pour rendre le modèle disponible, exécutez `ollama serve`.
 
@@ -367,11 +385,20 @@ GOOGLE_API_KEY=...
 ```
 
 Une fois que vous avez vos identifiants, vous pouvez commencer à discuter avec **Chatboxd**. Notez que l'utilisation de l'API de Gemini peut entraîner des frais.""",
+        "Groq": """**Groq** vous permet d'accéder à des modèles de langage à travers leur API.
+
+Pour commencer, vous devez vous inscrire sur https://console.groq.com et obtenir vos identifiants d'API. Une fois que vous avez vos identifiants, vous devez les stocker dans des variables d'environnement ou dans le fichier `secrets.env`:
+
+```
+GROQ_API_KEY=...
+```
+
+Une fois que vous avez vos identifiants, vous pouvez commencer à discuter avec **Chatboxd**. Notez que l'utilisation de l'API de Groq peut entraîner des frais.""",
     },
     "DE": {
         "Ollama": """**Ollama** ermöglicht es Ihnen, ein Sprachmodell auf Ihrem eigenen Gerät auszuführen.
 
-Dazu müssen Sie Ollama auf Ihrem System installieren und das zu verwendende Modell mit `ollama pull <model_name>` herunterladen (stellen Sie sicher, dass dasselbe Modell in `config.py` konfiguriert ist).
+Dazu müssen Sie Ollama auf Ihrem System installieren und das zu verwendende Modell mit `ollama pull <model_name>` herunterladen (stellen Sie sicher, dass dasselbe Modell auf der Zulassungsliste in `llm_service.py` steht).
 
 Um das Modell bereitzustellen, führen Sie `ollama serve` aus.
 
@@ -396,11 +423,20 @@ GOOGLE_API_KEY=...
 ```
 
 Nachdem die Anmeldedaten konfiguriert wurden, können Sie mit **Chatboxd** chatten. Beachten Sie, dass die Nutzung der Gemini-API Kosten verursachen kann.""",
+        "Groq": """**Groq** ermöglicht den Zugriff auf Sprachmodelle über ihre API.
+
+Um zu beginnen, müssen Sie sich auf https://console.groq.com registrieren und Ihre API-Anmeldedaten erhalten. Sobald Sie Ihre Anmeldedaten haben, sollten Sie diese in Umgebungsvariablen oder in der Datei `secrets.env` speichern:
+
+```
+GROQ_API_KEY=...
+```
+
+Nachdem die Anmeldedaten konfiguriert wurden, können Sie mit **Chatboxd** chatten. Beachten Sie, dass die Nutzung der Groq-API Kosten verursachen kann.""",
     },
     "PT": {
         "Ollama": """**Ollama** permite que você execute um modelo de linguagem em seu próprio dispositivo.
 
-Para isso, você precisará instalar o Ollama em seu sistema e baixar o modelo a ser usado com `ollama pull <model_name>` (certifique-se de que o mesmo modelo esteja configurado em `config.py`).
+Para isso, você precisará instalar o Ollama em seu sistema e baixar o modelo a ser usado com `ollama pull <model_name>` (certifique-se de que o mesmo modelo esteja na lista de permitidos de `llm_service.py`).
 
 Para disponibilizar o modelo, execute `ollama serve`.
 
@@ -425,11 +461,20 @@ GOOGLE_API_KEY=...
 ```
 
 Após configurar as credenciais, você pode começar a conversar com **Chatboxd**. Observe que o uso da API de Gemini pode acarretar custos.""",
+        "Groq": """**Groq** permite o acesso a modelos de linguagem através de sua API.
+
+Para começar, você precisará se registrar em https://console.groq.com e obter suas credenciais de API. Depois de obter suas credenciais, armazene-as em variáveis de ambiente ou no arquivo `secrets.env`:
+
+```
+GROQ_API_KEY=...
+```
+
+Após configurar as credenciais, você pode começar a conversar com **Chatboxd**. Observe que o uso da API de Groq pode acarretar custos.""",
     },
     "IT": {
         "Ollama": """**Ollama** permette di eseguire un modello di linguaggio sul tuo dispositivo.
 
-Per utilizzare Ollama, prima devi installarlo sul tuo sistema e scaricare il modello che vuoi utilizzare, eseguendo `ollama pull <model_name>` (assicurati che lo stesso modello sia configurato in `config.py`).
+Per utilizzare Ollama, prima devi installarlo sul tuo sistema e scaricare il modello che vuoi utilizzare, eseguendo `ollama pull <model_name>` (assicurati che lo stesso modello sia nella lista consentita di `llm_service.py`).
 
 Per rendere il modello disponibile, esegui `ollama serve`.
 
@@ -454,5 +499,14 @@ GOOGLE_API_KEY=...
 ```
 
 Una volta configurate le credenziali, puoi iniziare a conversare con **Chatboxd**. Nota che l'utilizzo dell'API Gemini può comportare costi.""",
+        "Groq": """**Groq** permette di accedere a modelli di linguaggio attraverso la loro API.
+
+Per iniziare, devi registrarti su https://console.groq.com e ottenere le tue credenziali API. Una volta ottenute le tue credenziali, devi memorizzarle in variabili di ambiente o nel file `secrets.env`:
+
+```
+GROQ_API_KEY=...
+```
+
+Una volta configurate le credenziali, puoi iniziare a conversare con **Chatboxd**. Nota che l'utilizzo dell'API Groq può comportare costi.""",
     },
 }

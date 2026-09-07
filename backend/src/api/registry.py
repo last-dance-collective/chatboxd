@@ -1,16 +1,5 @@
 from services.langgraph_service import ChatboxdAgent
-from services.llm_service import gemini_model, ollama_model, openai_model
-
-
-def build_llm(provider: str, model: str):
-    name = provider.lower()
-    if name == "ollama":
-        return ollama_model(model)
-    if name == "openai":
-        return openai_model(model)
-    if name == "google":
-        return gemini_model(model)
-    raise ValueError(f"Invalid provider: {provider}")
+from services.llm_service import build_llm
 
 
 class AgentRegistry:

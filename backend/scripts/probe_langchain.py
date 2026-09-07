@@ -13,6 +13,7 @@ PACKAGES = [
     "langchain-openai",
     "langchain-ollama",
     "langchain-google-genai",
+    "langchain-groq",
     "langgraph",
     "fastapi",
     "sqlalchemy",
@@ -36,6 +37,7 @@ def import_graph() -> None:
     from langgraph.prebuilt import ToolNode, tools_condition
     from langchain_core.messages import HumanMessage, RemoveMessage, SystemMessage
     from langchain_google_genai import ChatGoogleGenerativeAI
+    from langchain_groq import ChatGroq
     from langchain_ollama import ChatOllama
     from langchain_openai import ChatOpenAI
 
@@ -57,6 +59,7 @@ def import_graph() -> None:
         RemoveMessage,
         SystemMessage,
         ChatGoogleGenerativeAI,
+        ChatGroq,
         ChatOllama,
         ChatOpenAI,
         app,

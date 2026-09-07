@@ -13,17 +13,16 @@ from dotenv import load_dotenv
 src = Path(__file__).resolve().parents[1] / "src"
 sys.path.insert(0, str(src))
 
-from enviroment_config import configure_models_api_key  # noqa: E402
+from services.llm_service import build_llm, configure_models_api_key  # noqa: E402
 from paths import SECRETS_PATH  # noqa: E402
-from services.llm_service import gemini_model  # noqa: E402
 from services.langgraph_service import ChatboxdAgent  # noqa: E402
 from api.events import events_from_langgraph  # noqa: E402
 
 
-async def dump(prompt: str, model: str = "gemini-2.5-flash") -> None:
+async def dump(prompt: str, model: str = "gemini-3.8-flash") -> None:
     load_dotenv(SECRETS_PATH)
     configure_models_api_key()
-    agent = ChatboxdAgent(llm=gemini_model(model), language="ES")
+    agent = ChatboxdAgent(llm=build_llm("Google", model), language="ES")
     kinds: Counter[str] = Counter()
     mapped_types: Counter[str] = Counter()
     samples: list[dict] = []

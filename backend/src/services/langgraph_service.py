@@ -1,10 +1,8 @@
 from datetime import datetime
 from typing import Any, AsyncIterator
 
+from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import SystemMessage, HumanMessage, RemoveMessage
-from langchain_ollama import ChatOllama
-from langchain_openai import ChatOpenAI
-from langchain_google_genai import ChatGoogleGenerativeAI
 from langgraph.graph import StateGraph, START
 from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.prebuilt import ToolNode, tools_condition
@@ -26,7 +24,7 @@ import os
 class ChatboxdAgent:
     def __init__(
         self,
-        llm: ChatOllama | ChatOpenAI | ChatGoogleGenerativeAI,
+        llm: BaseChatModel,
         language: str = "EN",
         username: str = "",
     ):

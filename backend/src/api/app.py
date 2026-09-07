@@ -21,15 +21,11 @@ from api.schemas import (
     ResetRequest,
 )
 from catalog.translations import LANGUAGE_NAMES, MODEL_PROVIDERS, NO_DB_TEXT, TRANSLATIONS
-from config import LANGUAGE, MODELS
+from config import LANGUAGE
 from data_ingestion.main import main as ingest_letterboxd
-from enviroment_config import (
-    configure_models_api_key,
-    get_local_ollama_models,
-    provider_available,
-)
 from paths import DB_PATH, SECRETS_PATH, USER_DATA_DIR
 from services.daily_message_service import get_daily_message
+from services.llm_service import bootstrap_providers, configure_models_api_key
 from utils.logger_utils import logger
 
 EXPECTED_FILENAMES = {"reviews.csv", "diary.csv"}
@@ -60,17 +56,13 @@ def health() -> HealthResponse:
 @app.get("/api/bootstrap", response_model=BootstrapResponse)
 def bootstrap() -> BootstrapResponse:
     configure_models_api_key()
-    models = {name: list(values) for name, values in MODELS.items()}
-    available = [provider for provider in models if provider_available(provider)]
-    if "Ollama" in available:
-        models["Ollama"] = get_local_ollama_models()
     providers = [
         ProviderInfo(
-            id=provider,
-            available=provider in available,
-            models=list(models.get(provider, [])),
+            id=status.id,
+            available=status.available,
+            models=list(status.models),
         )
-        for provider in models
+        for status in bootstrap_providers()
     ]
     return BootstrapResponse(
         db_exists=DB_PATH.is_file(),
