@@ -50,7 +50,7 @@ class LocalModels:
         return self.probe()
 
     def models(self) -> tuple[str, ...]:
-        return self.installed() if self.probe() else ()
+        return self.installed()
 
 
 @dataclass(frozen=True)
@@ -60,12 +60,11 @@ class Provider:
     build: Callable[[str], BaseChatModel]
 
     def status(self) -> ProviderStatus:
-        available = self.source.available()
-        if isinstance(self.source, LocalModels):
-            models = self.source.installed() if available else ()
-        else:
-            models = self.source.models()
-        return ProviderStatus(self.id, available, models)
+        return ProviderStatus(
+            self.id,
+            self.source.available(),
+            self.source.models(),
+        )
 
 
 @dataclass(frozen=True)
@@ -100,7 +99,9 @@ def _local_ollama_models() -> tuple[str, ...]:
             for line in output[1:]
             if line.split(":")[0] in OLLAMA_SUPPORTED_MODELS
         )
-    except (FileNotFoundError, subprocess.CalledProcessError) as e:
+    except FileNotFoundError:
+        return ()
+    except subprocess.CalledProcessError as e:
         logger.error(f"Error found while running ollama list: {e}")
         return ()
     except Exception as e:

@@ -1,5 +1,3 @@
-"""Dump astream_events kinds from a live Gemini turn so we can check the SSE mapper."""
-
 from __future__ import annotations
 
 import asyncio

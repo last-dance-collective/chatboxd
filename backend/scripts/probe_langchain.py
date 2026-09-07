@@ -1,5 +1,3 @@
-"""Print installed LangChain versions and prove the agent graph still imports."""
-
 from __future__ import annotations
 
 import importlib.metadata as metadata
@@ -50,20 +48,32 @@ def import_graph() -> None:
         if hasattr(checkpoint_memory, name)
     ]
     print(f"checkpointers={','.join(savers)}")
-    _ = (
-        START,
-        StateGraph,
-        ToolNode,
-        tools_condition,
-        HumanMessage,
-        RemoveMessage,
-        SystemMessage,
-        ChatGoogleGenerativeAI,
-        ChatGroq,
-        ChatOllama,
-        ChatOpenAI,
-        app,
-        ChatboxdAgent,
+    print(f"app={app.title}")
+    print(f"start={START}")
+    print(
+        "chat_models="
+        + ",".join(
+            cls.__name__
+            for cls in (
+                ChatGoogleGenerativeAI,
+                ChatGroq,
+                ChatOllama,
+                ChatOpenAI,
+            )
+        )
+    )
+    print(
+        "graph="
+        + ",".join(
+            (
+                StateGraph.__name__,
+                ToolNode.__name__,
+                tools_condition.__name__,
+                HumanMessage.__name__,
+                RemoveMessage.__name__,
+                SystemMessage.__name__,
+            )
+        )
     )
     run_async = inspect.signature(ChatboxdAgent.run_async)
     print(f"run_async{run_async}")
