@@ -12,6 +12,7 @@ PACKAGES = [
     "langchain-ollama",
     "langchain-google-genai",
     "langchain-groq",
+    "langchain-openrouter",
     "langgraph",
     "fastapi",
     "sqlalchemy",
@@ -38,6 +39,7 @@ def import_graph() -> None:
     from langchain_groq import ChatGroq
     from langchain_ollama import ChatOllama
     from langchain_openai import ChatOpenAI
+    from langchain_openrouter import ChatOpenRouter
 
     from api.app import app
     from services.langgraph_service import ChatboxdAgent
@@ -59,6 +61,7 @@ def import_graph() -> None:
                 ChatGroq,
                 ChatOllama,
                 ChatOpenAI,
+                ChatOpenRouter,
             )
         )
     )

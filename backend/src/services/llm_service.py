@@ -12,6 +12,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_groq import ChatGroq
 from langchain_ollama import ChatOllama
 from langchain_openai import ChatOpenAI
+from langchain_openrouter import ChatOpenRouter
 
 from paths import SECRETS_PATH
 from utils.logger_utils import logger
@@ -129,6 +130,11 @@ def _groq(model: str) -> BaseChatModel:
     return ChatGroq(model=model, temperature=TEMPERATURE)
 
 
+def _openrouter(model: str) -> BaseChatModel:
+    logger.info("Using OpenRouter")
+    return ChatOpenRouter(model=model, temperature=TEMPERATURE)
+
+
 PROVIDERS: tuple[Provider, ...] = (
     Provider(
         id="Google",
@@ -171,6 +177,19 @@ PROVIDERS: tuple[Provider, ...] = (
             ),
         ),
         build=_groq,
+    ),
+    Provider(
+        id="OpenRouter",
+        source=HostedModels(
+            env_var="OPENROUTER_API_KEY",
+            catalog=(
+                "openrouter/free",
+                "google/gemma-4-31b-it:free",
+                "nvidia/nemotron-3-super-120b-a12b:free",
+                "thinkingmachines/inkling:free",
+            ),
+        ),
+        build=_openrouter,
     ),
 )
 

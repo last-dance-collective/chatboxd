@@ -2,7 +2,7 @@
 
 Chatboxd lets you chat with the diary and reviews exported from your Letterboxd account. The API is FastAPI. The UI is a React app. The agent still runs on LangChain and LangGraph.
 
-It supports several languages and several LLM providers (OpenAI, Google Gemini, Groq, and Ollama).
+It supports several languages and several LLM providers (OpenAI, Google Gemini, Groq, OpenRouter, and Ollama).
 
 ## Contents
 
@@ -34,6 +34,7 @@ Copy `backend/template_secrets.env` to `backend/secrets.env` and fill in the key
 OPENAI_API_KEY=
 GOOGLE_API_KEY=
 GROQ_API_KEY=
+OPENROUTER_API_KEY=
 ```
 
 You can also export the same variables in your shell. Add `OMDB_API_KEY` if you want the extended movie-detail tool.
@@ -79,7 +80,7 @@ Open the URL Vite prints, usually `http://localhost:5173`. The first `uv run` in
 
 ## How it works
 
-The LLM is orchestrated with [LangChain](https://www.langchain.com/) and [LangGraph](https://www.langchain.com/langgraph), and served through OpenAI, Gemini, Groq, or [Ollama](https://www.ollama.com/). Watches and reviews live in SQLite. FastAPI streams agent events to the React UI.
+The LLM is orchestrated with [LangChain](https://www.langchain.com/) and [LangGraph](https://www.langchain.com/langgraph), and served through OpenAI, Gemini, Groq, [OpenRouter](https://openrouter.ai/), or [Ollama](https://www.ollama.com/). Watches and reviews live in SQLite. FastAPI streams agent events to the React UI.
 
 ![Chatboxd Diagram](public/chatboxd_diagram_round.png)
 

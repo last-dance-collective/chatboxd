@@ -12,6 +12,12 @@ GROQ_MODELS = (
     "openai/gpt-oss-20b",
     "openai/gpt-oss-120b",
 )
+OPENROUTER_MODELS = (
+    "openrouter/free",
+    "google/gemma-4-31b-it:free",
+    "nvidia/nemotron-3-super-120b-a12b:free",
+    "thinkingmachines/inkling:free",
+)
 
 
 def test_hosted_env_vars_in_template() -> None:
@@ -60,6 +66,29 @@ def test_groq_unavailable_when_key_absent() -> None:
     assert groq.models == GROQ_MODELS
 
 
+def test_build_llm_openrouter_has_bind_tools() -> None:
+    with mock.patch.dict(os.environ, {"OPENROUTER_API_KEY": "dummy"}):
+        llm = build_llm("OpenRouter", "openrouter/free")
+    assert hasattr(llm, "bind_tools")
+
+
+def test_openrouter_available_when_key_set() -> None:
+    with mock.patch.dict(os.environ, {"OPENROUTER_API_KEY": "dummy"}):
+        statuses = {status.id: status for status in bootstrap_providers()}
+    openrouter = statuses["OpenRouter"]
+    assert openrouter.available
+    assert openrouter.models == OPENROUTER_MODELS
+
+
+def test_openrouter_unavailable_when_key_absent() -> None:
+    with mock.patch.dict(os.environ):
+        os.environ.pop("OPENROUTER_API_KEY", None)
+        statuses = {status.id: status for status in bootstrap_providers()}
+    openrouter = statuses["OpenRouter"]
+    assert openrouter.available is False
+    assert openrouter.models == OPENROUTER_MODELS
+
+
 if __name__ == "__main__":
     test_hosted_env_vars_in_template()
     test_every_provider_in_every_language()
@@ -67,4 +96,7 @@ if __name__ == "__main__":
     test_unknown_provider_raises()
     test_groq_available_when_key_set()
     test_groq_unavailable_when_key_absent()
+    test_build_llm_openrouter_has_bind_tools()
+    test_openrouter_available_when_key_set()
+    test_openrouter_unavailable_when_key_absent()
     print("ok")

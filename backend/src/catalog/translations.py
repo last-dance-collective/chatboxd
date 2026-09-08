@@ -319,6 +319,15 @@ GROQ_API_KEY=...
 ```
 
 Una vez configuradas las credenciales, puedes comenzar a chatear con **Chatboxd**. Ten en cuenta que el uso de la API de Groq puede acarrear costes.""",
+        "OpenRouter": """**OpenRouter** permite el acceso a modelos de lenguaje a través de su API, incluidos modelos gratuitos.
+
+Para comenzar, necesitarás registrarte en https://openrouter.ai/keys y obtener tus credenciales de API. Una vez que tengas tus credenciales, deberás almacenarlas en variables de entorno o en el fichero `secrets.env`:
+
+```
+OPENROUTER_API_KEY=...
+```
+
+El catálogo empieza por `openrouter/free` y otros modelos `:free` con soporte de herramientas. Una vez configuradas las credenciales, puedes comenzar a chatear con **Chatboxd**. OpenRouter también ofrece modelos de pago que no están en esta lista, y usarlos puede acarrear costes.""",
     },
     "EN": {
         "Ollama": """**Ollama** allows you to run a Large Language Model in your own device.
@@ -356,6 +365,15 @@ GROQ_API_KEY=...
 ```
 
 Once you have your credentials, you can start chatting with **Chatboxd**. Note that using the Groq API may incur costs.""",
+        "OpenRouter": """**OpenRouter** allows you to access Large Language Models through their API, including free models.
+
+To get started, you must sign up at https://openrouter.ai/keys and get your API credentials. Once you have your credentials, you must store them in environment variables or in the `secrets.env` file:
+
+```
+OPENROUTER_API_KEY=...
+```
+
+The catalog starts with `openrouter/free` and other `:free` models that support tools. Once you have your credentials, you can start chatting with **Chatboxd**. Paid models exist on OpenRouter but are not in this list, and using them may incur costs.""",
     },
     "FR": {
         "Ollama": """**Ollama** vous permet d'exécuter un modèle de langage à votre propre appareil.
@@ -394,6 +412,15 @@ GROQ_API_KEY=...
 ```
 
 Une fois que vous avez vos identifiants, vous pouvez commencer à discuter avec **Chatboxd**. Notez que l'utilisation de l'API de Groq peut entraîner des frais.""",
+        "OpenRouter": """**OpenRouter** vous permet d'accéder à des modèles de langage à travers leur API, y compris des modèles gratuits.
+
+Pour commencer, vous devez vous inscrire sur https://openrouter.ai/keys et obtenir vos identifiants d'API. Une fois que vous avez vos identifiants, vous devez les stocker dans des variables d'environnement ou dans le fichier `secrets.env`:
+
+```
+OPENROUTER_API_KEY=...
+```
+
+Le catalogue commence par `openrouter/free` et d'autres modèles `:free` qui prennent en charge les outils. Une fois que vous avez vos identifiants, vous pouvez commencer à discuter avec **Chatboxd**. OpenRouter propose aussi des modèles payants absents de cette liste, et leur utilisation peut entraîner des frais.""",
     },
     "DE": {
         "Ollama": """**Ollama** ermöglicht es Ihnen, ein Sprachmodell auf Ihrem eigenen Gerät auszuführen.
@@ -432,6 +459,15 @@ GROQ_API_KEY=...
 ```
 
 Nachdem die Anmeldedaten konfiguriert wurden, können Sie mit **Chatboxd** chatten. Beachten Sie, dass die Nutzung der Groq-API Kosten verursachen kann.""",
+        "OpenRouter": """**OpenRouter** ermöglicht den Zugriff auf Sprachmodelle über ihre API, einschließlich kostenloser Modelle.
+
+Um zu beginnen, müssen Sie sich auf https://openrouter.ai/keys registrieren und Ihre API-Anmeldedaten erhalten. Sobald Sie Ihre Anmeldedaten haben, sollten Sie diese in Umgebungsvariablen oder in der Datei `secrets.env` speichern:
+
+```
+OPENROUTER_API_KEY=...
+```
+
+Der Katalog beginnt mit `openrouter/free` und weiteren `:free`-Modellen mit Tool-Unterstützung. Nachdem die Anmeldedaten konfiguriert wurden, können Sie mit **Chatboxd** chatten. OpenRouter bietet auch kostenpflichtige Modelle, die nicht in dieser Liste stehen, und deren Nutzung kann Kosten verursachen.""",
     },
     "PT": {
         "Ollama": """**Ollama** permite que você execute um modelo de linguagem em seu próprio dispositivo.
@@ -470,6 +506,15 @@ GROQ_API_KEY=...
 ```
 
 Após configurar as credenciais, você pode começar a conversar com **Chatboxd**. Observe que o uso da API de Groq pode acarretar custos.""",
+        "OpenRouter": """**OpenRouter** permite o acesso a modelos de linguagem através de sua API, incluindo modelos gratuitos.
+
+Para começar, você precisará se registrar em https://openrouter.ai/keys e obter suas credenciais de API. Depois de obter suas credenciais, armazene-as em variáveis de ambiente ou no arquivo `secrets.env`:
+
+```
+OPENROUTER_API_KEY=...
+```
+
+O catálogo começa com `openrouter/free` e outros modelos `:free` com suporte a ferramentas. Após configurar as credenciais, você pode começar a conversar com **Chatboxd**. A OpenRouter também oferece modelos pagos que não estão nesta lista, e usá-los pode acarretar custos.""",
     },
     "IT": {
         "Ollama": """**Ollama** permette di eseguire un modello di linguaggio sul tuo dispositivo.
@@ -508,5 +553,14 @@ GROQ_API_KEY=...
 ```
 
 Una volta configurate le credenziali, puoi iniziare a conversare con **Chatboxd**. Nota che l'utilizzo dell'API Groq può comportare costi.""",
+        "OpenRouter": """**OpenRouter** permette di accedere a modelli di linguaggio attraverso la loro API, inclusi modelli gratuiti.
+
+Per iniziare, devi registrarti su https://openrouter.ai/keys e ottenere le tue credenziali API. Una volta ottenute le tue credenziali, devi memorizzarle in variabili di ambiente o nel file `secrets.env`:
+
+```
+OPENROUTER_API_KEY=...
+```
+
+Il catalogo inizia con `openrouter/free` e altri modelli `:free` con supporto per gli strumenti. Una volta configurate le credenziali, puoi iniziare a conversare con **Chatboxd**. OpenRouter offre anche modelli a pagamento assenti da questa lista, e usarli può comportare costi.""",
     },
 }
