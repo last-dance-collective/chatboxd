@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react'
+import { ArrowCounterClockwise, CalendarBlank, PaperPlaneRight, Sparkle } from '@phosphor-icons/react'
 import { MovieCard } from '../components/MovieCard'
 import { RatingChart } from '../components/RatingChart'
 import { RichText } from '../components/RichText'
+import { Select, type SelectGroup, type SelectOption } from '../components/Select'
 import { orderedProviders, type ChatMessage, type ModelChoice, type ProviderInfo, type Texts } from '../types'
 
 type Props = {
@@ -52,6 +54,24 @@ export function ChatScreen({
     }
     return list.slice(0, 3)
   }, [texts.suggestions_list])
+  const languageOptions = useMemo<SelectOption[]>(
+    () => Object.entries(languages).map(([code, label]) => ({ value: code, label })),
+    [languages],
+  )
+  const modelGroups = useMemo<SelectGroup[]>(
+    () =>
+      orderedProviders(providers)
+        .filter((item) => item.available && item.models.length > 0)
+        .map((item) => ({
+          label: item.id,
+          options: item.models.map((name) => ({
+            value: encodeChoice({ provider: item.id, model: name }),
+            label: name,
+            hint: item.id,
+          })),
+        })),
+    [providers],
+  )
   const showSuggestions = messages.length === 0 && !streaming
   const canSend = Boolean(model) && !streaming
 
@@ -66,34 +86,38 @@ export function ChatScreen({
     <div className="app-shell">
       <aside className="sidebar">
         <img className="sidebar-logo" src="/chatboxd.png" alt="Chatboxd" />
+        <div className="field">
+          <span className="field-label">{texts.select_language}</span>
+          <Select
+            ariaLabel={texts.select_language}
+            options={languageOptions}
+            value={language}
+            onChange={onLanguage}
+          />
+        </div>
         <button type="button" className="btn-ghost sidebar-action" onClick={onReset}>
+          <ArrowCounterClockwise size={15} weight="bold" aria-hidden />
           {texts.reset_chat}
         </button>
-        <select
-          className="select"
-          aria-label={texts.select_language}
-          value={language}
-          onChange={(event) => onLanguage(event.target.value)}
-        >
-          {Object.entries(languages).map(([code, label]) => (
-            <option key={code} value={code}>
-              {label}
-            </option>
-          ))}
-        </select>
       </aside>
 
       <div className="chat-main">
         <div className="chat-scroll">
           {dailyMessage ? (
             <div className="daily">
-              <RichText text={dailyMessage} />
+              <CalendarBlank size={18} className="daily-icon" aria-hidden />
+              <div>
+                <RichText text={dailyMessage} />
+              </div>
             </div>
           ) : null}
 
           {showSuggestions ? (
             <section className="suggestions">
-              <p>{texts.suggestions_label}</p>
+              <p className="suggestions-label">
+                <Sparkle size={15} weight="fill" aria-hidden />
+                {texts.suggestions_label}
+              </p>
               <div className="suggestion-row">
                 {suggestions.map((item) => (
                   <button
@@ -128,7 +152,14 @@ export function ChatScreen({
                 {message.movie ? <MovieCard movie={message.movie} /> : null}
                 {message.graph ? <RatingChart ratings={message.graph} /> : null}
                 {streaming && message.id === messages.at(-1)?.id && !message.content && !message.status ? (
-                  <p className="muted">{texts.chat_loading}</p>
+                  <p className="typing">
+                    <span className="typing-dots" aria-hidden>
+                      <span />
+                      <span />
+                      <span />
+                    </span>
+                    {texts.chat_loading}
+                  </p>
                 ) : null}
               </li>
             ))}
@@ -158,35 +189,21 @@ export function ChatScreen({
             disabled={streaming || !model}
           />
           <div className="composer-bar">
-            <select
-              className="composer-model"
-              aria-label={texts.select_model}
+            <Select
+              ariaLabel={texts.select_model}
+              placeholder={texts.select_model}
+              groups={modelGroups}
               value={model ? encodeChoice(model) : ''}
               disabled={streaming}
-              onChange={(event) => {
-                const next = decodeChoice(event.target.value)
+              placement="up"
+              onChange={(value) => {
+                const next = decodeChoice(value)
                 if (next) onModel(next)
               }}
-            >
-              {model ? null : <option value="">{texts.select_model}</option>}
-              {orderedProviders(providers)
-                .filter((item) => item.available && item.models.length > 0)
-                .map((item) => (
-                  <optgroup key={item.id} label={item.id}>
-                    {item.models.map((name) => {
-                      const choice = { provider: item.id, model: name }
-                      const value = encodeChoice(choice)
-                      return (
-                        <option key={value} value={value}>
-                          {item.id} {name}
-                        </option>
-                      )
-                    })}
-                  </optgroup>
-                ))}
-            </select>
+            />
             <button className="btn-primary" type="submit" disabled={!canSend || !draft.trim()}>
               Send
+              <PaperPlaneRight size={15} weight="bold" aria-hidden />
             </button>
           </div>
         </form>

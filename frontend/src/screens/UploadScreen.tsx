@@ -1,4 +1,5 @@
-import { useState, type FormEvent } from 'react'
+import { useRef, useState, type DragEvent, type FormEvent } from 'react'
+import { CircleNotch, FileArrowUp, FileCsv } from '@phosphor-icons/react'
 import { ingestFiles } from '../api'
 import { RichText } from '../components/RichText'
 
@@ -20,6 +21,23 @@ export function UploadScreen({ intro, onUploaded }: Props) {
   const { title, body } = headingFromMarkdown(intro)
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  const [fileNames, setFileNames] = useState<string[]>([])
+  const [dragging, setDragging] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  function syncFiles(files: FileList | null) {
+    setFileNames(files ? [...files].map((file) => file.name) : [])
+  }
+
+  function onDrop(event: DragEvent<HTMLLabelElement>) {
+    event.preventDefault()
+    setDragging(false)
+    const { files } = event.dataTransfer
+    if (inputRef.current && files.length > 0) {
+      inputRef.current.files = files
+      syncFiles(files)
+    }
+  }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -51,12 +69,42 @@ export function UploadScreen({ intro, onUploaded }: Props) {
         <RichText text={body} />
       </div>
       <form className="upload-form" onSubmit={onSubmit}>
-        <label className="file-drop">
-          <span>Drop diary.csv and reviews.csv here</span>
-          <input name="files" type="file" accept=".csv" multiple required />
+        <label
+          className="file-drop"
+          data-dragging={dragging}
+          onDragOver={(event) => {
+            event.preventDefault()
+            setDragging(true)
+          }}
+          onDragLeave={() => setDragging(false)}
+          onDrop={onDrop}
+        >
+          <FileArrowUp size={34} weight="duotone" className="file-drop-icon" aria-hidden />
+          <span className="file-drop-title">Drop diary.csv and reviews.csv here</span>
+          <span className="file-drop-hint">or click to browse your files</span>
+          <input
+            ref={inputRef}
+            className="visually-hidden"
+            name="files"
+            type="file"
+            accept=".csv"
+            multiple
+            onChange={(event) => syncFiles(event.currentTarget.files)}
+          />
         </label>
+        {fileNames.length > 0 ? (
+          <ul className="file-list">
+            {fileNames.map((name) => (
+              <li key={name}>
+                <FileCsv size={15} aria-hidden />
+                {name}
+              </li>
+            ))}
+          </ul>
+        ) : null}
         {error ? <p className="error">{error}</p> : null}
         <button className="btn-primary" type="submit" disabled={busy}>
+          {busy ? <CircleNotch size={16} weight="bold" className="spin" aria-hidden /> : null}
           {busy ? 'Loading diary…' : 'Build my database'}
         </button>
       </form>
