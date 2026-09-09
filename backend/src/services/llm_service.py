@@ -170,8 +170,8 @@ PROVIDERS: tuple[Provider, ...] = (
         source=HostedModels(
             env_var="GROQ_API_KEY",
             catalog=(
-                "llama-3.1-8b-instant",
-                "llama-3.3-70b-versatile",
+                "qwen/qwen3.8-27b",
+                "qwen/qwen3.6-27b",
                 "openai/gpt-oss-20b",
                 "openai/gpt-oss-120b",
             ),
@@ -182,12 +182,7 @@ PROVIDERS: tuple[Provider, ...] = (
         id="OpenRouter",
         source=HostedModels(
             env_var="OPENROUTER_API_KEY",
-            catalog=(
-                "openrouter/free",
-                "google/gemma-4-31b-it:free",
-                "nvidia/nemotron-3-super-120b-a12b:free",
-                "thinkingmachines/inkling:free",
-            ),
+            catalog=("openrouter/free",),
         ),
         build=_openrouter,
     ),
