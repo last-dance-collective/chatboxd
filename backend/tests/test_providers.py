@@ -7,8 +7,8 @@ from services.llm_service import HostedModels, PROVIDERS, bootstrap_providers, b
 
 TEMPLATE_SECRETS = Path(__file__).resolve().parents[1] / "template_secrets.env"
 GROQ_MODELS = (
-    "llama-3.1-8b-instant",
-    "llama-3.3-70b-versatile",
+    "qwen/qwen3.8-27b",
+    "qwen/qwen3.6-27b",
     "openai/gpt-oss-20b",
     "openai/gpt-oss-120b",
 )
@@ -36,7 +36,7 @@ def test_every_provider_in_every_language() -> None:
 
 def test_build_llm_groq_has_bind_tools() -> None:
     with mock.patch.dict(os.environ, {"GROQ_API_KEY": "dummy"}):
-        llm = build_llm("Groq", "llama-3.3-70b-versatile")
+        llm = build_llm("Groq", "qwen/qwen3.8-27b")
     assert hasattr(llm, "bind_tools")
 
 
