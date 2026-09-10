@@ -25,20 +25,12 @@ export type ModelChoice = {
   model: string
 }
 
-const PREFERRED_PROVIDER = 'Google'
-
 export function firstAvailable(providers: ProviderInfo[]): ModelChoice | null {
   const usable = providers.filter((item) => item.available && item.models.length > 0)
-  const provider = usable.find((item) => item.id === PREFERRED_PROVIDER) ?? usable[0]
+  const provider = usable[0]
   const model = provider?.models[0]
   if (!provider || !model) return null
   return { provider: provider.id, model }
-}
-
-export function orderedProviders(providers: ProviderInfo[]): ProviderInfo[] {
-  return [...providers].sort(
-    (left, right) => Number(right.id === PREFERRED_PROVIDER) - Number(left.id === PREFERRED_PROVIDER),
-  )
 }
 
 export type Bootstrap = {

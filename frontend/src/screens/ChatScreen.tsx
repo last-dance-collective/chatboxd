@@ -4,7 +4,7 @@ import { MovieCard } from '../components/MovieCard'
 import { RatingChart } from '../components/RatingChart'
 import { RichText } from '../components/RichText'
 import { Select, type SelectGroup, type SelectOption } from '../components/Select'
-import { orderedProviders, type ChatMessage, type ModelChoice, type ProviderInfo, type Texts } from '../types'
+import { type ChatMessage, type ModelChoice, type ProviderInfo, type Texts } from '../types'
 
 type Props = {
   texts: Texts
@@ -60,7 +60,7 @@ export function ChatScreen({
   )
   const modelGroups = useMemo<SelectGroup[]>(
     () =>
-      orderedProviders(providers)
+      providers
         .filter((item) => item.available && item.models.length > 0)
         .map((item) => ({
           label: item.id,

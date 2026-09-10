@@ -6,25 +6,13 @@ from catalog.translations import MODEL_PROVIDERS
 from services.llm_service import HostedModels, PROVIDERS, bootstrap_providers, build_llm
 
 TEMPLATE_SECRETS = Path(__file__).resolve().parents[1] / "template_secrets.env"
-GROQ_MODELS = (
-    "qwen/qwen3.8-27b",
-    "qwen/qwen3.6-27b",
-    "openai/gpt-oss-20b",
-    "openai/gpt-oss-120b",
-)
-OPENROUTER_MODELS = (
-    "openrouter/free",
-    "google/gemma-4-31b-it:free",
-    "nvidia/nemotron-3-super-120b-a12b:free",
-    "thinkingmachines/inkling:free",
-)
+HOSTED = [provider for provider in PROVIDERS if isinstance(provider.source, HostedModels)]
 
 
 def test_hosted_env_vars_in_template() -> None:
     text = TEMPLATE_SECRETS.read_text()
-    for provider in PROVIDERS:
-        if isinstance(provider.source, HostedModels):
-            assert provider.source.env_var in text
+    for provider in HOSTED:
+        assert provider.source.env_var in text
 
 
 def test_every_provider_in_every_language() -> None:
@@ -34,10 +22,32 @@ def test_every_provider_in_every_language() -> None:
             assert provider_id in help_map, f"{provider_id} missing from {language}"
 
 
-def test_build_llm_groq_has_bind_tools() -> None:
-    with mock.patch.dict(os.environ, {"GROQ_API_KEY": "dummy"}):
-        llm = build_llm("Groq", "qwen/qwen3.8-27b")
-    assert hasattr(llm, "bind_tools")
+def test_hosted_catalog_comes_from_the_table() -> None:
+    env = {provider.source.env_var: "dummy" for provider in HOSTED}
+    with mock.patch.dict(os.environ, env):
+        statuses = {status.id: status for status in bootstrap_providers()}
+    for provider in HOSTED:
+        status = statuses[provider.id]
+        assert status.available
+        assert status.models == provider.source.catalog
+
+
+def test_hosted_unavailable_without_key() -> None:
+    with mock.patch.dict(os.environ):
+        for provider in HOSTED:
+            os.environ.pop(provider.source.env_var, None)
+        statuses = {status.id: status for status in bootstrap_providers()}
+    for provider in HOSTED:
+        status = statuses[provider.id]
+        assert status.available is False
+        assert status.models == provider.source.catalog
+
+
+def test_hosted_build_has_bind_tools() -> None:
+    for provider in HOSTED:
+        with mock.patch.dict(os.environ, {provider.source.env_var: "dummy"}):
+            llm = build_llm(provider.id, provider.source.catalog[0])
+        assert hasattr(llm, "bind_tools")
 
 
 def test_unknown_provider_raises() -> None:
@@ -49,54 +59,11 @@ def test_unknown_provider_raises() -> None:
     raise AssertionError("expected ValueError")
 
 
-def test_groq_available_when_key_set() -> None:
-    with mock.patch.dict(os.environ, {"GROQ_API_KEY": "dummy"}):
-        statuses = {status.id: status for status in bootstrap_providers()}
-    groq = statuses["Groq"]
-    assert groq.available
-    assert groq.models == GROQ_MODELS
-
-
-def test_groq_unavailable_when_key_absent() -> None:
-    with mock.patch.dict(os.environ):
-        os.environ.pop("GROQ_API_KEY", None)
-        statuses = {status.id: status for status in bootstrap_providers()}
-    groq = statuses["Groq"]
-    assert groq.available is False
-    assert groq.models == GROQ_MODELS
-
-
-def test_build_llm_openrouter_has_bind_tools() -> None:
-    with mock.patch.dict(os.environ, {"OPENROUTER_API_KEY": "dummy"}):
-        llm = build_llm("OpenRouter", "openrouter/free")
-    assert hasattr(llm, "bind_tools")
-
-
-def test_openrouter_available_when_key_set() -> None:
-    with mock.patch.dict(os.environ, {"OPENROUTER_API_KEY": "dummy"}):
-        statuses = {status.id: status for status in bootstrap_providers()}
-    openrouter = statuses["OpenRouter"]
-    assert openrouter.available
-    assert openrouter.models == OPENROUTER_MODELS
-
-
-def test_openrouter_unavailable_when_key_absent() -> None:
-    with mock.patch.dict(os.environ):
-        os.environ.pop("OPENROUTER_API_KEY", None)
-        statuses = {status.id: status for status in bootstrap_providers()}
-    openrouter = statuses["OpenRouter"]
-    assert openrouter.available is False
-    assert openrouter.models == OPENROUTER_MODELS
-
-
 if __name__ == "__main__":
     test_hosted_env_vars_in_template()
     test_every_provider_in_every_language()
-    test_build_llm_groq_has_bind_tools()
+    test_hosted_catalog_comes_from_the_table()
+    test_hosted_unavailable_without_key()
+    test_hosted_build_has_bind_tools()
     test_unknown_provider_raises()
-    test_groq_available_when_key_set()
-    test_groq_unavailable_when_key_absent()
-    test_build_llm_openrouter_has_bind_tools()
-    test_openrouter_available_when_key_set()
-    test_openrouter_unavailable_when_key_absent()
     print("ok")
