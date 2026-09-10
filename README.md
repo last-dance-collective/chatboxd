@@ -2,7 +2,7 @@
 
 Chatboxd lets you chat with the diary and reviews exported from your Letterboxd account. The API is FastAPI. The UI is a React app. The agent still runs on LangChain and LangGraph.
 
-It supports several languages and several LLM providers (OpenAI, Google Gemini, Groq, OpenRouter, and Ollama).
+It supports Spanish and English, and several LLM providers (OpenAI, Google Gemini, Groq, OpenRouter, and Ollama).
 
 ## Contents
 
@@ -45,7 +45,7 @@ You can upload `diary.csv` and `reviews.csv` in the app. To load them from the c
 
 1. Export your data from [Letterboxd data settings](https://letterboxd.com/settings/data/).
 2. Put `reviews.csv` and `diary.csv` in `backend/src/data_ingestion/user_data/`.
-3. Set `USER_NAME` in `backend/src/data_ingestion/main.py` if you share one database across people.
+3. Set `DEFAULT_USERNAME` in `backend/src/config.py` if you share one database across people.
 4. Run:
 
 ```bash
@@ -53,7 +53,7 @@ cd backend
 PYTHONPATH=src uv run python src/data_ingestion/main.py
 ```
 
-The script creates `reviews` and `diary` in `backend/letterboxd.db`. Diary rows link to reviews when the movie name and date match.
+The command replaces `reviews` and `diary` in `backend/letterboxd.db` with the export. Diary rows link to reviews when the movie name and date match.
 
 `reviews.csv` needs `Date`, `Name`, and `Review`.
 

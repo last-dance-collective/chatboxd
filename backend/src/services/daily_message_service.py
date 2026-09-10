@@ -3,7 +3,7 @@ from typing import Any, Dict, List
 
 from catalog.translations import TRANSLATIONS
 from paths import DB_PATH
-from services.sqlite_service import Database, Operator
+from services.letterboxd_store import LetterboxdStore
 
 
 def get_daily_message(language: str = "EN") -> str | None:
@@ -13,20 +13,8 @@ def get_daily_message(language: str = "EN") -> str | None:
 
 
 def find_diary_entry(date: str) -> List[Dict[str, Any]]:
-    db = Database(str(DB_PATH))
-    filters = [
-        {
-            "column": "watched_date",
-            "operator": Operator.LIKE,
-            "value": date[4:10],
-        },
-        {
-            "column": "rating",
-            "operator": Operator.BETWEEN,
-            "value": [4.0, 5.0],
-        },
-    ]
-    return db.filter_diary_entries(filters=filters)
+    store = LetterboxdStore(DB_PATH)
+    return store.on_this_day(date[4:10])
 
 
 def compose_message(entries: List[Dict[str, Any]], language: str) -> str | None:

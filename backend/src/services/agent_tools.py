@@ -10,8 +10,8 @@ from api.schemas import MovieCard
 from catalog.translations import TOOL_RESPONSES, TRANSLATIONS
 from paths import DB_PATH
 from services.graph_services import GRAPH_TYPES
+from services.letterboxd_store import LetterboxdStore
 from services.movies_data_service import get_letterboxd_data, get_omdb_data
-from services.sqlite_service import Database, Operator
 from utils.logger_utils import logger
 
 
@@ -48,14 +48,9 @@ def get_reviews(
     Returns:
         str: Description of retrieved reviews.
     """
-    db = Database(str(DB_PATH))
-    if review_id:
-        filter = [{"column": "id", "operator": Operator.EQUAL, "value": review_id}]
-    else:
-        filter = [{"column": "name", "operator": Operator.LIKE, "value": name}]
-
-    logger.info(f"🔍 Filters: {filter}")
-    reviews = db.filter_reviews(filter)
+    store = LetterboxdStore(DB_PATH)
+    logger.info(f"🔍 Reviews query name={name} review_id={review_id}")
+    reviews = store.filter_reviews(name=name, review_id=review_id)
 
     return TOOL_RESPONSES["EN"]["get_reviews_response"] + str(reviews)
 
@@ -84,18 +79,20 @@ def get_movies(
     Returns:
         str: Description of retrieved movies.
     """
-    filters = [
-        create_two_params_filter("watched_date", from_watched_date, to_watched_date),
-        create_two_params_filter("rating", from_rating, to_rating),
-        {"column": "name", "operator": Operator.LIKE, "value": name},
-        {"column": "rewatch", "operator": Operator.EQUAL, "value": rewatch},
-        {"column": "year", "operator": Operator.EQUAL, "value": year},
-    ]
-
-    filters = [filter for filter in filters if filter["value"] is not None]
-    logger.info(f"🔍 Filters: {filters}")
-    db = Database(str(DB_PATH))
-    movies = db.filter_diary_entries(filters=filters)
+    logger.info(
+        f"🔍 Diary query name={name} dates={from_watched_date}/{to_watched_date} "
+        f"rating={from_rating}/{to_rating} rewatch={rewatch} year={year}"
+    )
+    store = LetterboxdStore(DB_PATH)
+    movies = store.filter_diary(
+        name=name,
+        from_watched_date=from_watched_date,
+        to_watched_date=to_watched_date,
+        from_rating=from_rating,
+        to_rating=to_rating,
+        rewatch=rewatch,
+        year=year,
+    )
 
     return TOOL_RESPONSES["EN"]["get_movies_response"] + str(movies)
 
@@ -179,35 +176,6 @@ def get_graph(movies: list[dict[str, Any]]) -> dict[str, Any]:
         "data": ratings,
         "indicaciones": TOOL_RESPONSES["EN"]["get_graph_response"],
     }
-
-
-def create_two_params_filter(
-    param_name: str, from_param: Any, to_param: Any
-) -> dict[str, Any]:
-    if from_param and to_param:
-        return {
-            "column": param_name,
-            "operator": Operator.BETWEEN,
-            "value": [from_param, to_param],
-        }
-    elif from_param:
-        return {
-            "column": param_name,
-            "operator": Operator.GREATER_THAN_EQUAL,
-            "value": from_param,
-        }
-    elif to_param:
-        return {
-            "column": param_name,
-            "operator": Operator.LESS_THAN_EQUAL,
-            "value": to_param,
-        }
-    else:
-        return {
-            "column": param_name,
-            "operator": Operator.LESS_THAN_EQUAL,
-            "value": None,
-        }
 
 
 def _texts_for(language: str) -> dict[str, Any]:

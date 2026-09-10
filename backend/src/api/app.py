@@ -21,10 +21,10 @@ from api.schemas import (
     ResetRequest,
 )
 from catalog.translations import LANGUAGE_NAMES, MODEL_PROVIDERS, NO_DB_TEXT, TRANSLATIONS
-from config import LANGUAGE
-from data_ingestion.main import main as ingest_letterboxd
+from config import DEFAULT_USERNAME, LANGUAGE
 from paths import DB_PATH, SECRETS_PATH, USER_DATA_DIR
 from services.daily_message_service import get_daily_message
+from services.letterboxd_store import LetterboxdStore
 from services.llm_service import bootstrap_providers, configure_models_api_key
 from utils.logger_utils import logger
 
@@ -100,7 +100,11 @@ async def ingest(
         dest = USER_DATA_DIR / upload.filename
         dest.write_bytes(await upload.read())
     try:
-        ingest_letterboxd()
+        LetterboxdStore(DB_PATH).ingest(
+            USER_DATA_DIR / "diary.csv",
+            USER_DATA_DIR / "reviews.csv",
+            DEFAULT_USERNAME,
+        )
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except Exception as exc:
