@@ -11,14 +11,7 @@ from config import CONVERS_TURNS
 from catalog.prompts import PROMPTS
 from utils.logger_utils import logger
 from utils.langgraph_utils import State, rewrite_tool_responses
-from services.agent_tools import (
-    get_movies,
-    get_reviews,
-    get_graph,
-    get_movie_details,
-    get_movie_details_extended,
-)
-import os
+from services.agent_tools import agent_bundles
 
 
 class ChatboxdAgent:
@@ -35,15 +28,7 @@ class ChatboxdAgent:
                 username=username,
             )
         )
-        self.tools = [get_movies, get_reviews, get_graph]
-
-        if os.environ.get("OMDB_API_KEY"):
-            logger.info("OMDB key is present, get details tool extended enabled")
-            self.tools.append(get_movie_details_extended)
-        else:
-            logger.info("OMDB key is NOT present, get details tool extended disabled")
-            self.tools.append(get_movie_details)
-
+        self.tools = [bundle.tool for bundle in agent_bundles()]
         self.llm = llm.bind_tools(self.tools).with_config({"run_name": "chatboxd_llm"})
         self.create_graph()
         logger.info("Agent initialized")
