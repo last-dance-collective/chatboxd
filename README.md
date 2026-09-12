@@ -83,7 +83,7 @@ Open the URL Vite prints, usually `http://localhost:5173`. The first `uv run` in
 
 The LLM is orchestrated with [LangChain](https://www.langchain.com/) and [LangGraph](https://www.langchain.com/langgraph), and served through OpenAI, Gemini, Groq, [OpenRouter](https://openrouter.ai/), or [Ollama](https://www.ollama.com/). Watches and reviews live in SQLite. FastAPI streams agent events to the React UI.
 
-![Chatboxd Diagram](public/chatboxd_diagram_round.png)
+![Chatboxd Diagram](docs/chatboxd-architecture.png)
 
 ### Agent
 
