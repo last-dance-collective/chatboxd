@@ -2,7 +2,7 @@
  *
  * Radius scale (locked): buttons & pills 999px, cards & bubbles 12-16px,
  * form controls 10px, dropdown options 8px.
- * Z-index scale: 40 dropdown panel. Nothing else layers.
+ * Z-index scale: 2 jump-to-latest chip, 40 dropdown panel.
  * Accent lock: --green is the single interactive accent; orange/blue only
  * appear in brand marks (logo, badges, tool status).
  */
@@ -468,13 +468,41 @@ h1 {
   grid-template-rows: minmax(0, 1fr) auto;
 }
 
+.chat-thread {
+  position: relative;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 .chat-scroll {
   max-width: 52rem;
   width: 100%;
   margin: 0 auto;
   padding: 1.5rem 1.25rem 2rem;
   overflow-y: auto;
+  overflow-anchor: none;
   min-height: 0;
+  flex: 1 1 auto;
+}
+
+.jump-latest-wrap {
+  position: absolute;
+  left: 50%;
+  bottom: 0.85rem;
+  transform: translateX(-50%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.jump-latest {
+  pointer-events: auto;
+  background: var(--bg-raised);
+  box-shadow: var(--shadow-sm);
+  padding: 0.4rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .daily {

@@ -71,6 +71,7 @@ export type Texts = {
   chat_placeholder: string
   header_caption: string
   chat_loading: string
+  jump_to_latest: string
   continue: string
   start_page_markdown: string
   keys_not_set: string
@@ -94,6 +95,7 @@ export function textsOf(
     chat_placeholder: String(raw.chat_placeholder ?? 'Type a message'),
     header_caption: String(raw.header_caption ?? ''),
     chat_loading: String(raw.chat_loading ?? 'Generating...'),
+    jump_to_latest: String(raw.jump_to_latest ?? 'Jump to latest'),
     continue: String(raw.continue ?? 'Continue'),
     start_page_markdown: String(raw.start_page_markdown ?? ''),
     keys_not_set: String(raw.keys_not_set ?? 'Agent keys are missing'),

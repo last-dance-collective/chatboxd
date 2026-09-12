@@ -1,10 +1,16 @@
-import { useMemo, useState } from 'react'
-import { ArrowCounterClockwise, CalendarBlank, PaperPlaneRight, Sparkle } from '@phosphor-icons/react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { ArrowCounterClockwise, CalendarBlank, CaretDown, PaperPlaneRight, Sparkle } from '@phosphor-icons/react'
 import { MovieCard } from '../components/MovieCard'
 import { RatingChart } from '../components/RatingChart'
 import { RichText } from '../components/RichText'
 import { Select, type SelectGroup, type SelectOption } from '../components/Select'
 import { type ChatMessage, type ModelChoice, type ProviderInfo, type Texts } from '../types'
+
+const PIN_THRESHOLD_PX = 80
+
+function isPinnedToBottom(el: HTMLElement) {
+  return el.scrollHeight - el.scrollTop - el.clientHeight <= PIN_THRESHOLD_PX
+}
 
 type Props = {
   texts: Texts
@@ -46,6 +52,66 @@ export function ChatScreen({
   onReset,
 }: Props) {
   const [draft, setDraft] = useState('')
+  const [showJump, setShowJump] = useState(false)
+  const scrollerRef = useRef<HTMLDivElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
+  const pinRef = useRef(true)
+  const hasTranscriptRef = useRef(false)
+
+  const followIfPinned = useCallback(() => {
+    const el = scrollerRef.current
+    if (!el || !pinRef.current || !hasTranscriptRef.current) return
+    el.scrollTop = el.scrollHeight
+  }, [])
+
+  const syncJump = useCallback(() => {
+    const el = scrollerRef.current
+    if (!el) return
+    const overflowing = el.scrollHeight - el.clientHeight > 1
+    const next = overflowing && hasTranscriptRef.current && !pinRef.current
+    setShowJump((current) => (current === next ? current : next))
+  }, [])
+
+  const pinToBottom = useCallback(() => {
+    pinRef.current = true
+    setShowJump(false)
+  }, [])
+
+  useLayoutEffect(() => {
+    hasTranscriptRef.current = messages.length > 0
+    followIfPinned()
+  }, [messages, streaming, dailyMessage, followIfPinned])
+
+  useEffect(() => {
+    const content = contentRef.current
+    if (!content) return
+    const observer = new ResizeObserver(() => {
+      followIfPinned()
+      syncJump()
+    })
+    observer.observe(content)
+    return () => observer.disconnect()
+  }, [followIfPinned, syncJump])
+
+  function onScrollerScroll() {
+    const el = scrollerRef.current
+    if (!el || !hasTranscriptRef.current) return
+    pinRef.current = isPinnedToBottom(el)
+    syncJump()
+  }
+
+  function onScrollerWheel(event: React.WheelEvent<HTMLDivElement>) {
+    if (event.deltaY < 0) pinRef.current = false
+  }
+
+  function jumpToLatest() {
+    pinToBottom()
+    const el = scrollerRef.current
+    if (!el) return
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    el.scrollTo({ top: el.scrollHeight, behavior: reduceMotion ? 'auto' : 'smooth' })
+  }
+
   const suggestions = useMemo(() => {
     const list = [...texts.suggestions_list]
     for (let i = list.length - 1; i > 0; i -= 1) {
@@ -79,6 +145,7 @@ export function ChatScreen({
     const trimmed = text.trim()
     if (!trimmed || !canSend) return
     setDraft('')
+    pinToBottom()
     onSend(trimmed)
   }
 
@@ -95,75 +162,99 @@ export function ChatScreen({
             onChange={onLanguage}
           />
         </div>
-        <button type="button" className="btn-ghost sidebar-action" onClick={onReset}>
+        <button
+          type="button"
+          className="btn-ghost sidebar-action"
+          onClick={() => {
+            pinToBottom()
+            onReset()
+          }}
+        >
           <ArrowCounterClockwise size={15} weight="bold" aria-hidden />
           {texts.reset_chat}
         </button>
       </aside>
 
       <div className="chat-main">
-        <div className="chat-scroll">
-          {dailyMessage ? (
-            <div className="daily">
-              <CalendarBlank size={18} className="daily-icon" aria-hidden />
-              <div>
-                <RichText text={dailyMessage} />
-              </div>
+        <div className="chat-thread">
+          <div
+            className="chat-scroll"
+            ref={scrollerRef}
+            onScroll={onScrollerScroll}
+            onWheel={onScrollerWheel}
+          >
+            <div className="chat-content" ref={contentRef}>
+              {dailyMessage ? (
+                <div className="daily">
+                  <CalendarBlank size={18} className="daily-icon" aria-hidden />
+                  <div>
+                    <RichText text={dailyMessage} />
+                  </div>
+                </div>
+              ) : null}
+
+              {showSuggestions ? (
+                <section className="suggestions">
+                  <p className="suggestions-label">
+                    <Sparkle size={15} weight="fill" aria-hidden />
+                    {texts.suggestions_label}
+                  </p>
+                  <div className="suggestion-row">
+                    {suggestions.map((item) => (
+                      <button
+                        key={item}
+                        type="button"
+                        className="pill"
+                        disabled={!canSend}
+                        onClick={() => submit(item)}
+                      >
+                        {item}
+                      </button>
+                    ))}
+                  </div>
+                </section>
+              ) : null}
+
+              <ol className="transcript">
+                {messages.map((message) => (
+                  <li key={message.id} className={`bubble bubble-${message.role}`}>
+                    {message.status ? (
+                      <div className="status">
+                        <RichText text={message.status} />
+                      </div>
+                    ) : null}
+                    {message.role === 'user' && message.content ? (
+                      <p className="bubble-plain">{message.content}</p>
+                    ) : null}
+                    {message.role === 'assistant' && message.content ? (
+                      <RichText text={message.content} />
+                    ) : null}
+                    {message.error ? <p className="error">{message.error}</p> : null}
+                    {message.movie ? <MovieCard movie={message.movie} /> : null}
+                    {message.graph ? <RatingChart ratings={message.graph} /> : null}
+                    {streaming && message.id === messages.at(-1)?.id && !message.content && !message.status ? (
+                      <p className="typing">
+                        <span className="typing-dots" aria-hidden>
+                          <span />
+                          <span />
+                          <span />
+                        </span>
+                        {texts.chat_loading}
+                      </p>
+                    ) : null}
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </div>
+          {showJump ? (
+            <div className="jump-latest-wrap">
+              <button type="button" className="btn-ghost jump-latest" onClick={jumpToLatest}>
+                <CaretDown size={14} weight="bold" aria-hidden />
+                {texts.jump_to_latest}
+              </button>
             </div>
           ) : null}
-
-          {showSuggestions ? (
-            <section className="suggestions">
-              <p className="suggestions-label">
-                <Sparkle size={15} weight="fill" aria-hidden />
-                {texts.suggestions_label}
-              </p>
-              <div className="suggestion-row">
-                {suggestions.map((item) => (
-                  <button
-                    key={item}
-                    type="button"
-                    className="pill"
-                    disabled={!canSend}
-                    onClick={() => submit(item)}
-                  >
-                    {item}
-                  </button>
-                ))}
-              </div>
-            </section>
-          ) : null}
-
-          <ol className="transcript">
-            {messages.map((message) => (
-              <li key={message.id} className={`bubble bubble-${message.role}`}>
-                {message.status ? (
-                  <div className="status">
-                    <RichText text={message.status} />
-                  </div>
-                ) : null}
-                {message.role === 'user' && message.content ? (
-                  <p className="bubble-plain">{message.content}</p>
-                ) : null}
-                {message.role === 'assistant' && message.content ? (
-                  <RichText text={message.content} />
-                ) : null}
-                {message.error ? <p className="error">{message.error}</p> : null}
-                {message.movie ? <MovieCard movie={message.movie} /> : null}
-                {message.graph ? <RatingChart ratings={message.graph} /> : null}
-                {streaming && message.id === messages.at(-1)?.id && !message.content && !message.status ? (
-                  <p className="typing">
-                    <span className="typing-dots" aria-hidden>
-                      <span />
-                      <span />
-                      <span />
-                    </span>
-                    {texts.chat_loading}
-                  </p>
-                ) : null}
-              </li>
-            ))}
-          </ol>
         </div>
 
         <form
