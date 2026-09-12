@@ -3,10 +3,6 @@ LANGUAGE_NAMES = {
     "EN": "🇬🇧 English",
 }
 
-NO_DB_TEXT = """# Welcome to Chatboxd!
-Looks like you don't have a database with the letterboxd data.
-Go to the [export data section](https://letterboxd.com/settings/data/) on Letterboxd and download your data. Extract the data and find the two CSV files named `reviews.csv` and `diary.csv`. These two files are the ones required for building the database."""
-
 TRANSLATIONS = {
     "ES": {
         "select_language": "Selecciona tu idioma",
@@ -15,12 +11,20 @@ TRANSLATIONS = {
         "not_available_provider": "⚠️ Proveedor {provider} no disponible",
         "not_openai_api_key": "⚠️ OpenAI API Key no encontrada",
         "reset_chat": "Reiniciar Conversación",
+        "update_diary": "Actualizar diario",
         "configure_app": "Ajustes",
         "chat_placeholder": "Escribe tu mensaje aquí...",
         "header_caption": "¡Chatboxd te permite chatear con tus estadisticas de LetterBoxd!",
         "chat_loading": "Generando respuesta...",
         "jump_to_latest": "Ir al último",
         "continue": "Continuar",
+        "upload_drop_title": "Suelta aquí tu export .zip de Letterboxd",
+        "upload_drop_hint": "o haz clic para elegir el archivo",
+        "upload_busy": "Cargando diario…",
+        "upload_cancel": "Cancelar",
+        "upload_need_zip": "Sube un export .zip de Letterboxd",
+        "replace_diary_text": "# Actualizar diario\nEsto sustituye todas las películas y reseñas actuales por el contenido del zip.",
+        "no_db_text": "# Bienvenido/a a Chatboxd!\nParece que todavía no hay un diario cargado.\n\nDescarga el zip en la [sección de exportar datos](https://letterboxd.com/settings/data/) de Letterboxd y suéltalo aquí. Chatboxd se queda con `diary.csv` y `reviews.csv`.",
         "reviews_filter_loading": "Buscando reseñas con los siguientes filtros:\n",
         "reviews_loading": "Buscando reseñas...\n",
         "film_filter_loading": "Buscando películas con los siguientes filtros:\n",
@@ -54,12 +58,20 @@ TRANSLATIONS = {
         "not_available_provider": "⚠️ Provider {provider} not available",
         "not_openai_api_key": "⚠️ OpenAI API Key not found",
         "reset_chat": "Reset Conversation",
+        "update_diary": "Update diary",
         "configure_app": "Settings",
         "chat_placeholder": "Type your message here...",
         "header_caption": "Chatboxd lets you chat with your LetterBoxd stats!",
         "chat_loading": "Generating response...",
         "jump_to_latest": "Jump to latest",
         "continue": "Continue",
+        "upload_drop_title": "Drop your Letterboxd export .zip here",
+        "upload_drop_hint": "or click to choose the file",
+        "upload_busy": "Loading diary…",
+        "upload_cancel": "Cancel",
+        "upload_need_zip": "Upload a Letterboxd .zip export",
+        "replace_diary_text": "# Update diary\nThis replaces every current film and review with the contents of the zip.",
+        "no_db_text": "# Welcome to Chatboxd!\nLooks like you don't have a Letterboxd diary loaded yet.\nGo to the [export data section](https://letterboxd.com/settings/data/) on Letterboxd, download the zip, and drop it here. Chatboxd pulls `diary.csv` and `reviews.csv` out for you.",
         "reviews_filter_loading": "Searching reviews with the following filters:\n",
         "reviews_loading": "Searching reviews...\n",
         "film_filter_loading": "Searching films with the following filters:\n",

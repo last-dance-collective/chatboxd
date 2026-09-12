@@ -2,7 +2,7 @@
  *
  * Radius scale (locked): buttons & pills 999px, cards & bubbles 12-16px,
  * form controls 10px, dropdown options 8px.
- * Z-index scale: 2 jump-to-latest chip, 40 dropdown panel.
+ * Z-index scale: 2 jump-to-latest chip, 40 dropdown panel, 50 upload overlay.
  * Accent lock: --green is the single interactive accent; orange/blue only
  * appear in brand marks (logo, badges, tool status).
  */
@@ -135,6 +135,11 @@ a {
 
 .btn-ghost:active {
   transform: translateY(1px);
+}
+
+.btn-ghost:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 /* ---------- Select (custom dropdown) ---------- */
@@ -360,6 +365,34 @@ h1 {
   border-color: var(--green);
   background: color-mix(in srgb, var(--green) 7%, var(--panel));
   color: var(--text);
+}
+
+.file-drop[data-busy='true'] {
+  pointer-events: none;
+  cursor: progress;
+}
+
+.upload-panel h1 {
+  margin: 0 0 0.6rem;
+}
+
+.upload-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
+}
+
+.upload-overlay-card {
+  width: min(32rem, 100%);
+  padding: 1.5rem 1.35rem 1.35rem;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: var(--bg-raised);
+  box-shadow: var(--shadow);
 }
 
 .file-drop-icon {

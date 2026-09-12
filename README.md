@@ -41,12 +41,13 @@ You can also export the same variables in your shell. Add `OMDB_API_KEY` if you 
 
 ### Load Letterboxd data
 
-You can upload `diary.csv` and `reviews.csv` in the app. To load them from the command line instead:
+In the app, drop the `.zip` you download from [Letterboxd data settings](https://letterboxd.com/settings/data/). Chatboxd reads `diary.csv`, `reviews.csv`, and `profile.csv` from the zip. Username comes from the profile. If the diary file has no rows, it builds watches from `watched.csv` and ratings from `ratings.csv`. Nested `deleted/`, `likes/`, and `orphaned/` copies are ignored. A later upload from the sidebar replaces the diary in `backend/letterboxd.db`.
 
-1. Export your data from [Letterboxd data settings](https://letterboxd.com/settings/data/).
-2. Put `reviews.csv` and `diary.csv` in `backend/src/data_ingestion/user_data/`.
-3. Set `DEFAULT_USERNAME` in `backend/src/config.py` if you share one database across people.
-4. Run:
+To load the same files from the command line instead:
+
+1. Export your data from Letterboxd and extract the zip.
+2. Put `reviews.csv`, `diary.csv`, and `profile.csv` in `backend/src/data_ingestion/user_data/`.
+3. Run:
 
 ```bash
 cd backend

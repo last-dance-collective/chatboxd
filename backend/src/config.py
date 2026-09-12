@@ -1,5 +1,3 @@
 LANGUAGE = "ES"
 
 CONVERS_TURNS = 6
-
-DEFAULT_USERNAME = "mavilam"

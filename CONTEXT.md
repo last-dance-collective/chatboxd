@@ -9,7 +9,7 @@ The Diary and Review loaded from one Letterboxd export. Schema, ingest, and quer
 _Avoid_: database, sqlite service
 
 **Letterboxd export**:
-The `diary.csv` and `reviews.csv` files from Letterboxd. A load replaces the store.
+The Letterboxd zip. Ingest keeps `diary.csv` and `reviews.csv` and replaces the store. An empty diary falls back to `watched.csv` plus `ratings.csv`. Username comes from `profile.csv`.
 
 **Diary**:
 A watch: title, year, rating, watched date, rewatch, Letterboxd URL, optional link to a Review, and the username the caller passed on ingest.
@@ -18,7 +18,7 @@ A watch: title, year, rating, watched date, rewatch, Letterboxd URL, optional li
 The user's written text about a film, optionally linked from a Diary row when title and date match.
 
 **Username**:
-The Letterboxd person this store belongs to. Callers pass it on ingest; the store does not invent it.
+The Letterboxd person this store belongs to. Read from `profile.csv` on ingest.
 
 **On this day**:
 Diary watches whose watched date falls on today's month and day, used for the daily message.

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { ArrowCounterClockwise, CalendarBlank, CaretDown, PaperPlaneRight, Sparkle } from '@phosphor-icons/react'
+import { ArrowCounterClockwise, CalendarBlank, CaretDown, FileArchive, PaperPlaneRight, Sparkle } from '@phosphor-icons/react'
 import { MovieCard } from '../components/MovieCard'
 import { RatingChart } from '../components/RatingChart'
 import { RichText } from '../components/RichText'
@@ -25,6 +25,7 @@ type Props = {
   streaming: boolean
   onSend: (text: string) => void
   onReset: () => void
+  onUpdateDiary: () => void
 }
 
 function encodeChoice(choice: ModelChoice): string {
@@ -50,6 +51,7 @@ export function ChatScreen({
   streaming,
   onSend,
   onReset,
+  onUpdateDiary,
 }: Props) {
   const [draft, setDraft] = useState('')
   const [showJump, setShowJump] = useState(false)
@@ -172,6 +174,15 @@ export function ChatScreen({
         >
           <ArrowCounterClockwise size={15} weight="bold" aria-hidden />
           {texts.reset_chat}
+        </button>
+        <button
+          type="button"
+          className="btn-ghost sidebar-action"
+          disabled={streaming}
+          onClick={onUpdateDiary}
+        >
+          <FileArchive size={15} weight="bold" aria-hidden />
+          {texts.update_diary}
         </button>
       </aside>
 

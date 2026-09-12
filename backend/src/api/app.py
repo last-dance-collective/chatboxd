@@ -20,15 +20,14 @@ from api.schemas import (
     ProviderInfo,
     ResetRequest,
 )
-from catalog.translations import LANGUAGE_NAMES, MODEL_PROVIDERS, NO_DB_TEXT, TRANSLATIONS
-from config import DEFAULT_USERNAME, LANGUAGE
+from catalog.translations import LANGUAGE_NAMES, MODEL_PROVIDERS, TRANSLATIONS
+from config import LANGUAGE
+from data_ingestion.export_archive import ExportError, materialize_export
 from paths import DB_PATH, SECRETS_PATH, USER_DATA_DIR
 from services.daily_message_service import get_daily_message
 from services.letterboxd_store import LetterboxdStore
 from services.llm_service import bootstrap_providers, configure_models_api_key
 from utils.logger_utils import logger
-
-EXPECTED_FILENAMES = {"reviews.csv", "diary.csv"}
 
 
 @asynccontextmanager
@@ -71,7 +70,7 @@ def bootstrap() -> BootstrapResponse:
         providers=providers,
         translations=TRANSLATIONS,
         provider_help=MODEL_PROVIDERS,
-        no_db_text=NO_DB_TEXT,
+        no_db_text=_no_db_text(LANGUAGE),
     )
 
 
@@ -83,29 +82,16 @@ def daily_message(language: str = LANGUAGE) -> DailyMessageResponse:
 
 
 @app.post("/api/ingest", response_model=IngestResponse)
-async def ingest(
-    diary: UploadFile = File(...),
-    reviews: UploadFile = File(...),
-) -> IngestResponse:
-    names = {diary.filename, reviews.filename}
-    if names != EXPECTED_FILENAMES:
-        raise HTTPException(
-            status_code=400,
-            detail="Upload both diary.csv and reviews.csv",
-        )
+async def ingest(export: UploadFile = File(...)) -> IngestResponse:
     USER_DATA_DIR.mkdir(parents=True, exist_ok=True)
-    for upload in (diary, reviews):
-        if upload.filename is None:
-            raise HTTPException(status_code=400, detail="Missing filename")
-        dest = USER_DATA_DIR / upload.filename
-        dest.write_bytes(await upload.read())
     try:
+        files = materialize_export(await export.read(), USER_DATA_DIR)
         LetterboxdStore(DB_PATH).ingest(
-            USER_DATA_DIR / "diary.csv",
-            USER_DATA_DIR / "reviews.csv",
-            DEFAULT_USERNAME,
+            files.diary_csv,
+            files.reviews_csv,
+            files.username,
         )
-    except ValueError as exc:
+    except (ExportError, ValueError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except Exception as exc:
         logger.error(f"Data ingestion failed: {exc}")
@@ -158,3 +144,11 @@ async def chat(body: ChatRequest) -> StreamingResponse:
 
 def _sse(payload: dict) -> str:
     return f"data: {json.dumps(payload, ensure_ascii=False)}\n\n"
+
+
+def _no_db_text(language: str) -> str:
+    bundle = TRANSLATIONS.get(language) or TRANSLATIONS["EN"]
+    text = bundle.get("no_db_text")
+    if isinstance(text, str) and text.strip():
+        return text
+    return str(TRANSLATIONS["EN"]["no_db_text"])

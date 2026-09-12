@@ -1,4 +1,6 @@
+from paths import DB_PATH
 from services.langgraph_service import ChatboxdAgent
+from services.letterboxd_store import LetterboxdStore
 from services.llm_service import build_llm
 
 
@@ -18,6 +20,7 @@ class AgentRegistry:
             agent = ChatboxdAgent(
                 llm=build_llm(provider, model),
                 language=language,
+                username=_owner_username(),
             )
             self._agents[key] = agent
         return agent
@@ -26,6 +29,12 @@ class AgentRegistry:
         prefix = f"{session_id}|"
         for key in [k for k in self._agents if k.startswith(prefix)]:
             del self._agents[key]
+
+
+def _owner_username() -> str:
+    if not DB_PATH.is_file():
+        return ""
+    return LetterboxdStore(DB_PATH).owner_username()
 
 
 registry = AgentRegistry()

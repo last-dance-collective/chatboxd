@@ -23,10 +23,9 @@ export async function fetchDailyMessage(language: string): Promise<string | null
   return body.message
 }
 
-export async function ingestFiles(diary: File, reviews: File): Promise<void> {
+export async function ingestExport(file: File): Promise<void> {
   const data = new FormData()
-  data.append('diary', diary)
-  data.append('reviews', reviews)
+  data.append('export', file)
   const res = await fetch('/api/ingest', { method: 'POST', body: data })
   if (!res.ok) throw new Error(await parseError(res))
 }

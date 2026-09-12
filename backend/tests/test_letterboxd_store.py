@@ -37,6 +37,7 @@ def test_ingest_links_review_and_username() -> None:
     heat = store.filter_diary(name="Heat", year=1995, from_watched_date="2024-01-01")
     assert len(heat) == 1
     assert heat[0]["username"] == "tester"
+    assert store.owner_username() == "tester"
     assert heat[0]["review_id"] is not None
     reviews = store.filter_reviews(review_id=heat[0]["review_id"])
     assert reviews[0]["review"] == "Cops and robbers."

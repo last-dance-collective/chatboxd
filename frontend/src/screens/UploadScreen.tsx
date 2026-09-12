@@ -1,11 +1,14 @@
-import { useRef, useState, type DragEvent, type FormEvent } from 'react'
-import { CircleNotch, FileArrowUp, FileCsv } from '@phosphor-icons/react'
-import { ingestFiles } from '../api'
+import { useEffect, useState, type DragEvent } from 'react'
+import { CircleNotch, FileArchive, FileZip } from '@phosphor-icons/react'
+import { ingestExport } from '../api'
 import { RichText } from '../components/RichText'
+import type { Texts } from '../types'
 
 type Props = {
   intro: string
+  texts: Texts
   onUploaded: () => Promise<void>
+  onCancel?: () => void
 }
 
 function headingFromMarkdown(markdown: string): { title: string; body: string } {
@@ -17,97 +20,105 @@ function headingFromMarkdown(markdown: string): { title: string; body: string } 
   return { title: first.replace(/^#+ /, ''), body: lines.slice(1).join('\n').trim() }
 }
 
-export function UploadScreen({ intro, onUploaded }: Props) {
+function zipFromList(files: FileList | File[] | null): File | null {
+  if (!files) return null
+  return [...files].find((file) => file.name.toLowerCase().endsWith('.zip')) ?? null
+}
+
+export function UploadScreen({ intro, texts, onUploaded, onCancel }: Props) {
   const { title, body } = headingFromMarkdown(intro)
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
-  const [fileNames, setFileNames] = useState<string[]>([])
+  const [fileName, setFileName] = useState<string | null>(null)
   const [dragging, setDragging] = useState(false)
-  const inputRef = useRef<HTMLInputElement>(null)
 
-  function syncFiles(files: FileList | null) {
-    setFileNames(files ? [...files].map((file) => file.name) : [])
-  }
-
-  function onDrop(event: DragEvent<HTMLLabelElement>) {
-    event.preventDefault()
-    setDragging(false)
-    const { files } = event.dataTransfer
-    if (inputRef.current && files.length > 0) {
-      inputRef.current.files = files
-      syncFiles(files)
+  useEffect(() => {
+    if (!onCancel) return
+    const cancel = onCancel
+    function onKey(event: KeyboardEvent) {
+      if (event.key === 'Escape' && !busy) cancel()
     }
-  }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [busy, onCancel])
 
-  async function onSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    const form = new FormData(event.currentTarget)
-    const files = [...form.getAll('files')].filter((value): value is File => value instanceof File)
-    const diary = files.find((file) => file.name === 'diary.csv')
-    const reviews = files.find((file) => file.name === 'reviews.csv')
-    if (!diary || !reviews) {
-      setError('Upload both diary.csv and reviews.csv.')
+  async function upload(file: File | null) {
+    if (!file) {
+      setError(texts.upload_need_zip)
       return
     }
+    setFileName(file.name)
     setBusy(true)
     setError(null)
     try {
-      await ingestFiles(diary, reviews)
+      await ingestExport(file)
       await onUploaded()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ingestion failed')
+      setError(err instanceof Error ? err.message : texts.upload_need_zip)
     } finally {
       setBusy(false)
     }
   }
 
+  function onDrop(event: DragEvent<HTMLLabelElement>) {
+    event.preventDefault()
+    setDragging(false)
+    if (!busy) void upload(zipFromList(event.dataTransfer.files))
+  }
+
   return (
-    <main className="page page-narrow">
-      <img className="banner" src="/banner.png" alt="Chatboxd" />
+    <div className="upload-panel">
       <h1>{title}</h1>
-      <div className="lede">
-        <RichText text={body} />
-      </div>
-      <form className="upload-form" onSubmit={onSubmit}>
+      {body ? (
+        <div className="lede">
+          <RichText text={body} />
+        </div>
+      ) : null}
+      <div className="upload-form">
         <label
           className="file-drop"
           data-dragging={dragging}
+          data-busy={busy}
           onDragOver={(event) => {
             event.preventDefault()
-            setDragging(true)
+            if (!busy) setDragging(true)
           }}
           onDragLeave={() => setDragging(false)}
           onDrop={onDrop}
         >
-          <FileArrowUp size={34} weight="duotone" className="file-drop-icon" aria-hidden />
-          <span className="file-drop-title">Drop diary.csv and reviews.csv here</span>
-          <span className="file-drop-hint">or click to browse your files</span>
+          {busy ? (
+            <CircleNotch size={34} weight="bold" className="file-drop-icon spin" aria-hidden />
+          ) : (
+            <FileArchive size={34} weight="duotone" className="file-drop-icon" aria-hidden />
+          )}
+          <span className="file-drop-title">{busy ? texts.upload_busy : texts.upload_drop_title}</span>
+          <span className="file-drop-hint">{texts.upload_drop_hint}</span>
           <input
-            ref={inputRef}
             className="visually-hidden"
-            name="files"
             type="file"
-            accept=".csv"
-            multiple
-            onChange={(event) => syncFiles(event.currentTarget.files)}
+            accept=".zip,application/zip"
+            disabled={busy}
+            onChange={(event) => {
+              void upload(zipFromList(event.currentTarget.files))
+              event.currentTarget.value = ''
+            }}
           />
         </label>
-        {fileNames.length > 0 ? (
+        {fileName ? (
           <ul className="file-list">
-            {fileNames.map((name) => (
-              <li key={name}>
-                <FileCsv size={15} aria-hidden />
-                {name}
-              </li>
-            ))}
+            <li>
+              <FileZip size={15} aria-hidden />
+              {fileName}
+            </li>
           </ul>
         ) : null}
         {error ? <p className="error">{error}</p> : null}
-        <button className="btn-primary" type="submit" disabled={busy}>
-          {busy ? <CircleNotch size={16} weight="bold" className="spin" aria-hidden /> : null}
-          {busy ? 'Loading diary…' : 'Build my database'}
-        </button>
-      </form>
-    </main>
+        {onCancel ? (
+          <button className="btn-ghost" type="button" disabled={busy} onClick={onCancel}>
+            {texts.upload_cancel}
+          </button>
+        ) : null}
+      </div>
+    </div>
   )
 }

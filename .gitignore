@@ -5,3 +5,4 @@ secrets.env
 backend/.venv/
 node_modules/
 frontend/dist/
+example_extracted_zip_letterboxd/

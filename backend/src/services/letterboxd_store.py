@@ -101,6 +101,14 @@ class LetterboxdStore:
             session.close()
         logger.info("Letterboxd export loaded")
 
+    def owner_username(self) -> str:
+        session = self.Session()
+        try:
+            value = session.query(Diary.username).limit(1).scalar()
+            return value or ""
+        finally:
+            session.close()
+
     def filter_diary(
         self,
         *,

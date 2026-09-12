@@ -67,6 +67,7 @@ export type Texts = {
   available_provider: string
   not_available_provider: string
   reset_chat: string
+  update_diary: string
   configure_app: string
   chat_placeholder: string
   header_caption: string
@@ -77,6 +78,13 @@ export type Texts = {
   keys_not_set: string
   suggestions_label: string
   suggestions_list: string[]
+  upload_drop_title: string
+  upload_drop_hint: string
+  upload_busy: string
+  upload_cancel: string
+  upload_need_zip: string
+  no_db_text: string
+  replace_diary_text: string
 }
 
 export function textsOf(
@@ -91,6 +99,7 @@ export function textsOf(
     available_provider: String(raw.available_provider ?? '{provider} available'),
     not_available_provider: String(raw.not_available_provider ?? '{provider} unavailable'),
     reset_chat: String(raw.reset_chat ?? 'Reset'),
+    update_diary: String(raw.update_diary ?? 'Update diary'),
     configure_app: String(raw.configure_app ?? 'Settings'),
     chat_placeholder: String(raw.chat_placeholder ?? 'Type a message'),
     header_caption: String(raw.header_caption ?? ''),
@@ -101,5 +110,12 @@ export function textsOf(
     keys_not_set: String(raw.keys_not_set ?? 'Agent keys are missing'),
     suggestions_list: Array.isArray(list) ? list.map(String) : [],
     suggestions_label: String(raw.suggestions_label ?? ''),
+    upload_drop_title: String(raw.upload_drop_title ?? 'Drop your Letterboxd export .zip here'),
+    upload_drop_hint: String(raw.upload_drop_hint ?? 'or click to choose the file'),
+    upload_busy: String(raw.upload_busy ?? 'Loading diary…'),
+    upload_cancel: String(raw.upload_cancel ?? 'Cancel'),
+    upload_need_zip: String(raw.upload_need_zip ?? 'Upload a Letterboxd .zip export'),
+    no_db_text: String(raw.no_db_text ?? ''),
+    replace_diary_text: String(raw.replace_diary_text ?? ''),
   }
 }

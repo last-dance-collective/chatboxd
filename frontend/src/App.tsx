@@ -4,7 +4,7 @@ import { ChatScreen } from './screens/ChatScreen'
 import { UploadScreen } from './screens/UploadScreen'
 import { firstAvailable, textsOf, type Bootstrap, type ChatMessage, type ModelChoice } from './types'
 
-type Phase = 'boot' | 'upload' | 'chat'
+type Phase = 'boot' | 'empty' | 'chat'
 
 function newSessionId(): string {
   return crypto.randomUUID()
@@ -12,6 +12,7 @@ function newSessionId(): string {
 
 export default function App() {
   const [phase, setPhase] = useState<Phase>('boot')
+  const [replacing, setReplacing] = useState(false)
   const [bootstrap, setBootstrap] = useState<Bootstrap | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [language, setLanguage] = useState('ES')
@@ -20,13 +21,17 @@ export default function App() {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [streaming, setStreaming] = useState(false)
   const [dailyMessage, setDailyMessage] = useState<string | null>(null)
+  const [diaryEpoch, setDiaryEpoch] = useState(0)
 
-  const loadBootstrap = useCallback(async () => {
+  const loadBootstrap = useCallback(async (preservePrefs = false) => {
     const data = await fetchBootstrap()
     setBootstrap(data)
-    setLanguage(data.default_language)
-    setModelChoice(firstAvailable(data.providers))
-    setPhase(data.db_exists ? 'chat' : 'upload')
+    if (!preservePrefs) {
+      setLanguage(data.default_language)
+      setModelChoice(firstAvailable(data.providers))
+    }
+    setPhase(data.db_exists ? 'chat' : 'empty')
+    setReplacing(false)
   }, [])
 
   useEffect(() => {
@@ -40,7 +45,7 @@ export default function App() {
     fetchDailyMessage(language)
       .then(setDailyMessage)
       .catch(() => setDailyMessage(null))
-  }, [phase, language])
+  }, [phase, language, diaryEpoch])
 
   async function onSend(text: string) {
     if (!modelChoice) return
@@ -101,6 +106,12 @@ export default function App() {
     setMessages([])
   }
 
+  async function onIngested() {
+    await loadBootstrap(true)
+    await onReset()
+    setDiaryEpoch((n) => n + 1)
+  }
+
   if (error) {
     return (
       <main className="page page-narrow">
@@ -122,33 +133,51 @@ export default function App() {
 
   const texts = textsOf(bootstrap.translations, language)
 
-  if (phase === 'upload') {
+  if (phase === 'empty') {
     return (
-      <UploadScreen
-        intro={bootstrap.no_db_text}
-        onUploaded={async () => {
-          await loadBootstrap()
-        }}
-      />
+      <main className="page page-narrow">
+        <img className="banner" src="/banner.png" alt="Chatboxd" />
+        <UploadScreen intro={texts.no_db_text || bootstrap.no_db_text} texts={texts} onUploaded={onIngested} />
+      </main>
     )
   }
 
   return (
-    <ChatScreen
-      texts={texts}
-      languages={bootstrap.languages}
-      language={language}
-      onLanguage={setLanguage}
-      providers={bootstrap.providers}
-      model={modelChoice}
-      onModel={setModelChoice}
-      dailyMessage={dailyMessage}
-      messages={messages}
-      streaming={streaming}
-      onSend={onSend}
-      onReset={() => {
-        void onReset()
-      }}
-    />
+    <>
+      <ChatScreen
+        texts={texts}
+        languages={bootstrap.languages}
+        language={language}
+        onLanguage={setLanguage}
+        providers={bootstrap.providers}
+        model={modelChoice}
+        onModel={setModelChoice}
+        dailyMessage={dailyMessage}
+        messages={messages}
+        streaming={streaming}
+        onSend={onSend}
+        onReset={() => {
+          void onReset()
+        }}
+        onUpdateDiary={() => setReplacing(true)}
+      />
+      {replacing ? (
+        <div
+          className="upload-overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-label={texts.update_diary}
+        >
+          <div className="upload-overlay-card">
+            <UploadScreen
+              intro={texts.replace_diary_text}
+              texts={texts}
+              onUploaded={onIngested}
+              onCancel={() => setReplacing(false)}
+            />
+          </div>
+        </div>
+      ) : null}
+    </>
   )
 }
