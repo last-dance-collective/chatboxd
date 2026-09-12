@@ -1,176 +1,112 @@
-![image](https://github.com/user-attachments/assets/e2f778f5-8ae4-465f-9362-250b8914c7ba)
+![Chatboxd](https://github.com/user-attachments/assets/e2f778f5-8ae4-465f-9362-250b8914c7ba)
 
----
+Chatboxd lets you chat with the diary and reviews exported from your Letterboxd account. The API is FastAPI. The UI is a React app. The agent still runs on LangChain and LangGraph.
 
-Chatboxd is a web application that allows you to easily interact with information logged into your Letterboxd account thanks to the power of LLMs.
-
-It is multi-language, allows the use of several LLM models and contains many other features.
+It supports Spanish and English, and several LLM providers (OpenAI, Google Gemini, Groq, OpenRouter, and Ollama).
 
 ## Contents
 
-1. [Execution](#execution)
-    - [Requirements](#requirements)
-    - [Environment Variables](#environment-variables)
-    - [Load Your Data](#load-your-data)
-    - [Run App](#run-app)
-2. [How It Works](#how-it-works)
+1. [Run the app](#run-the-app)
+    - [Install tools](#install-tools)
+    - [Set API keys](#set-api-keys)
+    - [Load Letterboxd data](#load-letterboxd-data)
+    - [Start the API and the UI](#start-the-api-and-the-ui)
+2. [How it works](#how-it-works)
     - [Agent](#agent)
     - [Tools](#tools)
-    - [BBDD](#bbdd)
+    - [Database](#database)
 
-## Execution
+## Run the app
 
-In this section, we will explain how to execute the application once you have cloned the repository.
+### Install tools
 
-### Requirements
-
-> [!IMPORTANT]
-> You need to have installed [UV](https://docs.astral.sh/uv/)
-
-uv is an extremely fast Python package and project manager, written in Rust. For installation, you can use one of the following methods:
-
--   `curl`
-
-    ```bash
-    curl -LsSf https://astral.sh/uv/install.sh | sh
-    ```
-
--   `wget`
-
-    ```bash
-    wget -qO- https://astral.sh/uv/install.sh | sh
-    ```
-
--   `Homebrew`
-
-    ```bash
-    brew install uv
-    ```
-
-If you need another method, you can find it [UV Installation Guide](https://docs.astral.sh/uv/getting-started/installation/).
-
-### Environment Variables
-
-Since Chatboxd is an application that leverages a LLM, it is necessary to configure some environment variables with the model credentials.
-
-Currently, the repository supports OpenAI LLMs, but we are working on supporting more models.
-
-> [!NOTE]
-> In the `template_secrets.env` file you can find the following variable:
->
-> -   `OPENAI_API_KEY`: The API key of the OpenAI service.
-
-> [!TIP]
-> You can find the API key in the OpenAI dashboard under the "API Keys" section.
-
-> [!IMPORTANT]
-> Once you have entered the values in the `template_secrets.env` file, you have to rename it to `secrets.env`.
-
-If you prefer, you can declare the environment variables in your terminal before running the application.
+Install [uv](https://docs.astral.sh/uv/getting-started/installation/) and Node.js 20 or newer.
 
 ```bash
-export OPENAI_API_KEY=<Your OpenAI API key>
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-### Load Your Data
+### Set API keys
 
-**All files related to the data ingestion are located in the folder _data_ingestion_ located in the src directory**
-To load your data into a new SQLite database, follow these steps:
+Copy `backend/template_secrets.env` to `backend/secrets.env` and fill in the keys you use.
 
-#### Prepare Your Data Files
+```
+OPENAI_API_KEY=
+GOOGLE_API_KEY=
+GROQ_API_KEY=
+OPENROUTER_API_KEY=
+```
 
-1. Go to the [export data section](https://letterboxd.com/settings/data/) on Letterboxd and download your data.
-2. Extract the data and find the two CSV files named `reviews.csv` and `diary.csv`.
-3. Place these files in the `data_ingestion/user_data/` directory.
+You can also export the same variables in your shell. Add `OMDB_API_KEY` if you want the extended movie-detail tool.
 
-> [!NOTE]
-> `reviews.csv` should have the following columns:
-> -   `Date`: The date of the review.
-> -   `Name`: The name of the movie.
-> -   `Review`: The review text.
+### Load Letterboxd data
 
-> [!NOTE]
->  `diary.csv` should have the following columns:
-> -   `Date`: The date the movie was watched.
-> -   `Name`: The name of the movie.
-> -   `Year`: The year the movie was released.
-> -   `Letterboxd URI`: The URI of the movie on Letterboxd.
-> -   `Rating`: The rating given to the movie.
-> -   `Rewatch`: Indicates if the movie was rewatched.
-> -   `Tags`: Any tags associated with the movie.
-> -   `Watched Date`: The date the movie was watched.
-> -   `Username`: The username of the person who watched the movie.
+In the app, drop the `.zip` you download from [Letterboxd data settings](https://letterboxd.com/settings/data/). Chatboxd reads `diary.csv`, `reviews.csv`, and `profile.csv` from the zip. Username comes from the profile. If the diary file has no rows, it builds watches from `watched.csv` and ratings from `ratings.csv`. Nested `deleted/`, `likes/`, and `orphaned/` copies are ignored. A later upload from the sidebar replaces the diary in `backend/letterboxd.db`.
 
-#### Run the Data Ingestion Script
+To load the same files from the command line instead:
 
-> [!IMPORTANT]
-> There is a variable called `USER_NAME` at `data_ingestion/main.py` where you can specify the username of the person who watched the movies. This is intended to be used when multiple people are using the same database.
+1. Export your data from Letterboxd and extract the zip.
+2. Put `reviews.csv`, `diary.csv`, and `profile.csv` in `backend/src/data_ingestion/user_data/`.
+3. Run:
 
 ```bash
-uv run data_ingestion/main.py
+cd backend
+PYTHONPATH=src uv run python src/data_ingestion/main.py
 ```
 
-#### What it Does?
+The command replaces `reviews` and `diary` in `backend/letterboxd.db` with the export. Diary rows link to reviews when the movie name and date match.
 
-The script initializes the SQLite database by creating the required tables (`reviews` and `diary`) if they do not already exist. It then processes data from `reviews.csv` and `diary.csv`, inserting the entries into their corresponding tables.
+`reviews.csv` needs `Date`, `Name`, and `Review`.
 
-Additionally, the script associates diary entries with their respective reviews by matching the movie name and date. The SQLite database file, `letterboxd.db`, will be generated in the script's parent directory.
+`diary.csv` needs `Date`, `Name`, `Year`, `Letterboxd URI`, `Rating`, `Rewatch`, `Tags`, and `Watched Date`.
 
-By following these steps, you will be able to load your data into the SQLite database and interact with the data.
+### Start the API and the UI
 
-### Run App
-
-To run the app you just need to enter the following command in a terminal:
+In one terminal:
 
 ```bash
-uv run -m streamlit run src/main.py
+cd backend
+uv run uvicorn api.app:app --app-dir src --reload --port 8000
 ```
 
-> [!NOTE]
-> The first time you run this command, it creates the virtual environment and installs all the dependencies. This first run may take a little longer, but the following runs will be much faster.
+In another:
 
-## How It Works
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-This section documents the engineering process carried out for the operation of the project. It is a section in which technical concepts will be deepened in detail for those people who want the necessary knowledge to carry out a similar project.
+Open the URL Vite prints, usually `http://localhost:5173`. The first `uv run` in `backend/` creates the virtualenv and installs Python packages.
 
-### Design
+## How it works
 
-Chatboxd leverages several components to create its chat-based experience. In the core of the application lies a Large Language Model, orchestrated through [LangChain](https://www.langchain.com/) and [LangGraph](https://www.langchain.com/langgraph), and served either through the [OpenAI API](https://platform.openai.com/) or [Ollama](https://www.ollama.com/). The database is built in SQLite employing the user data from Letterboxd, whereas the user interface is powered by [Streamlit](https://streamlit.io/).   
+The LLM is orchestrated with [LangChain](https://www.langchain.com/) and [LangGraph](https://www.langchain.com/langgraph), and served through OpenAI, Gemini, Groq, [OpenRouter](https://openrouter.ai/), or [Ollama](https://www.ollama.com/). Watches and reviews live in SQLite. FastAPI streams agent events to the React UI.
 
-![Chatboxd Diagram](public/chatboxd_diagram_round.png)
+![Chatboxd Diagram](docs/chatboxd-architecture.png)
 
 ### Agent
 
-We have developed a ReAct agent architecture based on the following concepts:
+The graph is a ReAct loop with a history filter in front.
 
--   `act` - Let the model call specific tools.
--   `observe` - Pass the tool output back to the model.
--   `reason` - Let the model reason about the tool output to decide what to do next (e.g., call another tool or just respond directly).
+- `act`. The model calls tools.
+- `observe`. Tool output goes back to the model.
+- `reason`. The model decides whether to call another tool or answer.
 
-Here is a simple diagram of the agent architecture:
+![Architecture Diagram](https://github.com/user-attachments/assets/e48dedcc-73a0-4e05-9b40-ad28871eac7)
 
-![Architecture Diagram](https://github.com/user-attachments/assets/e48dedcc-73a0-4e05-9b40-ad28871eacb7)
+The `Filter` node drops old turns so the prompt stays bounded.
 
-We have added a previous node called `Filter` which is in charge of filtering the message history so that it is not excessively long after several iterations.
-The operation and details of the tools are explained below.
+Chat tokens, tool status, movie cards, and rating histograms travel as SSE events on `POST /api/chat`.
 
 ### Tools
 
-The agent has at its disposal several tools that allow it to access the SQLite database that we have created with our data and also perform queries to external APIs. According to the user's request, the agent will decide to call one tool, several, or directly answer as mentioned above.
+- `get_movies`. Filter the diary by title, dates, rating, year, or rewatch.
+- `get_reviews`. Find reviews by movie name or review id.
+- `get_graph`. Build rating-distribution data for the UI chart.
+- `get_movie_details`. Scrape Letterboxd Open Graph data from a film URL.
+- `get_movie_details_extended`. Same, plus OMDb plot and ratings when `OMDB_API_KEY` is set.
 
-The list of tools is:
-
--   `get_movies`: Filters the user movie registry according to the search parameters identified in the user query, then retrieves the search result.
--   `get_reviews`: Retrieve reviews from movies watched by the user, searching by movie name or by review id.
--   `get_graph`: Generates and displays a graph based upon the provided list of movies.
--   `get_movie_details`: Retrieves the detail of a movie by its Letterboxd URL.
--   `get_movie_details_extended`: Retrieves the detail of a movie by its title (in English) using the OmdbAPI and its Letterboxd URL.
-
-> [!NOTE]
-> If the user has an `OMDb API KEY`, the agent will always use `get_movie_details_extended` for movie requests in detail. If not, the agent will use `get_movie_details`.
-
-### BBDD
-
-Although it has been previously commented on the structure of the csv, for a more adequate knowledge of the database used, the following E/R model is attached:
+### Database
 
 ![E/R Model](https://github.com/user-attachments/assets/47c8e353-c457-4a1a-ac9d-25731a78afc9)

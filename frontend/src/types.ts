@@ -1,0 +1,121 @@
+export type MovieCardData = {
+  title: string
+  url: string
+  image_url: string
+  plot: string
+  ratings: { Source?: string; Value?: string }[]
+}
+
+export type ChatEvent =
+  | { type: 'token'; text: string }
+  | { type: 'status'; message: string }
+  | { type: 'movie_card'; movie: MovieCardData }
+  | { type: 'graph'; data: number[] }
+  | { type: 'error'; message: string }
+  | { type: 'done' }
+
+export type ProviderInfo = {
+  id: string
+  available: boolean
+  models: string[]
+}
+
+export type ModelChoice = {
+  provider: string
+  model: string
+}
+
+export function firstAvailable(providers: ProviderInfo[]): ModelChoice | null {
+  const usable = providers.filter((item) => item.available && item.models.length > 0)
+  const provider = usable[0]
+  const model = provider?.models[0]
+  if (!provider || !model) return null
+  return { provider: provider.id, model }
+}
+
+export type Bootstrap = {
+  db_exists: boolean
+  default_language: string
+  languages: Record<string, string>
+  providers: ProviderInfo[]
+  translations: Record<string, Record<string, unknown>>
+  provider_help: Record<string, Record<string, string>>
+  no_db_text: string
+}
+
+export type ChatRequest = {
+  session_id: string
+  message: string
+  language: string
+  provider: string
+  model: string
+}
+
+export type ChatMessage = {
+  id: string
+  role: 'user' | 'assistant'
+  content: string
+  status?: string
+  movie?: MovieCardData
+  graph?: number[]
+  error?: string
+}
+
+export type Texts = {
+  select_language: string
+  select_model: string
+  available_provider: string
+  not_available_provider: string
+  reset_chat: string
+  update_diary: string
+  configure_app: string
+  chat_placeholder: string
+  header_caption: string
+  chat_loading: string
+  jump_to_latest: string
+  continue: string
+  start_page_markdown: string
+  keys_not_set: string
+  suggestions_label: string
+  suggestions_list: string[]
+  upload_drop_title: string
+  upload_drop_hint: string
+  upload_busy: string
+  upload_cancel: string
+  upload_need_zip: string
+  no_db_text: string
+  replace_diary_text: string
+}
+
+export function textsOf(
+  translations: Record<string, Record<string, unknown>>,
+  language: string,
+): Texts {
+  const raw = translations[language] ?? translations.EN ?? {}
+  const list = raw.suggestions_list
+  return {
+    select_language: String(raw.select_language ?? 'Select language'),
+    select_model: String(raw.select_model ?? 'Choose a model'),
+    available_provider: String(raw.available_provider ?? '{provider} available'),
+    not_available_provider: String(raw.not_available_provider ?? '{provider} unavailable'),
+    reset_chat: String(raw.reset_chat ?? 'Reset'),
+    update_diary: String(raw.update_diary ?? 'Update diary'),
+    configure_app: String(raw.configure_app ?? 'Settings'),
+    chat_placeholder: String(raw.chat_placeholder ?? 'Type a message'),
+    header_caption: String(raw.header_caption ?? ''),
+    chat_loading: String(raw.chat_loading ?? 'Generating...'),
+    jump_to_latest: String(raw.jump_to_latest ?? 'Jump to latest'),
+    continue: String(raw.continue ?? 'Continue'),
+    start_page_markdown: String(raw.start_page_markdown ?? ''),
+    keys_not_set: String(raw.keys_not_set ?? 'Agent keys are missing'),
+    suggestions_list: Array.isArray(list) ? list.map(String) : [],
+    suggestions_label: String(raw.suggestions_label ?? ''),
+    upload_drop_title: String(raw.upload_drop_title ?? 'Drop your Letterboxd export .zip here'),
+    upload_drop_hint: String(raw.upload_drop_hint ?? 'or click to choose the file'),
+    upload_busy: String(raw.upload_busy ?? 'Loading diary…'),
+    upload_cancel: String(raw.upload_cancel ?? 'Cancel'),
+    upload_need_zip: String(raw.upload_need_zip ?? 'Upload a Letterboxd .zip export'),
+    no_db_text: String(raw.no_db_text ?? ''),
+    replace_diary_text: String(raw.replace_diary_text ?? ''),
+  }
+}

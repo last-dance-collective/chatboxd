@@ -1,0 +1,206 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Chatboxd",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "chat-path",
+        "label": "Chat stream",
+        "focus": ["viewer", "spa", "api", "agent", "tools", "store"],
+        "note": "The viewer chats over POST /api/chat SSE through the ReAct agent into the diary."
+      },
+      {
+        "id": "ingest-path",
+        "label": "Letterboxd ingest",
+        "focus": ["spa", "api", "store"],
+        "note": "A Letterboxd zip upload replaces diary and reviews in the store."
+      },
+      {
+        "id": "model-path",
+        "label": "Model catalog",
+        "focus": ["spa", "api", "agent", "providers"],
+        "note": "Bootstrap lists PROVIDERS; the agent calls the selected hosted or local model."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "viewer",
+      "type": "external",
+      "label": "Viewer",
+      "sublabel": "Browser",
+      "pos": [40, 300],
+      "size": [140, 68]
+    },
+    {
+      "id": "spa",
+      "type": "frontend",
+      "label": "Chatboxd SPA",
+      "sublabel": "Vite + React :5173",
+      "brand": "react",
+      "tag": "ES / EN",
+      "pos": [292, 300],
+      "size": [150, 68]
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "FastAPI",
+      "sublabel": "REST + SSE :8000",
+      "brand": "fastapi",
+      "pos": [554, 300],
+      "size": [150, 68]
+    },
+    {
+      "id": "agent",
+      "type": "backend",
+      "label": "LangGraph Agent",
+      "sublabel": "ReAct loop",
+      "pos": [816, 300],
+      "size": [160, 68]
+    },
+    {
+      "id": "tools",
+      "type": "backend",
+      "label": "Tools",
+      "sublabel": "artifacts + observations",
+      "pos": [1088, 300],
+      "size": [150, 68]
+    },
+    {
+      "id": "store",
+      "type": "database",
+      "label": "Diary store",
+      "sublabel": "SQLite diary + reviews",
+      "brand": "sqlite",
+      "pos": [554, 560],
+      "size": [150, 68]
+    },
+    {
+      "id": "providers",
+      "type": "cloud",
+      "label": "LLM providers",
+      "sublabel": "hosted catalog + Ollama",
+      "tag": "Gemini first",
+      "pos": [816, 80],
+      "size": [160, 68]
+    },
+    {
+      "id": "letterboxd",
+      "type": "external",
+      "label": "Letterboxd",
+      "sublabel": "export zip + Open Graph",
+      "pos": [1088, 560],
+      "size": [150, 68]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Browser",
+      "wraps": ["spa"]
+    },
+    {
+      "kind": "region",
+      "label": "Python API",
+      "wraps": ["api", "agent", "tools", "store"]
+    }
+  ],
+  "connections": [
+    {
+      "id": "open-ui",
+      "from": "viewer",
+      "to": "spa",
+      "label": "localhost:5173",
+      "variant": "emphasis"
+    },
+    {
+      "id": "chat-sse",
+      "from": "spa",
+      "to": "api",
+      "label": "POST /api/chat",
+      "variant": "emphasis"
+    },
+    {
+      "id": "stream-agent",
+      "from": "api",
+      "to": "agent",
+      "label": "astream_events",
+      "variant": "emphasis"
+    },
+    {
+      "id": "react-tools",
+      "from": "agent",
+      "to": "tools",
+      "label": "ReAct tool calls",
+      "variant": "emphasis"
+    },
+    {
+      "id": "query-store",
+      "from": "tools",
+      "to": "store",
+      "label": "diary queries",
+      "variant": "emphasis"
+    },
+    {
+      "id": "upload-zip",
+      "from": "spa",
+      "to": "api",
+      "label": "POST /api/ingest",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "bottom"
+    },
+    {
+      "id": "replace-diary",
+      "from": "api",
+      "to": "store",
+      "label": "replace ingest",
+      "variant": "dashed",
+      "fromSide": "right",
+      "toSide": "right"
+    },
+    {
+      "id": "build-llm",
+      "from": "agent",
+      "to": "providers",
+      "label": "build_llm"
+    },
+    {
+      "id": "og-scrape",
+      "from": "tools",
+      "to": "letterboxd",
+      "label": "Open Graph scrape",
+      "labelAt": [1163, 382]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Chat",
+      "items": [
+        "SSE events: token, status, movie_card, graph, done",
+        "Assistant replies render GitHub-flavored markdown"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Ingest",
+      "items": [
+        "Username comes from profile.csv",
+        "Empty diary.csv falls back to watched.csv + ratings.csv"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Providers",
+      "items": [
+        "One PROVIDERS table is the catalog and picker order",
+        "Optional OMDb plot and ratings when OMDB_API_KEY is set"
+      ]
+    }
+  ]
+}

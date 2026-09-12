@@ -1,0 +1,83 @@
+from datetime import datetime
+from typing import Any, AsyncIterator
+
+from langchain_core.language_models import BaseChatModel
+from langchain_core.messages import SystemMessage, HumanMessage, RemoveMessage
+from langgraph.graph import StateGraph, START
+from langgraph.checkpoint.memory import InMemorySaver
+from langgraph.prebuilt import ToolNode, tools_condition
+
+from config import CONVERS_TURNS
+from catalog.prompts import PROMPTS
+from utils.logger_utils import logger
+from utils.langgraph_utils import State, rewrite_tool_responses
+from services.agent_tools import agent_bundles
+
+
+class ChatboxdAgent:
+    def __init__(
+        self,
+        llm: BaseChatModel,
+        language: str = "EN",
+        username: str = "",
+    ):
+        prompts = PROMPTS.get(language, PROMPTS["EN"])
+        self.sys_msg = SystemMessage(
+            content=prompts["AGENT_SYSTEM_PROMPT"].format(
+                current_date=datetime.today().strftime("%Y-%m-%d"),
+                username=username,
+            )
+        )
+        self.tools = [bundle.tool for bundle in agent_bundles()]
+        self.llm = llm.bind_tools(self.tools).with_config({"run_name": "chatboxd_llm"})
+        self.create_graph()
+        logger.info("Agent initialized")
+
+    def filter_messages(self, state: State):
+        turn_start_indices = [
+            i
+            for i, msg in enumerate(state["messages"])
+            if isinstance(msg, HumanMessage)
+        ]
+
+        if len(turn_start_indices) > CONVERS_TURNS + 1:
+            first_keep_index = turn_start_indices[-(CONVERS_TURNS + 1)]
+            delete_messages = [
+                RemoveMessage(id=m.id) for m in state["messages"][:first_keep_index]
+            ]
+            logger.info(f"{len(delete_messages)} messages removed from chat history")
+            return {"messages": delete_messages}
+
+        return None
+
+    def chatbot(self, state: State):
+        messages = rewrite_tool_responses(state)
+        return {"messages": [self.llm.invoke([self.sys_msg] + messages)]}
+
+    def create_graph(self):
+        graph_builder = StateGraph(State)
+        graph_builder.add_node("filter_messages", self.filter_messages)
+        graph_builder.add_node("chatbot", self.chatbot)
+        graph_builder.add_node("tools", ToolNode(self.tools))
+        graph_builder.add_edge(START, "filter_messages")
+        graph_builder.add_edge("filter_messages", "chatbot")
+        graph_builder.add_conditional_edges("chatbot", tools_condition)
+        graph_builder.add_edge("tools", "chatbot")
+        checkpointer = InMemorySaver()
+        self.graph = graph_builder.compile(checkpointer=checkpointer)
+
+    def run(self, user_msg: str, thread_id: str = "1"):
+        config = {"configurable": {"thread_id": thread_id}}
+        return self.graph.invoke(
+            {"messages": HumanMessage(content=user_msg)},
+            config,
+        )
+
+    def run_async(self, user_msg: str, thread_id: str = "1") -> AsyncIterator[dict[str, Any]]:
+        config = {"configurable": {"thread_id": thread_id}}
+        logger.info("Running agent")
+        return self.graph.astream_events(
+            {"messages": HumanMessage(content=user_msg)},
+            config,
+            version="v2",
+        )

@@ -1,0 +1,22 @@
+[project]
+name = "chatboxd"
+version = "0.1.0"
+description = "Chat with your Letterboxd diary through FastAPI and a React UI."
+readme = "../README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "langchain-ollama>=1.1.0",
+    "langgraph>=1.2.11",
+    "langchain-openai>=1.6.0",
+    "langchain>=1.4.0",
+    "bs4>=0.0.2",
+    "sqlalchemy>=2.0.52",
+    "python-dotenv>=1.0.1",
+    "langchain-google-genai>=4.4.0",
+    "langchain-groq>=1.1.0",
+    "langchain-openrouter>=0.2.8",
+    "fastapi>=0.141.1",
+    "uvicorn[standard]>=0.52.4",
+    "python-multipart>=0.0.32",
+    "requests>=2.32.3",
+]

@@ -1,3 +1,8 @@
 __pycache__/
 *.py[cod]
 secrets.env
+.venv/
+backend/.venv/
+node_modules/
+frontend/dist/
+example_extracted_zip_letterboxd/
