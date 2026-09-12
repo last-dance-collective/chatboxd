@@ -1,9 +1,0 @@
-ts	phase	decision	why	evidence	result
-2026-09-06T12:04:29Z	frame	upgrade langchain 0.3.7 to 1.4 and langgraph 0.2.50 to 1.2.11 in the FastAPI backend	user asked to refresh outdated deps; the chat SSE contract is the done check	backend/pyproject.toml	framed
-2026-09-06T12:04:29Z	design	keep the custom ReAct StateGraph instead of rewriting to create_agent	LangGraph v1 says custom graphs stay compatible; create_agent would drop filter_messages and rewrite_tool_responses	https://docs.langchain.com/oss/python/migrate/langgraph-v1	kept graph
-2026-09-06T12:04:29Z	harness	added probe_langchain.py before bumping packages	need a rerunnable import/version check that works on old and new stacks	backend/scripts/probe_langchain.py	baseline import_ok on 0.3.7
-2026-09-06T12:04:29Z	bump	uv lock and sync to langchain 1.4.0, langgraph 1.2.11, partner packages, sqlalchemy 2.0.52	jump to current majors with no 0.3 compatibility shim	backend/uv.lock, backend/pyproject.toml	probe import_ok on 1.4.0
-2026-09-06T12:04:29Z	imports	rename MemorySaver to InMemorySaver in ChatboxdAgent	same class under the documented name; one caller	backend/src/services/langgraph_service.py	alias confirmed MemorySaver is InMemorySaver
-2026-09-06T12:04:29Z	events	keep astream_events version v2 dict mapping	dump showed on_tool_start, on_tool_end, on_chat_model_stream still present; rewriting to v3 would change the only chat API for no user gain	backend/scripts/dump_astream_kinds.py	mapped status+token on diary query
-2026-09-06T12:04:29Z	verify	POST /api/chat after restarting uvicorn on the new venv	prove the product path, not only the probe	curl 127.0.0.1:8000/api/chat	status token done SSE, 90 peliculas in 2024
-2026-09-06T12:09:52Z	review	trail reviewer flagged missing transcript proof, 90 vs DB count, and untested providers	independent model scanned the TSV; keep the gaps visible instead of papering them over	subagent gpt-5.6-sol-max	open: OpenAI Ollama movie_card graph
